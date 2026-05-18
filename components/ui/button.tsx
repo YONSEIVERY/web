@@ -19,14 +19,14 @@ const base =
   'inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium tracking-tight'
 
 export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps | AnchorProps>(
-  function Button({ variant = 'primary', className, children, ...rest }, ref) {
-    if ((rest as AnchorProps).as === 'a') {
-      const { as: _as, ...anchorRest } = rest as AnchorProps
+  function Button(props, ref) {
+    const { variant = 'primary', className, children, as, ...rest } = props
+    if (as === 'a') {
       return (
         <a
           ref={ref as React.Ref<HTMLAnchorElement>}
           className={cn(base, styles[variant], className)}
-          {...anchorRest}
+          {...(rest as AnchorHTMLAttributes<HTMLAnchorElement>)}
         >
           {children}
         </a>
