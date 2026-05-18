@@ -10,11 +10,13 @@
 ## 1. Goals & Non-Goals
 
 ### Goals
+
 1. **External branding** — 협력사·산학협력 파트너에게 VERY 정체성 전달
 2. **Activity archive** — 세션·데모데이·창업팀 결과물의 누적 기록
 3. **Member showcase** — 기수별 멤버 + 알럼나이 스타트업 강조
 
 ### Non-Goals (v1 범위 밖)
+
 - 신입 부원 모집을 위한 자체 지원 폼 (구글폼 외부 링크로 충분)
 - 다국어 (한글 단일, 영문은 디자인 액센트로만)
 - 알럼나이 개인 상세 페이지, 검색, 댓글, 다크/라이트 토글, 회원 전용 영역
@@ -24,6 +26,7 @@
 ## 2. Brand Identity (from Instagram + design assets)
 
 ### Color tokens
+
 ```
 --color-bg-base:    #000000        # 배경
 --color-bg-elev:    #0A0A0F        # 카드/엘리베이션
@@ -35,16 +38,19 @@
 ```
 
 ### Typography
+
 - 영문 디스플레이: Geist / Inter / Pretendard (이탤릭 활용 — `lander`, `settler`, `fail forward`)
 - 한글 본문: Pretendard Variable
 - 모노: Geist Mono (코드/숫자/태그용)
 
 ### Motion
+
 - Easing: `cubic-bezier(0.16, 1, 0.3, 1)` — sharp slow-in
 - 스태거 진입, 스크롤-연동 패럴랙스 (히어로), hover-tilt (카드)
 - 글로벌 SVG 노이즈 오버레이 4% opacity — 영화 그레인 질감
 
 ### Available brand assets
+
 - `/design/logo_-02.png` — wing-V 로고 (white, 8000×4500)
 - `/design/Artboard 7-9.png` — 그라데이션/타이포 무드 보드
 - 인스타 그리드 사진 — 세션·데모데이 다큐 사진 (학회 원본 폴더 별도 수령 예정)
@@ -53,16 +59,16 @@
 
 ## 3. Information Architecture (8 pages)
 
-| 경로 | 페이지 | 핵심 콘텐츠 |
-|---|---|---|
-| `/` | Home | Hero, Manifesto, Core Value, Numbers, 최근 활동, 알럼나이 쇼케이스, CTA |
-| `/about` | About | Who We Are, Vision, K·E·N 풀스크린, For VERY Members |
-| `/curriculum` | Curriculum | 기수 셀렉터 + 주차별 타임라인 (노션 DB) |
-| `/demoday` | Demoday | 창업팀 갤러리, 수상내역, 연사·심사위원 (노션 DB) |
-| `/alumni` ★ | Alumni | 알럼나이 스타트업 그리드 + 분야·기수 필터 (노션 DB) |
-| `/partners` | Partners | 협력사 로고월, 산학협력 케이스 카드 |
-| `/recruit` | Recruit | 시즌 게이트 (모집 중 / 마감) + 외부 구글폼 |
-| `/contact` | Contact | 이메일, 인스타, 간단 문의 폼 |
+| 경로          | 페이지     | 핵심 콘텐츠                                                             |
+| ------------- | ---------- | ----------------------------------------------------------------------- |
+| `/`           | Home       | Hero, Manifesto, Core Value, Numbers, 최근 활동, 알럼나이 쇼케이스, CTA |
+| `/about`      | About      | Who We Are, Vision, K·E·N 풀스크린, For VERY Members                    |
+| `/curriculum` | Curriculum | 기수 셀렉터 + 주차별 타임라인 (노션 DB)                                 |
+| `/demoday`    | Demoday    | 창업팀 갤러리, 수상내역, 연사·심사위원 (노션 DB)                        |
+| `/alumni` ★   | Alumni     | 알럼나이 스타트업 그리드 + 분야·기수 필터 (노션 DB)                     |
+| `/partners`   | Partners   | 협력사 로고월, 산학협력 케이스 카드                                     |
+| `/recruit`    | Recruit    | 시즌 게이트 (모집 중 / 마감) + 외부 구글폼                              |
+| `/contact`    | Contact    | 이메일, 인스타, 간단 문의 폼                                            |
 
 ---
 
@@ -82,18 +88,23 @@
 ## 5. Component Catalog
 
 ### Primitives
+
 `Button` · `Tag` · `NoiseLayer` · `GlowBackground` · `SectionHeader` · `Divider`
 
 ### Layout
+
 `Nav` (고정 상단, 스크롤 시 블러) · `Footer` · `PageHero` · `Section`
 
 ### Content blocks
+
 `ManifestoBlock` · `CoreValueCard` · `NumberStat` · `TimelineRail` · `CurriculumCard` · `TeamCard` · `AlumniStartupCard` · `LogoMarquee` · `PartnerLogoGrid` · `CaseStudyCard` · `FilterBar` · `SeasonGate`
 
 ### Notion data components
+
 `CurriculumList` · `AlumniGrid` · `AwardsTimeline` · `TeamsGallery`
 
 ### Motion helpers
+
 `Reveal` (IntersectionObserver 스태거) · `TiltCard` · `CountUp` · `MagneticLink`
 
 ---
@@ -108,18 +119,21 @@
 ```
 
 ### Notion side prerequisites
+
 1. Internal Integration 생성 → 토큰 발급
 2. 각 DB에 Integration "Add connection"
 3. DB 스키마 컨벤션 합의 (컬럼명 고정)
 4. 이미지 정책: 로고는 png/svg, 사진은 webp
 
 ### Notion DB → 타입 매핑
+
 - `parseAlumniStartup(page)` → `AlumniStartup { name, founder, cohort, category, logoUrl, link }`
 - `parseCurriculum(page)` → `CurriculumWeek { cohort, week, topic, speaker, date, keywords, photoUrl? }`
 - `parseAward(page)` → `Award { alumniName, cohort, award, year, organization }`
 - `parseTeam(page)` → `Team { cohort, name, members, oneLiner, output? }`
 
 ### Secrets (Vercel env, server-only)
+
 - `NOTION_TOKEN`
 - `NOTION_DB_CURRICULUM_43`, `NOTION_DB_CURRICULUM_42`
 - `NOTION_DB_ALUMNI`, `NOTION_DB_AWARDS`, `NOTION_DB_TEAMS`
@@ -129,6 +143,7 @@
 `NEXT_PUBLIC_` 프리픽스 금지 — 클라이언트 번들 노출 방지.
 
 ### Cache & revalidation
+
 - 페이지 레벨: `export const revalidate = 60`
 - 즉시 반영 필요 시: `/api/revalidate?path=/curriculum` (관리자용, 시크릿 키 검증)
 
@@ -136,15 +151,15 @@
 
 ## 7. Error Handling
 
-| 시나리오 | 처리 |
-|---|---|
-| 노션 API 다운 | 마지막 ISR 캐시 유지, 페이지 정상 표시 |
-| DB 스키마 변경 | 파서가 안전 기본값 반환 + Sentry 워닝 |
-| 노션 이미지 URL 만료 | `next/image` `onError` → wing-V placeholder |
-| 빌드 타임 페칭 실패 | 정적 셸만 빌드, 런타임 ISR로 재시도 |
-| Contact 폼 전송 실패 | "yonseivery1997@gmail.com 으로 직접" 안내 |
-| 시즌 외 RECRUIT 직링크 | "다음 모집 알림 받기" 자동 분기 |
-| 404 / 500 | `not-found.tsx` / `error.tsx` 시네마틱 폴백 |
+| 시나리오               | 처리                                        |
+| ---------------------- | ------------------------------------------- |
+| 노션 API 다운          | 마지막 ISR 캐시 유지, 페이지 정상 표시      |
+| DB 스키마 변경         | 파서가 안전 기본값 반환 + Sentry 워닝       |
+| 노션 이미지 URL 만료   | `next/image` `onError` → wing-V placeholder |
+| 빌드 타임 페칭 실패    | 정적 셸만 빌드, 런타임 ISR로 재시도         |
+| Contact 폼 전송 실패   | "yonseivery1997@gmail.com 으로 직접" 안내   |
+| 시즌 외 RECRUIT 직링크 | "다음 모집 알림 받기" 자동 분기             |
+| 404 / 500              | `not-found.tsx` / `error.tsx` 시네마틱 폴백 |
 
 ---
 
@@ -157,6 +172,7 @@
 - **풀커버리지 컴포넌트 테스트, E2E 자동화는 의도적으로 제외 (YAGNI)**
 
 ### Accessibility
+
 - 시맨틱 HTML, WCAG AA 색 대비, 블루 포커스 링, alt 텍스트
 - 키보드 내비게이션, prefers-reduced-motion 존중
 
@@ -187,18 +203,18 @@
 
 ## 11. Timeline (estimated)
 
-| 단계 | 기간 |
-|---|---|
-| 0. 셋업 (Next 15 + Tailwind + Vercel + 도메인) | 0.5d |
-| 1. 디자인 시스템 + Nav/Footer | 1d |
-| 2. Home + About | 1~1.5d |
-| 3. Notion 연동 인프라 | 0.5d |
-| 4. Curriculum + Demoday | 1d |
-| 5. Alumni + Partners | 1d |
-| 6. Recruit + Contact | 0.5d |
-| 7. 모션 / 마이크로 폴리시 | 0.5~1d |
-| 8. QA + 배포 | 0.5d |
-| **Total** | **6~7d (풀타임 기준)** |
+| 단계                                           | 기간                   |
+| ---------------------------------------------- | ---------------------- |
+| 0. 셋업 (Next 15 + Tailwind + Vercel + 도메인) | 0.5d                   |
+| 1. 디자인 시스템 + Nav/Footer                  | 1d                     |
+| 2. Home + About                                | 1~1.5d                 |
+| 3. Notion 연동 인프라                          | 0.5d                   |
+| 4. Curriculum + Demoday                        | 1d                     |
+| 5. Alumni + Partners                           | 1d                     |
+| 6. Recruit + Contact                           | 0.5d                   |
+| 7. 모션 / 마이크로 폴리시                      | 0.5~1d                 |
+| 8. QA + 배포                                   | 0.5d                   |
+| **Total**                                      | **6~7d (풀타임 기준)** |
 
 ---
 

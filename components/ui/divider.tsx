@@ -10,7 +10,7 @@ export function Divider({ className, label }: { className?: string; label?: stri
     >
       <div className="h-px flex-1 bg-[var(--color-border)]" />
       {label ? (
-        <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-fg-muted)]">
+        <span className="font-mono text-xs tracking-widest text-[var(--color-fg-muted)] uppercase">
           {label}
         </span>
       ) : null}

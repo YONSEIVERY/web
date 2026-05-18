@@ -8,10 +8,8 @@ type ButtonProps = Common & ButtonHTMLAttributes<HTMLButtonElement> & { as?: 'bu
 type AnchorProps = Common & AnchorHTMLAttributes<HTMLAnchorElement> & { as: 'a'; href: string }
 
 const styles: Record<Variant, string> = {
-  primary:
-    'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-2)] transition-colors',
-  ghost:
-    'border border-[var(--color-border-strong)] text-white hover:bg-white/5 transition-colors',
+  primary: 'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-2)] transition-colors',
+  ghost: 'border border-[var(--color-border-strong)] text-white hover:bg-white/5 transition-colors',
   link: 'text-white underline underline-offset-4 decoration-[var(--color-accent)] hover:decoration-[var(--color-accent-2)]',
 }
 

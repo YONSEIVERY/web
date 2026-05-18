@@ -33,15 +33,19 @@
 **Steps:**
 
 1. Run from project root (`C:/Users/ricky/Desktop/very 43기`):
+
    ```bash
    npx create-next-app@latest web --typescript --tailwind --app --src-dir=false --import-alias "@/*" --eslint --turbopack --no-git
    ```
+
    Answer prompts: TypeScript ✅, ESLint ✅, Tailwind ✅, App Router ✅, Turbopack ✅, no `src/` dir, alias `@/*`.
 
 2. Verify:
+
    ```bash
    cd web && npm run dev
    ```
+
    Expected: dev server starts on `http://localhost:3000`, default Next.js page renders. Kill the server.
 
 3. Commit: not yet — git initialized in next task.
@@ -49,6 +53,7 @@
 ### Task 0.2: Initialize git, base config
 
 **Files:**
+
 - Modify: `web/.gitignore` (already exists from create-next-app)
 - Create: `web/.editorconfig`
 - Create: `web/.nvmrc`
@@ -56,6 +61,7 @@
 **Steps:**
 
 1. From project root:
+
    ```bash
    git init
    git branch -m main
@@ -63,11 +69,13 @@
    ```
 
 2. Create `web/.nvmrc`:
+
    ```
    20
    ```
 
 3. Create `web/.editorconfig`:
+
    ```
    root = true
    [*]
@@ -90,6 +98,7 @@
 ### Task 0.3: Strict TypeScript + Prettier
 
 **Files:**
+
 - Modify: `web/tsconfig.json`
 - Create: `web/.prettierrc.json`
 - Create: `web/.prettierignore`
@@ -97,6 +106,7 @@
 **Steps:**
 
 1. In `web/tsconfig.json`, ensure `compilerOptions` has:
+
    ```json
    "strict": true,
    "noUncheckedIndexedAccess": true,
@@ -105,11 +115,13 @@
    ```
 
 2. Install Prettier:
+
    ```bash
    cd web && npm i -D prettier prettier-plugin-tailwindcss
    ```
 
 3. Create `web/.prettierrc.json`:
+
    ```json
    {
      "semi": false,
@@ -121,6 +133,7 @@
    ```
 
 4. Create `web/.prettierignore`:
+
    ```
    .next
    node_modules
@@ -163,6 +176,7 @@ web/
 ```
 
 **Steps:**
+
 1. Create folders. On Windows bash: `mkdir -p` works.
 2. Add `.gitkeep` to each empty folder.
 3. Commit: `chore: scaffold folder structure`.
@@ -172,6 +186,7 @@ web/
 **Steps:**
 
 1. From `web/`:
+
    ```bash
    npm i @notionhq/client framer-motion clsx tailwind-merge zod
    npm i -D @types/node
@@ -184,12 +199,14 @@ web/
 ### Task 0.6: Environment variables scaffold
 
 **Files:**
+
 - Create: `web/.env.local.example`
 - Modify: `web/.gitignore` (verify `.env*.local` is ignored)
 
 **Steps:**
 
 1. Create `web/.env.local.example`:
+
    ```
    # Notion CMS
    NOTION_TOKEN=
@@ -328,6 +345,7 @@ export default config
 ### Task 1.2: Fonts (Pretendard + Geist)
 
 **Files:**
+
 - Modify: `web/app/layout.tsx`
 
 **Steps:**
@@ -450,6 +468,7 @@ export function GlowBackground({ className }: { className?: string }) {
 ### Task 1.6: `<Button />` + `<Tag />` + `<Divider />`
 
 **Files:**
+
 - Create `web/components/ui/button.tsx`
 - Create `web/components/ui/tag.tsx`
 - Create `web/components/ui/divider.tsx`
@@ -559,6 +578,7 @@ export function Divider({ className, label }: { className?: string; label?: stri
 ### Task 1.7: `<SectionHeader />` + `<Section />` container
 
 **Files:**
+
 - Create `web/components/ui/section.tsx`
 - Create `web/components/ui/section-header.tsx`
 
@@ -633,6 +653,7 @@ export function SectionHeader({
 **Files:** Create `web/components/layout/nav.tsx`
 
 **Behavior:**
+
 - Fixed top, transparent at scroll 0, `bg-black/60 backdrop-blur-xl` after 100px.
 - Logo (wing-V) left, menu center, RECRUIT CTA right.
 - Active route gets blue underline.
@@ -1010,6 +1031,7 @@ export const CORE_VALUES = [
 ### Task 4.3: Members benefits + Partners scaffolding
 
 **Files:**
+
 - Create `web/lib/content/member-benefits.ts`
 - Create `web/lib/content/partners.ts`
 
@@ -1231,6 +1253,7 @@ export interface Team {
 ### Task 7.3: Property getters helpers (TDD)
 
 **Files:**
+
 - Create `web/lib/notion/property.ts`
 - Create `web/tests/notion/property.test.ts`
 
@@ -1332,6 +1355,7 @@ export function getDate(page: Page, key: string): string | undefined {
 ### Task 7.4: parseAlumniStartup (TDD)
 
 **Files:**
+
 - Create `web/lib/notion/parsers/alumni.ts`
 - Create `web/tests/notion/alumni.test.ts`
 
@@ -1406,6 +1430,7 @@ Run `npm test` — expect PASS.
 Replicate Task 7.4 pattern for the remaining three parsers. Each gets its own test file.
 
 Notion column names to confirm with 학회 (Open Question #2 in design doc):
+
 - 커리큘럼: `주차`, `주제`, `연사`, `날짜`, `키워드` (multi-select), `사진` (file)
 - 수상내역: `상`, `수상자`, `기수`, `연도`, `기관`
 - 창업팀: `팀명`, `기수`, `멤버` (multi-select 또는 rich_text), `한줄소개`, `결과물`
@@ -1449,8 +1474,7 @@ export const getCurriculum = (cohort: 42 | 43): Promise<CurriculumWeek[]> => {
 export const getAwards = (): Promise<Award[]> =>
   queryDb(process.env.NOTION_DB_AWARDS ?? '', parseAward)
 
-export const getTeams = (): Promise<Team[]> =>
-  queryDb(process.env.NOTION_DB_TEAMS ?? '', parseTeam)
+export const getTeams = (): Promise<Team[]> => queryDb(process.env.NOTION_DB_TEAMS ?? '', parseTeam)
 ```
 
 **Commit:** `feat(notion): data-fetcher functions with safe fallback`.
@@ -1601,6 +1625,7 @@ For 에이블리, ZUZU 케이스: image, partner name, what we did, outcome.
 ### Task 12.1: `seasonGate` util (TDD)
 
 **Files:**
+
 - Create `web/lib/utils/season-gate.ts`
 - Create `web/tests/season-gate.test.ts`
 
@@ -1668,6 +1693,7 @@ Client component with name, email, message fields. Zod validation. Submit POSTs 
 ### Task 13.3: `/api/contact` route (TDD-ish)
 
 **Files:**
+
 - Create `web/app/api/contact/route.ts`
 - Create `web/tests/api/contact.test.ts`
 
@@ -1684,6 +1710,7 @@ Implementation: validate with Zod, send email via Resend (if `RESEND_API_KEY` se
 ### Task 14.1: `not-found.tsx` + `error.tsx`
 
 **Files:**
+
 - Create `web/app/not-found.tsx`
 - Create `web/app/error.tsx`
 
@@ -1761,11 +1788,13 @@ Fix any low-hanging issues (alt tags, font-display, layout shifts).
 ### Task 15.3: Manual QA checklist
 
 Walk through all 8 pages on:
+
 - Desktop 1440px Chrome
 - Mobile 375px iPhone DevTools
 - Tablet 768px
 
 Verify:
+
 - [ ] Nav scroll-blur works
 - [ ] Mobile drawer opens/closes
 - [ ] Hero looks cinematic
