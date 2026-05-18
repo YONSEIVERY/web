@@ -18,6 +18,15 @@
   --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/*
+ * z-index scale:
+ *   0–9   content
+ *   10–40 sticky / overlays-within-content
+ *   50    Nav
+ *   60    NoiseLayer (above nav for global film-grain)
+ *   70+   Modals, drawers, toasts (must beat NoiseLayer)
+ */
+
 @layer base {
   html {
     background: var(--color-bg-base);
