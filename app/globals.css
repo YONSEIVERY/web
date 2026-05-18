@@ -4,7 +4,7 @@
   --color-bg-base: #000000;
   --color-bg-elev: #0a0a0f;
   --color-fg-primary: #ffffff;
-  --color-fg-muted: #6b7280;
+  --color-fg-muted: #7b8290;
   --color-fg-subtle: #9ca3af;
   --color-accent: #3a4ff0;
   --color-accent-2: #818cf8;
@@ -31,12 +31,11 @@
   }
   ::selection {
     background: var(--color-accent);
-    color: white;
+    color: var(--color-fg-primary);
   }
   *:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-    border-radius: 2px;
   }
   ::-webkit-scrollbar {
     width: 10px;
