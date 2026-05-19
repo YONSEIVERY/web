@@ -1,5 +1,7 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import type { Route } from 'next'
+import veryMark from '@/public/brand/very-mark.png'
 import { NAV_ITEMS } from '@/lib/content/nav'
 import { SITE } from '@/lib/content/site'
 
@@ -22,12 +24,13 @@ export function SiteFooter() {
     <footer className="relative border-t border-border bg-bg-base px-6 pb-10 pt-20 md:px-10 md:pb-12 md:pt-28">
       <div className="grid grid-cols-12 gap-x-8 gap-y-12 md:gap-x-12">
         <div className="col-span-12 md:col-span-5">
-          <Link
-            href="/"
-            translate="no"
-            className="font-display text-3xl font-bold tracking-tight text-fg-primary md:text-4xl"
-          >
-            VERY
+          <Link href="/" aria-label="VERY 홈" className="inline-block">
+            <Image
+              src={veryMark}
+              alt="VERY"
+              priority={false}
+              className="h-10 w-auto md:h-12"
+            />
           </Link>
           <p className="mt-5 max-w-[28ch] font-display text-sm italic lowercase tracking-[0.18em] text-fg-subtle md:text-base">
             lander · settler · fail forward
@@ -86,7 +89,7 @@ export function SiteFooter() {
             <p className="font-display text-sm leading-[1.8] text-fg-subtle">
               연세대학교 신촌캠퍼스
               <br />
-              상경대학 창업학회실
+              제1공학관 A119호
             </p>
             <p
               translate="no"

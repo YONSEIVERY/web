@@ -1,4 +1,6 @@
+import Image from 'next/image'
 import Link from 'next/link'
+import veryMark from '@/public/brand/very-mark.png'
 import { SiteNavLinks } from './site-nav-links'
 
 /**
@@ -17,12 +19,13 @@ export function SiteNav() {
     <header className="site-nav fixed inset-x-0 top-0 z-50">
       <div className="site-nav-bg absolute inset-0 -z-10" aria-hidden />
       <div className="mx-auto flex h-14 items-center justify-between px-6 md:h-16 md:px-10">
-        <Link
-          href="/"
-          translate="no"
-          className="font-mono text-sm font-bold tracking-[0.32em] text-fg-primary"
-        >
-          VERY
+        <Link href="/" aria-label="VERY 홈" className="inline-flex items-center">
+          <Image
+            src={veryMark}
+            alt="VERY"
+            priority
+            className="h-6 w-auto md:h-7"
+          />
         </Link>
 
         <nav aria-label="Primary" className="hidden md:block">
