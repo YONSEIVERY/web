@@ -1,78 +1,105 @@
 /**
  * /curriculum page content.
  *
- * Society has not finalized exact week counts / hour blocks — figures here
- * are reasonable defaults that match how recent volumes have run. Swap in
- * authoritative numbers once they're confirmed.
+ * Source of truth: 43기 OT 자료 (VERY_43기_OT.pdf, 2026.03.05) +
+ * 정규 커리큘럼 인포그래픽. 카피는 가능한 한 OT 원문을 그대로 옮기되
+ * 사이트 톤에 맞춰 보조 문구 한 줄을 덧붙였다. 새로운 카피를 임의로
+ * 만들어 넣지 말 것 — 학회원이 OT에서 본 문구가 그대로 사이트에 있어야
+ * 신뢰감이 깨지지 않는다.
+ *
+ * 구조:
+ *   1. Hero       — FAIL FORWARD 슬로건
+ *   2. Tracks     — 정규 4단계 (10만플 → 프리토타이핑 → 아이디어톤 → 데모데이)
+ *   3. Sessions   — 보조 3종 (스터디 / 인사이트 / 컨벤션)
+ *   4. Industry   — 산학 협력
+ *   5. Closing    — CTA
  */
 export const CURRICULUM = {
   hero: {
-    eyebrow: 'Curriculum — Vol.43 / 2026—1',
-    headlineLine1: '한 학기,',
-    headlineLine2: '한 권의 잡지.',
+    eyebrow: '~/curriculum — Vol.43 / 2026—1',
+    headlineLine1: '실패를 통해,',
+    headlineLine2: '앞으로 나아가다.',
     subline:
-      'One semester. One volume. Every cohort assembles a single body of work — sessions are chapters, demoday is the cover.',
+      'Be ready to fail forward. 한 학기, 네 단계의 정규 트랙과 세 갈래의 보조 세션 — 책장이 아니라 실험실로 묶인 커리큘럼.',
   },
-  format: {
-    label: 'FORMAT',
-    title: '학기 단위, 주간 세션.',
-    body: '한 학기를 한 권의 잡지처럼 묶습니다. 매주 세션이 한 챕터, 학기 말 데모데이가 표지가 되는 구조로 — 흐름이 끊기지 않게, 누적되도록 설계되어 있습니다.',
-    stats: [
-      { value: '12주', label: 'WEEKS', note: '한 학기의 길이' },
-      { value: '3시간', label: 'PER SESSION', note: '매주 1회 정기 세션' },
-      { value: '4단계', label: 'PHASES', note: '온보딩부터 데모데이까지' },
-    ],
-  },
-  phases: {
-    label: 'PHASES',
-    title: '학기는 네 단계로 흐릅니다.',
+  tracks: {
+    label: 'CURRICULUM',
+    title: '정규 4단계.',
+    body: '한 학기를 네 개의 단계로 묶습니다. 시장에서 시작해서, 시장에서 검증하고, 시장에서 발표합니다.',
     items: [
       {
         num: '01',
-        mono: 'ONBOARDING',
-        title: '온보딩 · 팀 빌딩',
-        body: '새 회원과 기존 회원이 한 팀으로 묶이는 첫 단계. 학회의 언어·도구·아카이브를 공유하고, 한 학기를 함께 끌고 갈 팀을 확정합니다.',
+        mono: '10만원 프로젝트',
+        title: '10만원으로, 2주, 시장에.',
+        tags: ['#수익창출', '#실행'],
+        body: '10만원으로 2주 동안, 직접 시장에 나아가 빠르게 매출을 내봅니다. 한정된 시간과 자원으로 최대한 많은 수익을 창출하는 첫 단계입니다.',
       },
       {
         num: '02',
-        mono: 'DOMAIN RESEARCH',
-        title: '도메인 리서치',
-        body: '관심 산업·시장을 깊게 파고드는 단계. 시장 구조, 플레이어, 미해결 문제를 직접 만나서 정리하고 학회 내부에 발표합니다.',
+        mono: '프리토타이핑',
+        title: '시장이 사 줄지부터.',
+        tags: ['#시장검증', '#시장성'],
+        body: '최소한의 시간과 비용으로 아이디어의 시장성을 검증합니다. 선제적으로 시장 검증을 마치고 아이템의 시장성을 확인하는 단계입니다.',
       },
       {
         num: '03',
-        mono: 'IDEA SPRINT',
-        title: '아이디어 스프린트',
-        body: '리서치를 가설로, 가설을 프로토타입으로 빠르게 옮기는 단계. 매주 한 사이클씩 만들고 부수고 다시 세웁니다.',
+        mono: '아이디어톤',
+        title: '아이디어, 무대 위로.',
+        tags: ['#아이디어피칭', '#실전창업'],
+        body: '아이디어 피칭을 통해 창업 아이템을 제시하고 실전 창업을 시작합니다. 학회 안에서 처음으로 자신의 아이템을 무대에 올리는 단계입니다.',
       },
       {
         num: '04',
-        mono: 'DEMODAY PREP',
-        title: '데모데이 준비',
-        body: '학기의 결과물을 외부에 발표할 수 있는 형태로 다듬는 단계. 피치 덱·시연 시나리오·예상 질문을 모의 발표에서 반복합니다.',
+        mono: '데모데이',
+        title: 'IR 피칭, CEO·VC 앞에.',
+        tags: ['#IR_PITCH', '#MVP'],
+        body: 'CEO와 VC 심사역 앞에서 IR 피칭을 진행하여 평가 및 투자를 받습니다. 여러분의 아이디어를 창업을 통해 현실로 만드는 마지막 단계입니다.',
       },
     ],
   },
-  workshops: {
-    label: 'WORKSHOPS',
-    title: '세션 너머의 활동.',
+  sessions: {
+    label: 'SESSIONS',
+    title: '보조 3세션.',
+    body: '정규 트랙을 받치는 세 갈래의 주간 활동. 매주 학회 안에서 함께 진행됩니다.',
     items: [
       {
-        mono: 'CASE STUDY',
-        title: '케이스 스터디',
-        body: '국내외 스타트업·실패 사례를 함께 분해하고, 우리 팀의 가정에 다시 대입해 봅니다.',
+        mono: 'STUDY',
+        title: '스터디 세션',
+        summary: '조별로 책 한 권, 한 학기.',
+        bullets: [
+          '조 1권의 책을 읽고 오프라인 독서 모임을 진행합니다.',
+          '리더가 주제를 선정하면 조원이 토론하고, 주제·논점·결론을 노션에 업로드합니다.',
+          '책을 다 읽은 뒤 정규 세션에서 퀴즈가 출제됩니다. (3문제 이상 오답 시 벌금 1만원)',
+          '인증샷과 조 단위 책 요약, 개인 인사이트를 노션에 함께 남깁니다.',
+        ],
       },
       {
-        mono: 'GUEST TALK',
-        title: '게스트 토크',
-        body: '학회 동문 창업자·현직 VC·도메인 전문가를 초청해 묻고 답하는 자리.',
+        mono: 'INSIGHT',
+        title: '인사이트 세션',
+        summary: '매주 10분, 150자.',
+        bullets: [
+          '매주 10분 가량의 스타트업·비즈니스 콘텐츠를 함께 시청합니다.',
+          '150자 내외의 감상문을 과제로 작성합니다.',
+          '학회원 모두 서로의 감상문을 확인할 수 있습니다.',
+        ],
       },
       {
-        mono: 'FIELD VISIT',
-        title: '필드 비짓',
-        body: '관심 도메인의 실제 현장을 찾아가 보는 활동. 보고 들은 것은 곧장 다음 주 세션의 재료가 됩니다.',
+        mono: 'CONVENTION',
+        title: '컨벤션 세션',
+        summary: '우물 밖, 큰 무대.',
+        bullets: [
+          '학회원들과 함께 외부 강연, 컨퍼런스, 데모데이 등을 누빕니다.',
+          '텍스트 너머의 생생한 현장의 흐름을 읽어내는 시간입니다.',
+          '우물 밖의 창업가들과 교감하며, 나의 가능성을 증명할 더 큰 무대를 마주합니다.',
+        ],
       },
     ],
+  },
+  industry: {
+    label: 'INDUSTRY',
+    title: '산학 협력.',
+    body: 'VERY는 기업과의 산학 협력을 통해, 기업의 실제 문제를 해결하는 실전 프로젝트를 수행합니다. 기업의 병목을 해결하고 성과를 만들기 위해 시장을 분석하고, 마케팅·브랜딩 전략을 직접 실행합니다.',
+    note: '이를 통해 현장에서만 얻을 수 있는 사업 경험을 쌓게 됩니다.',
   },
   closing: {
     label: 'JOIN',

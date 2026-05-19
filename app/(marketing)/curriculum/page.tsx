@@ -6,24 +6,26 @@ import { CURRICULUM } from '@/lib/content/curriculum'
 export const metadata: Metadata = {
   title: '커리큘럼',
   description:
-    'VERY의 학기 단위 커리큘럼. 한 학기를 한 권의 잡지로 묶는 4단계 진행 — 온보딩, 도메인 리서치, 아이디어 스프린트, 데모데이 준비.',
+    'VERY 43기 정규 커리큘럼. 10만원 프로젝트 → 프리토타이핑 → 아이디어톤 → 데모데이의 네 단계와 스터디·인사이트·컨벤션 세 갈래의 보조 세션, 그리고 산학 협력.',
 }
 
 /**
  * /curriculum — semester program page.
  *
- * Reuses the about page's section rhythm (eyebrow + hairline + content),
- * keyed under the `about-anim-*` reveal classes so the cross-page motion
- * language stays one system. New page-local namespace would mean duplicate
- * keyframes for no visual gain.
+ * Content mirrors VERY 43기 OT (Tracks / Sessions / Industry) so the
+ * page reads like an extension of the OT deck. Light "code-tone" cues
+ * (`~/curriculum` eyebrow path, accent-colored hashtag chips, prompt
+ * mark on tracks) are layered on top of the existing magazine skeleton;
+ * we did not redo the whole visual system, only added monospace
+ * affordances per the officer feedback.
  */
 export default function CurriculumPage() {
   return (
     <main className="pt-14 md:pt-16">
       <CurriculumHero />
-      <FormatSection />
-      <PhasesSection />
-      <WorkshopsSection />
+      <TracksSection />
+      <SessionsSection />
+      <IndustrySection />
       <ClosingSection />
     </main>
   )
@@ -58,8 +60,8 @@ function CurriculumHero() {
   )
 }
 
-function FormatSection() {
-  const { label, title, body, stats } = CURRICULUM.format
+function TracksSection() {
+  const { label, title, body, items } = CURRICULUM.tracks
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <SectionLabel label={label} className="col-span-12 md:col-span-3" />
@@ -70,41 +72,6 @@ function FormatSection() {
         <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
           {body}
         </p>
-        <ul className="about-anim-meta mt-12 grid grid-cols-1 gap-x-8 gap-y-10 border-t border-border pt-10 md:grid-cols-3">
-          {stats.map((s) => (
-            <li key={s.label} className="flex flex-col gap-2">
-              <span
-                translate="no"
-                className="font-display text-[clamp(2.5rem,_5vw,_4rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
-              >
-                {s.value}
-              </span>
-              <span
-                translate="no"
-                className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
-              >
-                {s.label}
-              </span>
-              <span className="font-display text-sm leading-[1.6] text-fg-subtle">
-                {s.note}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )
-}
-
-function PhasesSection() {
-  const { label, title, items } = CURRICULUM.phases
-  return (
-    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
-        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
-          {title}
-        </h2>
         <ol className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:grid-cols-2 md:border md:border-border">
           {items.map((item) => (
             <li key={item.num} className="bg-bg-base">
@@ -126,6 +93,14 @@ function PhasesSection() {
                 <p className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
                   {item.title}
                 </p>
+                <ul
+                  translate="no"
+                  className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.24em] text-accent md:text-xs"
+                >
+                  {item.tags.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
                 <p className="max-w-[42ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
                   {item.body}
                 </p>
@@ -138,8 +113,8 @@ function PhasesSection() {
   )
 }
 
-function WorkshopsSection() {
-  const { label, title, items } = CURRICULUM.workshops
+function SessionsSection() {
+  const { label, title, body, items } = CURRICULUM.sessions
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <SectionLabel label={label} className="col-span-12 md:col-span-3" />
@@ -147,28 +122,79 @@ function WorkshopsSection() {
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
-        <ul className="about-anim-meta mt-12 grid grid-cols-1 gap-8 border-t border-border pt-10 md:grid-cols-3 md:gap-10">
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          {body}
+        </p>
+        <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
           {items.map((item) => (
-            <li key={item.mono} className="flex flex-col gap-3">
-              <span
-                translate="no"
-                className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
-              >
+            <li
+              key={item.mono}
+              className="grid grid-cols-12 items-start gap-x-4 border-b border-border py-10 md:gap-x-8 md:py-12"
+            >
+              <div className="col-span-12 flex flex-col gap-2 md:col-span-4">
                 <span
-                  aria-hidden
-                  className="mr-3 inline-block h-px w-6 bg-fg-primary"
-                />
-                {item.mono}
-              </span>
-              <p className="font-display text-lg font-bold tracking-tight text-fg-primary md:text-xl">
-                {item.title}
-              </p>
-              <p className="max-w-[36ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
-                {item.body}
-              </p>
+                  translate="no"
+                  className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                >
+                  <span
+                    aria-hidden
+                    className="mr-3 inline-block h-px w-6 bg-accent"
+                  />
+                  {item.mono}
+                </span>
+                <p className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
+                  {item.title}
+                </p>
+                <p
+                  translate="no"
+                  className="font-display text-sm italic lowercase tracking-[0.06em] text-fg-subtle md:text-base"
+                >
+                  {item.summary}
+                </p>
+              </div>
+              <ul className="col-span-12 mt-4 flex flex-col gap-3 md:col-span-8 md:mt-0">
+                {item.bullets.map((b) => (
+                  <li
+                    key={b}
+                    className="flex gap-3 text-sm leading-[1.7] text-fg-subtle md:text-base"
+                  >
+                    <span
+                      aria-hidden
+                      translate="no"
+                      className="mt-[0.3em] inline-block font-mono text-xs text-fg-muted"
+                    >
+                      &gt;
+                    </span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  )
+}
+
+function IndustrySection() {
+  const { label, title, body, note } = CURRICULUM.industry
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          {title}
+        </h2>
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          {body}
+        </p>
+        <p
+          translate="no"
+          className="about-anim-meta mt-6 max-w-[58ch] font-mono text-[11px] uppercase tracking-[0.24em] leading-[1.8] text-fg-muted md:text-xs"
+        >
+          &gt; {note}
+        </p>
       </div>
     </section>
   )
