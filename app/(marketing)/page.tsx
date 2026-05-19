@@ -35,18 +35,18 @@ function HeroGlow() {
   return (
     <div aria-hidden className="hero-anim-glow pointer-events-none absolute inset-0 -z-10">
       <div
-        className="absolute left-1/2 top-1/2 h-[80vh] w-[55vw] -translate-x-1/2 -translate-y-1/2 opacity-40"
+        className="absolute left-1/2 top-1/2 h-[80vh] w-[55vw] -translate-x-1/2 -translate-y-1/2 opacity-30"
         style={{
           background:
             'radial-gradient(ellipse at center, var(--color-accent) 0%, transparent 55%)',
         }}
       />
       <div
-        className="absolute left-1/2 top-1/2 h-[90vh] w-[75vw] -translate-x-1/2 -translate-y-1/2 opacity-30"
+        className="absolute left-1/2 top-1/2 h-[90vh] w-[75vw] -translate-x-1/2 -translate-y-1/2 opacity-20"
         style={{
           background:
             'radial-gradient(ellipse at center, var(--color-accent-2) 0%, transparent 60%)',
-          filter: 'blur(80px)',
+          filter: 'blur(100px)',
         }}
       />
     </div>
@@ -70,14 +70,14 @@ function FrameVertical({ side }: { side: 'left' | 'right' }) {
   const tickAlign = side === 'left' ? 'left-0' : 'right-0'
   return (
     <div className={`absolute ${sidePos} top-1/4 bottom-1/4 w-px`}>
-      <div className="hero-anim-vline h-full w-px origin-center bg-accent/60" />
+      <div className="hero-anim-vline h-full w-px origin-center bg-fg-primary/30" />
       <span
         aria-hidden
-        className={`hero-anim-tick absolute top-0 ${tickAlign} h-px w-2 origin-center bg-accent/60`}
+        className={`hero-anim-tick absolute top-0 ${tickAlign} h-px w-2 origin-center bg-fg-primary/30`}
       />
       <span
         aria-hidden
-        className={`hero-anim-tick absolute bottom-0 ${tickAlign} h-px w-2 origin-center bg-accent/60`}
+        className={`hero-anim-tick absolute bottom-0 ${tickAlign} h-px w-2 origin-center bg-fg-primary/30`}
       />
     </div>
   )
@@ -147,8 +147,14 @@ function HeroCenterStack() {
       <div className="flex flex-col items-center gap-3">
         <span
           aria-hidden
-          className="hero-anim-hline block h-px w-16 origin-center bg-accent"
+          className="hero-anim-hline block h-px w-16 origin-center bg-fg-primary"
         />
+        <p
+          translate="no"
+          className="hero-anim-heading font-display text-xs font-bold uppercase tracking-[0.42em] text-fg-primary md:text-sm"
+        >
+          Still Landing
+        </p>
         <p
           translate="no"
           className="hero-anim-slogan font-display text-sm italic lowercase tracking-[0.18em] text-fg-subtle md:text-base"
@@ -199,13 +205,13 @@ function HeroScrollHint() {
  * one scroll away, so the difference is small).
  */
 function ManifestoSection() {
-  const { heroEyebrow, whoWeAre, vision } = MANIFESTO
-  // Headline ("세상을 바꾸는 28년") is laid out word-by-word so the trailing
-  // "28" can take the accent color; the line breaks are part of the design.
+  const { heroEyebrow, heroSubline, whoWeAre, vision } = MANIFESTO
+  // Headline is laid out punctuation-by-punctuation: each beat owns a line so
+  // the marks read as a cinematic pause. Final "다음." takes the accent.
   return (
     <section
       id="manifesto"
-      className="manifesto-section relative grid min-h-screen grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-48"
+      className="manifesto-section relative grid min-h-screen grid-cols-12 content-between gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40"
     >
       <ManifestoVertical />
 
@@ -218,18 +224,22 @@ function ManifestoSection() {
         </p>
         <h2 className="manifesto-anim-headline mt-6 font-display font-bold tracking-tight text-fg-primary md:mt-8">
           <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
-            세상을
+            착륙.
           </span>
           <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
-            바꾸는
+            정착.
           </span>
           <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
-            <span translate="no" className="text-accent">
-              28
-            </span>
-            년
+            그리고{' '}
+            <span className="text-accent">다음.</span>
           </span>
         </h2>
+        <p
+          translate="no"
+          className="manifesto-anim-subline mt-6 font-display text-xs font-bold uppercase tracking-[0.32em] text-fg-subtle md:mt-8 md:text-sm"
+        >
+          {heroSubline}
+        </p>
       </header>
 
       <hr
@@ -237,7 +247,7 @@ function ManifestoSection() {
         className="manifesto-anim-hrule col-span-12 row-start-2 mt-12 h-px border-0 bg-border-strong md:hidden"
       />
 
-      <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-7 md:col-span-6 md:row-start-2 md:mt-24 md:gap-14">
+      <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-7 md:col-span-6 md:row-start-2 md:mt-0 md:gap-14">
         <ManifestoBlock label="WHO WE ARE" body={whoWeAre} variant="who" />
         <ManifestoBlock label="OUR VISION" body={vision} variant="vision" />
       </div>
@@ -256,7 +266,7 @@ function ManifestoVertical() {
     >
       <div className="mx-auto grid h-full max-w-full grid-cols-12 gap-x-12 px-10">
         <div className="col-start-7 -ml-6 h-full w-px">
-          <div className="manifesto-anim-vline h-full w-px origin-top bg-accent/40" />
+          <div className="manifesto-anim-vline h-full w-px origin-top bg-fg-primary/25" />
         </div>
       </div>
     </div>

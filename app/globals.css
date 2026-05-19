@@ -4,12 +4,15 @@
   --color-bg-base: #000000;
   --color-bg-elev: #0a0a0f;
   --color-fg-primary: #ffffff;
-  --color-fg-muted: #7b8290;
-  --color-fg-subtle: #9ca3af;
-  --color-accent: #3a4ff0;
-  --color-accent-2: #818cf8;
+  --color-fg-muted: #8a8f9a;
+  --color-fg-subtle: #b4b7be;
+  /* Cobalt detuned to an inky highlight; paired with a near-grey blue so
+     copy reads neutral against full-bleed photographic backgrounds (per
+     the instagram session card system: monochrome + natural tones). */
+  --color-accent: #3340c8;
+  --color-accent-2: #9098b0;
   --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
 
   --font-sans: 'Pretendard Variable', system-ui, sans-serif;
   --font-display: 'Geist', 'Inter', system-ui, sans-serif;
@@ -37,6 +40,25 @@
   }
   body {
     min-height: 100dvh;
+  }
+  /*
+   * Global film grain — fixed overlay (z-60), pointer-events: none. Matches
+   * the paper/photographic grain texture of the @yonseivery session-card
+   * visual system. SVG fractalNoise is inline so no asset request, and the
+   * blend mode lets the same texture sit over any background (black hero,
+   * future photographic sections) without recoloring.
+   */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    background-repeat: repeat;
   }
   ::selection {
     background: var(--color-accent);
@@ -161,10 +183,15 @@
     animation: hero-hline-in 600ms var(--ease-emphasized) forwards;
     animation-delay: 1200ms;
   }
-  .hero-anim-slogan {
+  .hero-anim-heading {
     opacity: 0;
     animation: hero-fade-up 600ms var(--ease-emphasized) forwards;
     animation-delay: 1250ms;
+  }
+  .hero-anim-slogan {
+    opacity: 0;
+    animation: hero-fade-up 600ms var(--ease-emphasized) forwards;
+    animation-delay: 1320ms;
   }
   .hero-anim-scroll {
     opacity: 0;
@@ -211,6 +238,7 @@
 
   .manifesto-anim-eyebrow,
   .manifesto-anim-headline,
+  .manifesto-anim-subline,
   .manifesto-anim-label-1,
   .manifesto-anim-body-1,
   .manifesto-anim-label-2,
@@ -223,6 +251,9 @@
   }
   .manifesto-anim-headline {
     animation-delay: 100ms;
+  }
+  .manifesto-anim-subline {
+    animation-delay: 250ms;
   }
   .manifesto-anim-vline {
     transform: scaleY(0);
@@ -261,6 +292,7 @@
     }
     .manifesto-anim-eyebrow,
     .manifesto-anim-headline,
+    .manifesto-anim-subline,
     .manifesto-anim-vline,
     .manifesto-anim-label-1,
     .manifesto-anim-body-1,
