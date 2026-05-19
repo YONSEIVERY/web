@@ -58,3 +58,119 @@
     border-radius: 4px;
   }
 }
+
+/*
+ * Home Hero — Editorial Cinematic reveal.
+ * Stagger order: corners (0/100/200/300) → vertical frame (400) →
+ * glow (500) → mark (600) → horizontal tick + slogan (1200) → scroll hint (1500).
+ * The 600→1200 gap lets the mark breathe alone before typographic detail lands.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes hero-corner-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes hero-vline-in {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes hero-hline-in {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @keyframes hero-glow-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes hero-mark-in {
+    from {
+      opacity: 0;
+      filter: blur(20px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+  @keyframes hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes hero-scroll-bob {
+    0%,
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 0.55;
+      transform: translateY(3px);
+    }
+  }
+
+  .hero-anim-corner {
+    opacity: 0;
+    animation: hero-corner-in 600ms var(--ease-emphasized) forwards;
+  }
+  .hero-anim-vline {
+    transform: scaleY(0);
+    animation: hero-vline-in 800ms var(--ease-emphasized) forwards;
+    animation-delay: 400ms;
+  }
+  .hero-anim-tick {
+    transform: scaleX(0);
+    animation: hero-hline-in 400ms var(--ease-emphasized) forwards;
+    animation-delay: 1100ms;
+  }
+  .hero-anim-glow {
+    opacity: 0;
+    animation: hero-glow-in 1200ms var(--ease-emphasized) forwards;
+    animation-delay: 500ms;
+  }
+  .hero-anim-mark {
+    opacity: 0;
+    animation: hero-mark-in 1200ms var(--ease-emphasized) forwards;
+    animation-delay: 600ms;
+  }
+  .hero-anim-hline {
+    transform: scaleX(0);
+    animation: hero-hline-in 600ms var(--ease-emphasized) forwards;
+    animation-delay: 1200ms;
+  }
+  .hero-anim-slogan {
+    opacity: 0;
+    animation: hero-fade-up 600ms var(--ease-emphasized) forwards;
+    animation-delay: 1250ms;
+  }
+  .hero-anim-scroll {
+    opacity: 0;
+    animation:
+      hero-fade-up 500ms var(--ease-emphasized) forwards,
+      hero-scroll-bob 2200ms ease-in-out 2000ms infinite;
+    animation-delay: 1500ms, 2000ms;
+  }
+}
