@@ -349,4 +349,58 @@
       animation-duration: auto;
     }
   }
+
+  /*
+   * Stats — By The Numbers reveal.
+   * Namespaced separately from manifesto so the two sections can scroll
+   * past independently. Eyebrow (0) → hairline (200) → 4 cells (300/420/
+   * 540/660). Inline animation-delay on each cell is set in the JSX so the
+   * stagger offset stays alongside the markup.
+   */
+  @keyframes stats-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes stats-hrule-in {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .stats-anim-eyebrow,
+  .stats-anim-cell {
+    opacity: 0;
+    animation: stats-fade-up 700ms var(--ease-emphasized) forwards;
+  }
+  .stats-anim-eyebrow {
+    animation-delay: 0ms;
+  }
+  .stats-anim-hrule {
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: stats-hrule-in 700ms var(--ease-emphasized) forwards;
+    animation-delay: 200ms;
+  }
+  @supports (animation-timeline: view()) {
+    .stats-section {
+      view-timeline-name: --stats-view;
+      view-timeline-axis: block;
+    }
+    .stats-anim-eyebrow,
+    .stats-anim-hrule,
+    .stats-anim-cell {
+      animation-timeline: --stats-view;
+      animation-range: entry 0% cover 30%;
+      animation-delay: 0s;
+      animation-duration: auto;
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { MANIFESTO } from '@/lib/content/manifesto'
+import { SITE, STATS } from '@/lib/content/site'
 
 /**
  * Home Hero — Editorial Cinematic.
@@ -304,11 +305,127 @@ function ManifestoBlock({
   )
 }
 
+/**
+ * Stats — By The Numbers.
+ *
+ * Four-cell editorial band placed after the manifesto. Each cell renders a
+ * single large display numeral (Geist, tracking-tight) paired with a mono
+ * caps label and a short hangul caption — the same dual-layer copy system
+ * used by hero (Still Landing / lander · settler · fail forward) and the
+ * manifesto block labels.
+ *
+ * Mobile: 2x2 grid. Desktop: a single row of four. A 1px hairline runs the
+ * full width above the cells, mirroring the manifesto column guide motif.
+ *
+ * Numbers source from `lib/content/site.ts`. ALUMNI and STARTUPS counts are
+ * placeholders (society has not finalized the exact figures yet) — the `+`
+ * sign signals "at least this many" so the copy reads honestly until the
+ * authoritative numbers land.
+ */
+function StatsSection() {
+  const cells: ReadonlyArray<{
+    value: string
+    label: string
+    caption: string
+  }> = [
+    {
+      value: String(STATS.yearsActive),
+      label: 'YEARS',
+      caption: `${SITE.since}년부터 멈춘 적 없는 활동`,
+    },
+    {
+      value: String(STATS.cohorts),
+      label: 'VOLUMES',
+      caption: '한 학기를 한 권의 잡지로',
+    },
+    {
+      value: `${STATS.alumniCount}+`,
+      label: 'ALUMNI',
+      caption: '누적 회원 네트워크',
+    },
+    {
+      value: `${STATS.startupsCount}+`,
+      label: 'STARTUPS',
+      caption: '학회를 거쳐간 창업팀',
+    },
+  ]
+
+  return (
+    <section
+      id="stats"
+      aria-labelledby="stats-eyebrow"
+      className="stats-section relative px-6 py-32 md:px-10 md:py-40"
+    >
+      <p
+        id="stats-eyebrow"
+        translate="no"
+        className="stats-anim-eyebrow flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
+      >
+        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
+        By The Numbers
+      </p>
+
+      <hr
+        aria-hidden
+        className="stats-anim-hrule mt-10 h-px border-0 bg-border-strong md:mt-14"
+      />
+
+      <ul className="stats-grid mt-12 grid grid-cols-2 gap-x-8 gap-y-14 md:mt-16 md:grid-cols-4 md:gap-x-12">
+        {cells.map((cell, index) => (
+          <StatCell
+            key={cell.label}
+            value={cell.value}
+            label={cell.label}
+            caption={cell.caption}
+            index={index}
+          />
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+function StatCell({
+  value,
+  label,
+  caption,
+  index,
+}: {
+  value: string
+  label: string
+  caption: string
+  index: number
+}) {
+  return (
+    <li
+      className="stats-anim-cell relative flex flex-col gap-3"
+      style={{ animationDelay: `${300 + index * 120}ms` }}
+    >
+      <span
+        translate="no"
+        className="font-display text-[clamp(3.5rem,_10vw,_8rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
+      >
+        {value}
+      </span>
+      <span
+        translate="no"
+        className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
+      >
+        {label}
+      </span>
+      <span className="font-display text-sm leading-[1.6] text-fg-subtle md:text-base">
+        {caption}
+      </span>
+    </li>
+  )
+}
+
 export default function HomePage() {
   return (
     <main>
       <HomeHero />
       <ManifestoSection />
+      <StatsSection />
     </main>
   )
 }
