@@ -1,6 +1,11 @@
 /**
  * /demoday page content.
  *
+ * Tone anchored to VERY_43기_OT.pdf p.4 — "데모데이 / #IR PITCH #MVP /
+ * 여러분의 아이디어를 창업을 통해 현실로 만드세요." Demoday is the IR
+ * pitch in front of CEO/VC reviewers, not a generic show-and-tell. Keep
+ * the copy faithful to that framing.
+ *
  * Recent volume titles and dates are placeholders — society will replace
  * with the canonical lineup from past programs. Keep the array length
  * stable (3 entries) so the layout grid doesn't have to handle empty cells.
@@ -8,24 +13,24 @@
 export const DEMODAY = {
   hero: {
     eyebrow: 'Demoday — Vol.43 / 2026—1',
-    headlineLine1: '학기 끝,',
-    headlineLine2: '그리고 표지.',
+    headlineLine1: 'IR 피칭,',
+    headlineLine2: 'CEO·VC 앞에.',
     subline:
-      'On the cover. Every volume ends on a public stage — pitches, demos, and a room full of people who have built this before.',
+      'IR pitch · MVP. 학기의 마지막 무대. 학회 팀이 한 학기 동안 만든 아이템을 CEO·VC 심사역 앞에 올려, 평가와 투자로 이어 나가는 자리.',
   },
   about: {
     label: 'WHAT IS IT',
-    title: '한 학기를 한 무대 위로.',
-    body: '데모데이는 학회 팀이 한 학기 동안 만들어온 것을 외부 청중 앞에 처음 꺼내놓는 자리입니다. 학기의 ‘표지’가 되는 무대로, 매 권의 마지막 장이자 다음 권의 첫 줄이 되도록 설계되어 있습니다.',
+    title: '아이디어를, 창업의 현실로.',
+    body: '데모데이는 학회 팀이 CEO와 VC 심사역 앞에서 IR 피칭을 진행하여 평가 및 투자를 받는 자리입니다. 매 학기 학회가 만들어온 결과물을 외부 청중 앞에 처음 꺼내놓는 무대로, 매 권의 마지막 장이자 다음 권의 첫 줄이 되도록 설계되어 있습니다.',
   },
   format: {
     label: 'FORMAT',
-    title: '한 저녁, 모든 팀, 한 무대.',
-    body: '학기 말 하루 저녁, 학회의 모든 팀이 같은 무대에서 발표합니다. 발표 → Q&A → 네트워킹의 세 막으로 진행되며, 동문·투자자·교수진이 청중으로 참여합니다.',
+    title: '한 저녁, 모든 팀, IR 피칭.',
+    body: '학기 말 하루 저녁, 학회의 모든 팀이 같은 무대에서 IR 피칭을 진행합니다. CEO·VC 심사역의 평가와 동문·교수진의 합석으로 세 막이 이어집니다.',
     stats: [
       { value: '1일', label: 'SINGLE NIGHT', note: '학기 말 하루 저녁' },
       { value: '10팀+', label: 'TEAMS', note: '학회의 모든 팀' },
-      { value: '3막', label: 'ACTS', note: '발표 · Q&A · 네트워킹' },
+      { value: '3막', label: 'ACTS', note: 'IR 피칭 · 심사 · 네트워킹' },
     ],
   },
   volumes: {
@@ -67,7 +72,7 @@ export const DEMODAY = {
       {
         mono: 'INVESTORS',
         title: '투자자 · 액셀러레이터',
-        body: '동문 네트워크를 통해 합류한 VC·AC가 학회 팀의 발표를 듣고 후속 미팅으로 이어집니다.',
+        body: 'CEO와 VC 심사역이 IR 피칭을 직접 평가합니다. 평가는 그 자리에서 끝나지 않고, 후속 미팅·투자 검토로 이어집니다.',
       },
       {
         mono: 'FACULTY',

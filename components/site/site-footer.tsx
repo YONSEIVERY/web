@@ -33,7 +33,7 @@ export function SiteFooter() {
             />
           </Link>
           <p className="mt-5 max-w-[28ch] font-display text-sm italic lowercase tracking-[0.18em] text-fg-subtle md:text-base">
-            lander · settler · fail forward
+            be ready to fail forward.
           </p>
           <p
             translate="no"

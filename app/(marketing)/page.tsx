@@ -154,13 +154,13 @@ function HeroCenterStack() {
           translate="no"
           className="hero-anim-heading font-display text-xs font-bold uppercase tracking-[0.42em] text-fg-primary md:text-sm"
         >
-          Still Landing
+          Fail Forward
         </p>
         <p
           translate="no"
           className="hero-anim-slogan font-display text-sm italic lowercase tracking-[0.18em] text-fg-subtle md:text-base"
         >
-          lander · settler · fail forward
+          be ready to fail forward.
         </p>
       </div>
       <Image
@@ -206,9 +206,10 @@ function HeroScrollHint() {
  * one scroll away, so the difference is small).
  */
 function ManifestoSection() {
-  const { heroEyebrow, heroSubline, whoWeAre, vision } = MANIFESTO
-  // Headline is laid out punctuation-by-punctuation: each beat owns a line so
-  // the marks read as a cinematic pause. Final "다음." takes the accent.
+  const { heroEyebrow, heroHeadline, heroHeadline2, heroSubline, heroSub, whoWeAre, vision } =
+    MANIFESTO
+  // Headline is laid out as two lines so the slogan reads with a cinematic
+  // pause between "준비가" and "되어 있을 것." Final line takes the accent.
   return (
     <section
       id="manifesto"
@@ -225,14 +226,10 @@ function ManifestoSection() {
         </p>
         <h2 className="manifesto-anim-headline mt-6 font-display font-bold tracking-tight text-fg-primary md:mt-8">
           <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
-            착륙.
+            {heroHeadline}
           </span>
-          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
-            정착.
-          </span>
-          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
-            그리고{' '}
-            <span className="text-accent">다음.</span>
+          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05] text-accent">
+            {heroHeadline2}
           </span>
         </h2>
         <p
@@ -240,6 +237,9 @@ function ManifestoSection() {
           className="manifesto-anim-subline mt-6 font-display text-xs font-bold uppercase tracking-[0.32em] text-fg-subtle md:mt-8 md:text-sm"
         >
           {heroSubline}
+        </p>
+        <p className="manifesto-anim-subline mt-3 max-w-[42ch] text-base leading-[1.7] text-fg-subtle md:text-lg">
+          {heroSub}
         </p>
       </header>
 

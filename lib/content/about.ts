@@ -1,9 +1,10 @@
 /**
  * /about page content.
  *
- * Five blocks: Hero, Origin, What We Do, Leadership, Closing.
- * Keep copy in a single tree so the page stays a thin markup layer and
- * the society can edit text in one place.
+ * Seven blocks: Hero, Origin, Core Value, Mindset, What We Do, Leadership,
+ * Closing. Core Value(KNOWLEDGE/EXPERIENCE/NETWORK) and Mindset(인재상) are
+ * lifted verbatim from VERY_43기_OT.pdf p.5–6 — do not paraphrase. The OT
+ * deck is what every recruit reads first, so the on-site copy must match.
  */
 export const ABOUT = {
   hero: {
@@ -20,6 +21,53 @@ export const ABOUT = {
     milestones: [
       { year: '1997', label: 'FOUNDED', note: '벤처창업연구회로 발족' },
       { year: '2026', label: 'VOL.43', note: '43기, 현재 진행 중' },
+    ],
+  },
+  coreValue: {
+    label: 'CORE VALUE',
+    title: 'VERY의 핵심가치.',
+    body: '학회를 받치는 세 개의 기둥. 지식·경험·사람으로 학회를 운영합니다.',
+    items: [
+      {
+        mono: 'KNOWLEDGE',
+        title: '지식',
+        body: '체계적인 커리큘럼으로 성공적 창업을 위한 지식들을 습득합니다.',
+      },
+      {
+        mono: 'EXPERIENCE',
+        title: '경험',
+        body: '창업 여정의 시행착오와 성공을 함께하며, 실전 경험을 통해 성장합니다.',
+      },
+      {
+        mono: 'NETWORK',
+        title: '사람',
+        body: '좋은 팀원이 창업의 시작입니다. VERY는 좋은 사람과의 만남의 장이 됩니다.',
+      },
+    ],
+  },
+  mindset: {
+    label: 'MINDSET',
+    title: 'VERY가 추구하는 인재.',
+    body: '두 갈래의 자질. 창업에 대한 진심과, 그것을 행동으로 옮기는 실행력.',
+    items: [
+      {
+        mono: 'SINCERITY',
+        title: '창업에 진심인 사람',
+        bullets: [
+          '세상을 바꿀 사람',
+          '10년 뒤에도 스타트업씬에 있을 사람',
+          '휴학도 불사할 사람',
+        ],
+      },
+      {
+        mono: 'EXECUTION',
+        title: '실행력',
+        bullets: [
+          '고객을 직접 만나는 사람',
+          '비전을 즉시 행동으로 옮기는 사람',
+          '실패에 대한 두려움이 없는 사람',
+        ],
+      },
     ],
   },
   whatWeDo: {

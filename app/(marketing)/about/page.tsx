@@ -22,6 +22,8 @@ export default function AboutPage() {
     <main className="pt-14 md:pt-16">
       <AboutHero />
       <OriginSection />
+      <CoreValueSection />
+      <MindsetSection />
       <WhatWeDoSection />
       <LeadershipSection />
       <ClosingSection />
@@ -89,6 +91,109 @@ function OriginSection() {
               <span className="font-display text-sm leading-[1.6] text-fg-subtle">
                 {m.note}
               </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+function CoreValueSection() {
+  const { label, title, body, items } = ABOUT.coreValue
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          {title}
+        </h2>
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          {body}
+        </p>
+        <ol className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:grid-cols-3 md:border md:border-border">
+          {items.map((item, index) => (
+            <li key={item.mono} className="bg-bg-base">
+              <div className="flex h-full flex-col gap-4 px-6 py-8 md:px-8 md:py-10">
+                <div className="flex items-baseline gap-4">
+                  <span
+                    translate="no"
+                    className="font-display text-3xl font-bold leading-none tracking-tight text-fg-muted md:text-4xl"
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span
+                    translate="no"
+                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                  >
+                    {item.mono}
+                  </span>
+                </div>
+                <p className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
+                  {item.title}
+                </p>
+                <p className="max-w-[36ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
+                  {item.body}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+function MindsetSection() {
+  const { label, title, body, items } = ABOUT.mindset
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          {title}
+        </h2>
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          {body}
+        </p>
+        <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
+          {items.map((item) => (
+            <li
+              key={item.mono}
+              className="grid grid-cols-12 items-start gap-x-4 border-b border-border py-10 md:gap-x-8 md:py-12"
+            >
+              <div className="col-span-12 flex flex-col gap-2 md:col-span-4">
+                <span
+                  translate="no"
+                  className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                >
+                  <span
+                    aria-hidden
+                    className="mr-3 inline-block h-px w-6 bg-accent"
+                  />
+                  {item.mono}
+                </span>
+                <p className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
+                  {item.title}
+                </p>
+              </div>
+              <ul className="col-span-12 mt-4 flex flex-col gap-3 md:col-span-8 md:mt-0">
+                {item.bullets.map((b) => (
+                  <li
+                    key={b}
+                    className="flex gap-3 text-sm leading-[1.7] text-fg-subtle md:text-base"
+                  >
+                    <span
+                      aria-hidden
+                      translate="no"
+                      className="mt-[0.3em] inline-block font-mono text-xs text-fg-muted"
+                    >
+                      &gt;
+                    </span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
             </li>
           ))}
         </ul>
