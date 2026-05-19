@@ -211,11 +211,11 @@ function ManifestoSection() {
   return (
     <section
       id="manifesto"
-      className="manifesto-section relative grid min-h-screen grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40"
+      className="manifesto-section relative grid min-h-screen grid-cols-12 content-between gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40"
     >
       <ManifestoVertical />
 
-      <header className="manifesto-anim-headline-block col-span-12 row-start-1 md:col-span-7">
+      <header className="manifesto-anim-headline-block col-span-12 row-start-1">
         <p
           translate="no"
           className="manifesto-anim-eyebrow font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
@@ -247,7 +247,7 @@ function ManifestoSection() {
         className="manifesto-anim-hrule col-span-12 row-start-2 mt-12 h-px border-0 bg-border-strong md:hidden"
       />
 
-      <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-8 md:col-span-5 md:row-start-1 md:mt-0 md:gap-14 md:self-end">
+      <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:row-start-2 md:mt-0 md:grid md:grid-cols-2 md:gap-x-12 md:gap-y-0">
         <ManifestoBlock label="WHO WE ARE" body={whoWeAre} variant="who" />
         <ManifestoBlock label="OUR VISION" body={vision} variant="vision" />
       </div>
@@ -262,7 +262,7 @@ function ManifestoVertical() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-y-24 left-0 right-0 hidden md:block"
+      className="pointer-events-none absolute top-1/2 bottom-24 left-0 right-0 hidden md:block"
     >
       <div className="mx-auto grid h-full max-w-full grid-cols-12 gap-x-12 px-10">
         <div className="col-start-7 -ml-6 h-full w-px">
