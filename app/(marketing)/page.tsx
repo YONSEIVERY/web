@@ -211,7 +211,7 @@ function ManifestoSection() {
   return (
     <section
       id="manifesto"
-      className="manifesto-section relative grid min-h-screen grid-cols-12 content-between gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40"
+      className="manifesto-section relative grid min-h-screen grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40"
     >
       <ManifestoVertical />
 
@@ -223,13 +223,13 @@ function ManifestoSection() {
           {heroEyebrow}
         </p>
         <h2 className="manifesto-anim-headline mt-6 font-display font-bold tracking-tight text-fg-primary md:mt-8">
-          <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
+          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
             착륙.
           </span>
-          <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
+          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
             정착.
           </span>
-          <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
+          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
             그리고{' '}
             <span className="text-accent">다음.</span>
           </span>
@@ -247,7 +247,7 @@ function ManifestoSection() {
         className="manifesto-anim-hrule col-span-12 row-start-2 mt-12 h-px border-0 bg-border-strong md:hidden"
       />
 
-      <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-7 md:col-span-6 md:row-start-2 md:mt-0 md:gap-14">
+      <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-8 md:col-span-5 md:row-start-1 md:mt-0 md:gap-14 md:self-end">
         <ManifestoBlock label="WHO WE ARE" body={whoWeAre} variant="who" />
         <ManifestoBlock label="OUR VISION" body={vision} variant="vision" />
       </div>
@@ -290,9 +290,9 @@ function ManifestoBlock({
     <div>
       <p
         translate="no"
-        className={`${labelAnim} flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent-2 md:text-xs`}
+        className={`${labelAnim} flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs`}
       >
-        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-accent-2" />
+        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-primary" />
         {label}
       </p>
       <p
