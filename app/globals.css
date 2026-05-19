@@ -173,4 +173,104 @@
       hero-scroll-bob 2200ms ease-in-out 2000ms infinite;
     animation-delay: 1500ms, 2000ms;
   }
+
+  /*
+   * Manifesto — Asymmetric Editorial Grid reveal.
+   * Namespaced separately from hero-* to avoid coupling.
+   * Stagger: eyebrow (0) → headline (100) → vertical scaleY (400) →
+   * WHO label (600) → who body (700) → VISION label (900) → vision body (1000).
+   * Plays on page load by default; @supports block below upgrades to
+   * scroll-driven when animation-timeline is available.
+   */
+  @keyframes manifesto-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes manifesto-vline-in {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes manifesto-hrule-in {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .manifesto-anim-eyebrow,
+  .manifesto-anim-headline,
+  .manifesto-anim-label-1,
+  .manifesto-anim-body-1,
+  .manifesto-anim-label-2,
+  .manifesto-anim-body-2 {
+    opacity: 0;
+    animation: manifesto-fade-up 700ms var(--ease-emphasized) forwards;
+  }
+  .manifesto-anim-eyebrow {
+    animation-delay: 0ms;
+  }
+  .manifesto-anim-headline {
+    animation-delay: 100ms;
+  }
+  .manifesto-anim-vline {
+    transform: scaleY(0);
+    animation: manifesto-vline-in 900ms var(--ease-emphasized) forwards;
+    animation-delay: 400ms;
+  }
+  .manifesto-anim-label-1 {
+    animation-delay: 600ms;
+  }
+  .manifesto-anim-body-1 {
+    animation-delay: 700ms;
+  }
+  .manifesto-anim-label-2 {
+    animation-delay: 900ms;
+  }
+  .manifesto-anim-body-2 {
+    animation-delay: 1000ms;
+  }
+  .manifesto-anim-hrule {
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: manifesto-hrule-in 600ms var(--ease-emphasized) forwards;
+    animation-delay: 300ms;
+  }
+
+  /*
+   * Progressive enhancement: when the browser supports CSS scroll-driven
+   * animations, retime the reveal to the section's view progress instead of
+   * page load. The keyframes are reused; only the timeline + range change.
+   * Browsers without support fall through to the load-time stagger above.
+   */
+  @supports (animation-timeline: view()) {
+    .manifesto-section {
+      view-timeline-name: --manifesto-view;
+      view-timeline-axis: block;
+    }
+    .manifesto-anim-eyebrow,
+    .manifesto-anim-headline,
+    .manifesto-anim-vline,
+    .manifesto-anim-label-1,
+    .manifesto-anim-body-1,
+    .manifesto-anim-label-2,
+    .manifesto-anim-body-2,
+    .manifesto-anim-hrule {
+      animation-timeline: --manifesto-view;
+      animation-range: entry 0% cover 30%;
+      animation-delay: 0s;
+      animation-duration: auto;
+    }
+  }
 }

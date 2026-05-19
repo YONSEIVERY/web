@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { MANIFESTO } from '@/lib/content/manifesto'
 
 /**
  * Home Hero — Editorial Cinematic.
@@ -183,10 +184,121 @@ function HeroScrollHint() {
   )
 }
 
+/**
+ * Manifesto — Asymmetric Editorial Grid.
+ *
+ * Magazine first-spread to Hero's cover. 12-col grid: a hangul mega headline
+ * sits top-left; two labelled body blocks (WHO WE ARE / OUR VISION) drop into
+ * the bottom-right, separated from the headline by a 1px cobalt vertical at
+ * the col-7 boundary — reusing Hero's verticals motif. Mobile collapses to a
+ * single stack with a horizontal rule standing in for the vertical.
+ *
+ * Stagger reveal is CSS-only (manifesto-* keyframes in globals.css). The
+ * @supports (animation-timeline) layer upgrades the reveal to scroll-driven
+ * for browsers that support it; otherwise it plays once on load (Hero is only
+ * one scroll away, so the difference is small).
+ */
+function ManifestoSection() {
+  const { heroEyebrow, whoWeAre, vision } = MANIFESTO
+  // Headline ("세상을 바꾸는 28년") is laid out word-by-word so the trailing
+  // "28" can take the accent color; the line breaks are part of the design.
+  return (
+    <section
+      id="manifesto"
+      className="manifesto-section relative grid min-h-screen grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-48"
+    >
+      <ManifestoVertical />
+
+      <header className="manifesto-anim-headline-block col-span-12 row-start-1 md:col-span-7">
+        <p
+          translate="no"
+          className="manifesto-anim-eyebrow font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
+        >
+          {heroEyebrow}
+        </p>
+        <h2 className="manifesto-anim-headline mt-6 font-display font-bold tracking-tight text-fg-primary md:mt-8">
+          <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
+            세상을
+          </span>
+          <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
+            바꾸는
+          </span>
+          <span className="block text-[clamp(3rem,_9vw,_7.5rem)] leading-[1.05]">
+            <span translate="no" className="text-accent">
+              28
+            </span>
+            년
+          </span>
+        </h2>
+      </header>
+
+      <hr
+        aria-hidden
+        className="manifesto-anim-hrule col-span-12 row-start-2 mt-12 h-px border-0 bg-border-strong md:hidden"
+      />
+
+      <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-7 md:col-span-6 md:row-start-2 md:mt-24 md:gap-14">
+        <ManifestoBlock label="WHO WE ARE" body={whoWeAre} variant="who" />
+        <ManifestoBlock label="OUR VISION" body={vision} variant="vision" />
+      </div>
+    </section>
+  )
+}
+
+function ManifestoVertical() {
+  // 1px cobalt rule sitting at the col-7 boundary, desktop only. Cropped to
+  // the section's inner padding so it reads as a magazine column guide rather
+  // than reaching edge-to-edge.
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-y-24 left-0 right-0 hidden md:block"
+    >
+      <div className="mx-auto grid h-full max-w-full grid-cols-12 gap-x-12 px-10">
+        <div className="col-start-7 -ml-6 h-full w-px">
+          <div className="manifesto-anim-vline h-full w-px origin-top bg-accent/40" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ManifestoBlock({
+  label,
+  body,
+  variant,
+}: {
+  label: string
+  body: string
+  variant: 'who' | 'vision'
+}) {
+  const labelAnim =
+    variant === 'who' ? 'manifesto-anim-label-1' : 'manifesto-anim-label-2'
+  const bodyAnim =
+    variant === 'who' ? 'manifesto-anim-body-1' : 'manifesto-anim-body-2'
+  return (
+    <div>
+      <p
+        translate="no"
+        className={`${labelAnim} flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent-2 md:text-xs`}
+      >
+        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-accent-2" />
+        {label}
+      </p>
+      <p
+        className={`${bodyAnim} mt-5 max-w-[42ch] text-base leading-[1.8] text-fg-subtle md:text-lg`}
+      >
+        {body}
+      </p>
+    </div>
+  )
+}
+
 export default function HomePage() {
   return (
     <main>
       <HomeHero />
+      <ManifestoSection />
     </main>
   )
 }
