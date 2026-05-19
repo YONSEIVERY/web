@@ -23,7 +23,7 @@ export function SiteFooter() {
   return (
     <footer className="relative border-t border-border bg-bg-base px-6 pb-10 pt-20 md:px-10 md:pb-12 md:pt-28">
       <div className="grid grid-cols-12 gap-x-8 gap-y-12 md:gap-x-12">
-        <div className="col-span-12 md:col-span-5">
+        <div className="col-span-12 md:col-span-4">
           <Link href="/" aria-label="VERY 홈" className="inline-block">
             <Image
               src={veryMark}
@@ -43,7 +43,7 @@ export function SiteFooter() {
           </p>
         </div>
 
-        <FooterColumn label="EXPLORE">
+        <FooterColumn label="EXPLORE" mdSpan="md:col-span-2">
           <ul className="flex flex-col gap-2.5">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
@@ -59,13 +59,13 @@ export function SiteFooter() {
           </ul>
         </FooterColumn>
 
-        <FooterColumn label="CONTACT">
+        <FooterColumn label="CONTACT" mdSpan="md:col-span-3">
           <ul className="flex flex-col gap-2.5">
             <li>
               <a
                 href={`mailto:${SITE.email}`}
                 translate="no"
-                className="font-mono text-[11px] uppercase tracking-[0.28em] text-fg-subtle transition-colors hover:text-fg-primary"
+                className="break-all font-mono text-[11px] uppercase tracking-[0.28em] text-fg-subtle transition-colors hover:text-fg-primary"
               >
                 {SITE.email}
               </a>
@@ -84,7 +84,7 @@ export function SiteFooter() {
           </ul>
         </FooterColumn>
 
-        <FooterColumn label="VISIT">
+        <FooterColumn label="VISIT" mdSpan="md:col-span-3">
           <address className="not-italic">
             <p className="font-display text-sm leading-[1.8] text-fg-subtle">
               연세대학교 신촌캠퍼스
@@ -123,13 +123,15 @@ export function SiteFooter() {
 
 function FooterColumn({
   label,
+  mdSpan,
   children,
 }: {
   label: string
+  mdSpan: `md:col-span-${number}`
   children: React.ReactNode
 }) {
   return (
-    <div className="col-span-6 md:col-span-2 md:col-start-auto">
+    <div className={`col-span-6 min-w-0 ${mdSpan}`}>
       <p
         translate="no"
         className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
