@@ -82,6 +82,50 @@
 }
 
 /*
+ * Site Nav — backdrop fade.
+ *
+ * Hero is full-bleed black, so the nav can sit transparent without a frame
+ * over the wordmark. As the user leaves hero the backdrop fades in to a
+ * blurred translucent black so the mono caps remain legible over the
+ * manifesto and subsequent (eventually photographic) sections.
+ *
+ * The hairline rule is a separate scroll-keyed pseudo-element so it only
+ * appears once the backdrop is doing work.
+ */
+.site-nav-bg {
+  background-color: rgba(0, 0, 0, 0);
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  border-bottom: 1px solid transparent;
+}
+@supports (animation-timeline: scroll()) {
+  @keyframes site-nav-bg-in {
+    to {
+      background-color: rgba(0, 0, 0, 0.65);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border-bottom-color: var(--color-border);
+    }
+  }
+  .site-nav-bg {
+    animation: site-nav-bg-in linear forwards;
+    animation-timeline: scroll(root);
+    animation-range: 60vh 95vh;
+  }
+}
+/* Fallback browsers without scroll-driven animations: keep a permanent
+   lightly-tinted backdrop after a short load delay so the nav still reads
+   over the hero without feeling heavy. */
+@supports not (animation-timeline: scroll()) {
+  .site-nav-bg {
+    background-color: rgba(0, 0, 0, 0.4);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom-color: var(--color-border);
+  }
+}
+
+/*
  * Home Hero — Editorial Cinematic reveal.
  * Stagger order: corners (0/100/200/300) → vertical frame (400) →
  * glow (500) → mark (600) → horizontal tick + slogan (1200) → scroll hint (1500).

@@ -119,8 +119,8 @@ function CornerLabel({
   delayMs: number
 }) {
   const pos = {
-    tl: 'top-[max(1.5rem,env(safe-area-inset-top))] left-[max(1.5rem,env(safe-area-inset-left))] md:top-8 md:left-10',
-    tr: 'top-[max(1.5rem,env(safe-area-inset-top))] right-[max(1.5rem,env(safe-area-inset-right))] md:top-8 md:right-10 text-right',
+    tl: 'top-[max(4.5rem,calc(env(safe-area-inset-top)+3rem))] left-[max(1.5rem,env(safe-area-inset-left))] md:top-24 md:left-10',
+    tr: 'top-[max(4.5rem,calc(env(safe-area-inset-top)+3rem))] right-[max(1.5rem,env(safe-area-inset-right))] md:top-24 md:right-10 text-right',
     bl: 'bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-[max(1.5rem,env(safe-area-inset-left))] md:bottom-8 md:left-10',
     br: 'bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.5rem,env(safe-area-inset-right))] md:bottom-8 md:right-10 text-right',
   }[slot]

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { NoiseLayer } from '@/components/ui/noise-layer'
+import { SiteNav } from '@/components/site/site-nav'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-display' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <NoiseLayer />
+        <SiteNav />
         {children}
       </body>
     </html>
