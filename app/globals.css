@@ -403,4 +403,65 @@
       animation-duration: auto;
     }
   }
+
+  /*
+   * /about — per-section reveal.
+   * Same fade-up keyframe pattern as manifesto/stats, namespaced separately
+   * so each section has its own view-timeline and stagger.
+   */
+  @keyframes about-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .about-anim-eyebrow,
+  .about-anim-headline,
+  .about-anim-subline,
+  .about-anim-title,
+  .about-anim-body,
+  .about-anim-meta {
+    opacity: 0;
+    animation: about-fade-up 700ms var(--ease-emphasized) forwards;
+  }
+  .about-anim-eyebrow {
+    animation-delay: 0ms;
+  }
+  .about-anim-headline {
+    animation-delay: 120ms;
+  }
+  .about-anim-subline {
+    animation-delay: 280ms;
+  }
+  .about-anim-title {
+    animation-delay: 100ms;
+  }
+  .about-anim-body {
+    animation-delay: 220ms;
+  }
+  .about-anim-meta {
+    animation-delay: 360ms;
+  }
+  @supports (animation-timeline: view()) {
+    .about-hero,
+    .about-section {
+      view-timeline-name: --about-view;
+      view-timeline-axis: block;
+    }
+    .about-anim-eyebrow,
+    .about-anim-headline,
+    .about-anim-subline,
+    .about-anim-title,
+    .about-anim-body,
+    .about-anim-meta {
+      animation-timeline: --about-view;
+      animation-range: entry 0% cover 30%;
+      animation-delay: 0s;
+      animation-duration: auto;
+    }
+  }
 }
