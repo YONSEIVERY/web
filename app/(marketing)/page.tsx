@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { GlowBackground } from '@/components/ui/glow-background'
 import { MANIFESTO } from '@/lib/content/manifesto'
 
@@ -9,10 +10,16 @@ function HomeHero() {
         <span className="font-mono text-xs uppercase tracking-[0.4em] text-[var(--color-accent-2)]">
           {MANIFESTO.heroEyebrow}
         </span>
-        <h1 className="mt-6 font-display text-[clamp(3rem,12vw,10rem)] font-bold italic leading-[0.9] tracking-tight">
-          VERY
-        </h1>
-        <p className="mt-6 max-w-xl text-balance text-[var(--color-fg-subtle)]">
+        <h1 className="sr-only">VERY</h1>
+        <Image
+          src="/brand/very-wordmark.png"
+          alt="VERY"
+          width={1080}
+          height={1080}
+          priority
+          className="mt-4 h-auto w-[clamp(18rem,58vw,40rem)]"
+        />
+        <p className="-mt-6 font-display text-base italic tracking-wide text-[var(--color-fg-subtle)] sm:text-lg">
           {MANIFESTO.heroSub}
         </p>
       </div>
