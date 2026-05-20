@@ -1,6 +1,11 @@
 /**
  * /alumni page content.
  *
+ * Brand metaphor (per VERY BI doc): the alumni network is a layered
+ * ground — each cohort hands the next a more compacted layer to land on.
+ * Magazine vocabulary (책장 / 표지 / 한 권) is reserved for masthead-style
+ * markers (VOL.43 etc.); body copy uses 지반 / 기수 / 누적.
+ *
  * Society-side data is not yet wired (no Notion DB, no canonical alumni
  * roster). Spotlight cards are intentionally placeholder-shaped so the
  * layout reads as "coming soon" rather than fake. Pull from `STATS` so
@@ -12,18 +17,18 @@ export const ALUMNI = {
   hero: {
     eyebrow: 'Alumni — Vol.43 / 2026—1',
     headlineLine1: '졸업은 끝이 아니라,',
-    headlineLine2: '다음 권의 시작.',
+    headlineLine2: '다음 지반의 시작.',
     subline:
-      'Once VERY, always VERY. The roster doesn’t close at the end of a semester — it compounds.',
+      'Once VERY, always VERY. 학회를 거친 사람은 학기와 함께 사라지지 않습니다. 매 기수가 더 단단해진 지반으로 누적됩니다.',
   },
   intro: {
     label: 'NETWORK',
-    title: '한 학기 끝나도, 책장은 닫히지 않습니다.',
-    body: 'VERY의 알럼나이 네트워크는 학기가 끝나도 이어지는 누적된 책장입니다. 매 권의 회원이 다음 권의 멘토·투자자·동료가 되는 구조로, 30년 가까이 그 두께를 쌓아왔습니다.',
+    title: '한 학기 끝나도, 지반은 닫히지 않습니다.',
+    body: 'VERY의 알럼나이 네트워크는 학기가 끝나도 이어지는 누적된 지반입니다. 매 기수의 회원이 다음 기수의 멘토·투자자·동료가 되는 구조로, 30년 가까이 그 두께를 더해왔습니다.',
   },
   stats: {
     label: 'BY THE NUMBERS',
-    title: '쌓인 두께, 숫자로.',
+    title: '다져진 지반, 숫자로.',
     items: [
       {
         value: String(STATS.yearsActive),
@@ -32,8 +37,8 @@ export const ALUMNI = {
       },
       {
         value: String(STATS.cohorts),
-        label: 'VOLUMES',
-        note: '한 학기를 한 권으로',
+        label: 'COHORTS',
+        note: '누적된 기수의 수',
       },
       {
         value: `${STATS.alumniCount}+`,
@@ -49,8 +54,8 @@ export const ALUMNI = {
   },
   spotlight: {
     label: 'SPOTLIGHT',
-    title: '책장 위에 꽂힌 회사들.',
-    note: '정식 알럼나이 카탈로그는 노션 DB 연동 시 자동으로 갱신됩니다. 아래는 자리를 잡아둔 표지들입니다.',
+    title: '지반 위에 선 회사들.',
+    note: '정식 알럼나이 로스터는 노션 DB 연동 시 자동으로 갱신됩니다. 아래는 자리를 잡아둔 카드들입니다.',
     items: [
       {
         cohort: 'VOL.40',
@@ -89,7 +94,7 @@ export const ALUMNI = {
       {
         mono: 'MENTORSHIP',
         title: '멘토링으로 돌아옵니다',
-        body: '직전 학기를 마친 동문이 다음 권의 팀에 직접 피드백을 주는 자리. 학기 중 1:1, 학기 말 데모데이에서 자연스럽게 연결됩니다.',
+        body: '직전 학기를 마친 동문이 다음 기수의 팀에 직접 피드백을 주는 자리. 학기 중 1:1, 학기 말 데모데이에서 자연스럽게 연결됩니다.',
       },
       {
         mono: 'FOLLOW-ON',
@@ -105,7 +110,7 @@ export const ALUMNI = {
   },
   closing: {
     label: 'JOIN',
-    title: '다음 권에 이름을 올릴 사람을 찾고 있습니다.',
+    title: '다음 기수에 이름을 올릴 사람을 찾고 있습니다.',
     body: '알럼나이 네트워크의 시작은 한 학기를 함께 끝내는 것입니다. 모집 시즌엔 노션·구글폼으로, 평소엔 메일·인스타로 연락 주세요.',
     primary: { label: 'CONTACT', href: '/contact' as const },
     secondary: {

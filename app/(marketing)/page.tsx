@@ -162,6 +162,12 @@ function HeroCenterStack() {
         >
           be ready to fail forward.
         </p>
+        <p
+          translate="no"
+          className="hero-anim-slogan font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
+        >
+          VERY early · VERY raw · VERY real
+        </p>
       </div>
       <Image
         src="/brand/very-mark.png"
@@ -206,8 +212,16 @@ function HeroScrollHint() {
  * one scroll away, so the difference is small).
  */
 function ManifestoSection() {
-  const { heroEyebrow, heroHeadline, heroHeadline2, heroSubline, heroSub, whoWeAre, vision } =
-    MANIFESTO
+  const {
+    heroEyebrow,
+    heroHeadline,
+    heroHeadline2,
+    heroSubline,
+    heroSub,
+    heroSupport,
+    whoWeAre,
+    vision,
+  } = MANIFESTO
   // Headline is laid out as two lines so the slogan reads with a cinematic
   // pause between "준비가" and "되어 있을 것." Final line takes the accent.
   return (
@@ -240,6 +254,12 @@ function ManifestoSection() {
         </p>
         <p className="manifesto-anim-subline mt-3 max-w-[42ch] text-base leading-[1.7] text-fg-subtle md:text-lg">
           {heroSub}
+        </p>
+        <p
+          translate="no"
+          className="manifesto-anim-subline mt-6 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-muted md:mt-8 md:text-xs"
+        >
+          &gt; {heroSupport}
         </p>
       </header>
 
@@ -306,21 +326,22 @@ function ManifestoBlock({
 }
 
 /**
- * Stats — By The Numbers.
+ * Stats — status screen.
  *
- * Four-cell editorial band placed after the manifesto. Each cell renders a
- * single large display numeral (Geist, tracking-tight) paired with a mono
- * caps label and a short hangul caption — the same dual-layer copy system
- * used by hero (Still Landing / lander · settler · fail forward) and the
- * manifesto block labels.
+ * Four-cell band styled as a terminal status readout (per VERY BI):
+ * mono prompt prefix `$ stats --vol=N` for the eyebrow, `[OK]` markers
+ * above each cell value, and a short `--` divider between label and
+ * caption. The big display numerals stay editorial; the mono chrome
+ * around them lands the status-screen visual code from the BI doc.
  *
- * Mobile: 2x2 grid. Desktop: a single row of four. A 1px hairline runs the
- * full width above the cells, mirroring the manifesto column guide motif.
+ * Mobile: 2x2 grid. Desktop: single row of four. Stagger animation
+ * preserved from the prior version so motion design across hero →
+ * manifesto → stats stays continuous.
  *
- * Numbers source from `lib/content/site.ts`. ALUMNI and STARTUPS counts are
- * placeholders (society has not finalized the exact figures yet) — the `+`
- * sign signals "at least this many" so the copy reads honestly until the
- * authoritative numbers land.
+ * Numbers source from `lib/content/site.ts`. ALUMNI and STARTUPS counts
+ * are placeholders (society has not finalized the exact figures yet) —
+ * the `+` sign signals "at least this many" so the copy reads honestly
+ * until the authoritative numbers land.
  */
 function StatsSection() {
   const cells: ReadonlyArray<{
@@ -335,8 +356,8 @@ function StatsSection() {
     },
     {
       value: String(STATS.cohorts),
-      label: 'VOLUMES',
-      caption: '한 학기를 한 권의 잡지로',
+      label: 'COHORTS',
+      caption: '학기마다 다진 한 묶음의 지반',
     },
     {
       value: `${STATS.alumniCount}+`,
@@ -362,7 +383,7 @@ function StatsSection() {
         className="stats-anim-eyebrow flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
       >
         <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-        By The Numbers
+        $ stats --vol={STATS.cohorts}
       </p>
 
       <hr
@@ -398,9 +419,16 @@ function StatCell({
 }) {
   return (
     <li
-      className="stats-anim-cell relative flex flex-col gap-3"
+      className="stats-anim-cell relative flex flex-col gap-2"
       style={{ animationDelay: `${300 + index * 120}ms` }}
     >
+      <span
+        translate="no"
+        aria-hidden
+        className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
+      >
+        [OK]
+      </span>
       <span
         translate="no"
         className="font-display text-[clamp(3.5rem,_10vw,_8rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
@@ -412,6 +440,13 @@ function StatCell({
         className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
       >
         {label}
+      </span>
+      <span
+        aria-hidden
+        translate="no"
+        className="font-mono text-[10px] tracking-[0.32em] text-fg-muted"
+      >
+        ──
       </span>
       <span className="font-display text-sm leading-[1.6] text-fg-subtle md:text-base">
         {caption}

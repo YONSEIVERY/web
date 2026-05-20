@@ -1,6 +1,11 @@
 /**
  * /partners page content.
  *
+ * Brand metaphor (per VERY BI doc): the partner program is the bedrock
+ * under the field — companies, capital, and the university are what
+ * make the ground load-bearing. Body copy uses 지반 / 필드 / 함께 일군;
+ * magazine vocabulary (책장 / 한 권 / 표지) is no longer used.
+ *
  * Partner roster is intentionally placeholder-shaped. Society will fill
  * names/logos once relationships are confirmed for the current volume.
  * Three categories (corporate / capital / academic) match how the
@@ -9,15 +14,15 @@
 export const PARTNERS = {
   hero: {
     eyebrow: 'Partners — Vol.43 / 2026—1',
-    headlineLine1: '책장 바깥에서,',
-    headlineLine2: '같이 들고 가는 손.',
+    headlineLine1: '땅 밑을 받치는',
+    headlineLine2: '단단한 지반.',
     subline:
-      'Outside the spine. The volume is ours — the weight is shared with companies, capital, and the university.',
+      'Bedrock under the field. 우리가 일구는 땅은 우리 혼자 다지지 않습니다. 기업·자본·대학이 그 아래를 함께 받칩니다.',
   },
   intro: {
     label: 'WHY',
-    title: '학회만으로는 끝까지 못 갑니다.',
-    body: '한 학기를 한 권의 잡지로 묶으려면 학회 안의 시간만으로는 부족합니다. 시장의 문제는 기업이, 자본의 언어는 VC가, 트랙과 자원은 학교가 갖고 있습니다. VERY의 파트너십은 그 세 갈래를 한 학기 안으로 끌어오는 통로입니다.',
+    title: '학회 안의 시간만으론 끝까지 못 갑니다.',
+    body: '한 학기 동안 지반을 다지려면 학회 안의 시간만으로는 부족합니다. 시장의 문제는 기업이, 자본의 언어는 VC가, 트랙과 자원은 학교가 갖고 있습니다. VERY의 파트너십은 그 세 갈래를 한 학기 안으로 끌어오는 통로입니다.',
   },
   categories: {
     label: 'CATEGORIES',
@@ -45,8 +50,8 @@ export const PARTNERS = {
   },
   roster: {
     label: 'CURRENT VOLUME',
-    title: '이번 권을 함께 만드는 손.',
-    note: '정식 파트너 로스터는 학기 중반 공식 공지와 함께 갱신됩니다. 아래는 카테고리별 자리만 잡아둔 표지입니다.',
+    title: '이번 학기를 함께 받치는 손.',
+    note: '정식 파트너 로스터는 학기 중반 공식 공지와 함께 갱신됩니다. 아래는 카테고리별 자리만 잡아둔 카드입니다.',
     items: [
       { category: 'CORPORATE', name: 'TBA', note: '도메인 리서치 협업 트랙' },
       { category: 'CORPORATE', name: 'TBA', note: '필드 비짓 · PoC' },
@@ -79,7 +84,7 @@ export const PARTNERS = {
   },
   closing: {
     label: 'CONTACT',
-    title: '같이 들고 갈 권이 있으면 말씀 주세요.',
+    title: '함께 받칠 학기가 있으면 말씀 주세요.',
     body: '파트너십 문의는 메일로 받습니다. 학기 단위라 시즌별 윈도우가 좁으니 가능하면 학기 시작 전에 연결해 주세요.',
     primary: { label: 'CONTACT', href: '/contact' as const },
     secondary: {

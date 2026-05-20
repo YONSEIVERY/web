@@ -465,3 +465,24 @@
     }
   }
 }
+
+/*
+ * VERY marquee — pre-footer brand pattern.
+ * Track contains two duplicated copies of the token row, so translating
+ * by -50% loops seamlessly. Animation only runs for users who haven't
+ * opted into reduced motion; otherwise the row sits static and the
+ * pattern still reads as a brand band above the colophon footer.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes very-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .very-marquee-track {
+    animation: very-marquee 40s linear infinite;
+  }
+}

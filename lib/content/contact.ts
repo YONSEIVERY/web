@@ -5,16 +5,21 @@
  * wired, and a fake form is worse than no form. We surface the three
  * real channels (email, instagram, recruit form when open) and tell
  * users which one to use for what.
+ *
+ * Vocabulary note: this page (and /demoday) is where the FIELD vocabulary
+ * from the VERY BI doc lands — members are "Operators", teams are "Unit",
+ * projects are "Mission". Elsewhere on the site we stay with plain 회원/
+ * 팀/프로젝트.
  */
 import { SITE } from './site'
 
 export const CONTACT = {
   hero: {
     eyebrow: 'Contact — Vol.43 / 2026—1',
-    headlineLine1: '편지의',
-    headlineLine2: '받는 사람.',
+    headlineLine1: '문은 세 개,',
+    headlineLine2: '모두 사람이 받습니다.',
     subline:
-      'Where to send it. Recruiting, partnership, press — three doors, all real, none of them a contact form.',
+      'Three real doors, no contact form. Recruiting, partnership, press — 어떤 용건이든 실제 사람이 받습니다.',
   },
   intro: {
     label: 'NOTE',
@@ -43,7 +48,7 @@ export const CONTACT = {
         mono: 'RECRUIT',
         label: '시즌별 노션 · 구글폼',
         href: SITE.recruitFormUrl,
-        note: '회원 모집은 학기 시작 전에 노션·구글폼으로 받습니다. 시즌 오픈 시 인스타로 안내.',
+        note: 'Operators 모집은 학기 시작 전에 노션·구글폼으로 받습니다. 시즌 오픈 시 인스타로 안내.',
         external: true,
       },
     ],
@@ -55,8 +60,8 @@ export const CONTACT = {
       {
         num: '01',
         mono: 'RECRUIT',
-        title: '학회 지원',
-        body: '모집 시즌엔 노션·구글폼으로 받습니다. 시즌이 닫혀 있다면 인스타그램에서 다음 시즌 일정을 확인해 주세요.',
+        title: 'Operator 지원',
+        body: '모집 시즌엔 노션·구글폼으로 받습니다. 새 학기의 Unit으로 합류하고 싶다면 이쪽. 시즌이 닫혀 있다면 인스타그램에서 다음 시즌 일정을 확인해 주세요.',
       },
       {
         num: '02',
@@ -93,7 +98,7 @@ export const CONTACT = {
   closing: {
     label: 'STILL HERE',
     title: '여기까지 읽었다면, 일단 한 줄 보내주세요.',
-    body: '완성된 문장이 아니어도 괜찮습니다. 어떤 용건인지 한 줄만 적어주시면, 다음 권을 같이 들고 갈 자리부터 찾아보겠습니다.',
+    body: '완성된 문장이 아니어도 괜찮습니다. 어떤 용건인지 한 줄만 적어주시면, 다음 학기 같이 다질 자리부터 찾아보겠습니다.',
     primary: { label: 'EMAIL US', href: `mailto:${SITE.email}` },
     secondary: { label: '@VERY_YONSEI', href: SITE.instagram },
   },

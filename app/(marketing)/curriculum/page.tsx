@@ -72,7 +72,42 @@ function TracksSection() {
         <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
           {body}
         </p>
-        <ol className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:grid-cols-2 md:border md:border-border">
+
+        <ol
+          aria-label="정규 4단계 진행 순서"
+          className="about-anim-meta mt-12 hidden items-center gap-3 md:mt-16 md:flex"
+        >
+          {items.map((item, index) => (
+            <li
+              key={item.num}
+              className="flex flex-1 items-center gap-3 last:flex-none"
+            >
+              <div className="flex shrink-0 items-baseline gap-2">
+                <span
+                  translate="no"
+                  className="font-mono text-xs tracking-[0.16em] text-accent"
+                >
+                  {item.num}
+                </span>
+                <span className="font-display text-sm tracking-tight text-fg-primary">
+                  {item.mono}
+                </span>
+              </div>
+              {index < items.length - 1 && (
+                <span
+                  aria-hidden
+                  className="flex flex-1 items-center gap-2"
+                >
+                  <span className="h-px flex-1 bg-border-strong" />
+                  <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                  <span className="h-px flex-1 bg-border-strong" />
+                </span>
+              )}
+            </li>
+          ))}
+        </ol>
+
+        <ol className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:mt-10 md:grid-cols-2 md:border md:border-border">
           {items.map((item) => (
             <li key={item.num} className="bg-bg-base">
               <div className="flex h-full flex-col gap-4 px-6 py-8 md:px-8 md:py-10">

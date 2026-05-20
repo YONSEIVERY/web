@@ -1,26 +1,44 @@
 /**
  * /about page content.
  *
- * Seven blocks: Hero, Origin, Core Value, Mindset, What We Do, Leadership,
- * Closing. Core Value(KNOWLEDGE/EXPERIENCE/NETWORK) and Mindset(인재상) are
- * lifted verbatim from VERY_43기_OT.pdf p.5–6 — do not paraphrase. The OT
- * deck is what every recruit reads first, so the on-site copy must match.
+ * Eight blocks: Hero, Origin, Manifesto, Core Value, Mindset, What We Do,
+ * Leadership, Closing.
+ *
+ * Brand metaphor anchor (per VERY BI doc): "We are the very first ground
+ * where ideas meet reality." All body copy uses GROUND / FIELD / 착지 /
+ * 지반 vocabulary — NOT the magazine vocabulary (책장 / 표지 / 한 권)
+ * that the site once used. Volume markers (VOL.43 / EST.1997) stay only
+ * as masthead-style metadata.
+ *
+ * Core Value(KNOWLEDGE/EXPERIENCE/NETWORK) and Mindset(인재상) are lifted
+ * verbatim from VERY_43기_OT.pdf p.5–6 — do not paraphrase. The OT deck
+ * is what every recruit reads first, so the on-site copy must match.
  */
 export const ABOUT = {
   hero: {
     eyebrow: 'About — Vol.43 / 2026—1',
-    headlineLine1: '졸업하지 않는다.',
-    headlineLine2: '누적될 뿐이다.',
+    headlineLine1: '아이디어가 현실을',
+    headlineLine2: '처음 마주하는 땅.',
     subline:
-      'We don’t graduate. We compound — every cohort hands the next a heavier baseline.',
+      'We are the very first ground where ideas meet reality. 매 학기, 더 단단해진 지반 위에서 다음 기수가 착지합니다.',
   },
   origin: {
     label: 'ORIGIN',
     title: 'Since 1997.',
-    body: '1997년 벤처창업연구회로 발족해, 연세대학교에서 가장 오래 이어진 창업학회로 매 학기를 한 권의 잡지처럼 묶어왔습니다. 매 학기가 한 권, 그렇게 쌓인 책장이 우리의 정체성입니다.',
+    body: '1997년 벤처창업연구회로 발족한 이래, 연세대학교에서 가장 오래 이어진 창업학회로서 매 학기 더 단단해진 지반을 다음 기수에게 넘겨왔습니다. 학기마다 새로 일군 땅, 그 누적이 학회의 정체성입니다.',
     milestones: [
       { year: '1997', label: 'FOUNDED', note: '벤처창업연구회로 발족' },
       { year: '2026', label: 'VOL.43', note: '43기, 현재 진행 중' },
+    ],
+  },
+  manifesto: {
+    label: 'MANIFESTO',
+    title: 'Do. Fail. Repeat.',
+    body: '실패는 피할 게 아니라 반복하고 활용하는 방법입니다. 실행 → 실패 → 다시 실행. VERY가 일하는 단 하나의 사이클이며, 학기마다 우리가 다지는 지반의 단위입니다.',
+    lines: [
+      'Fail Forward — 실패는 피하지 않고, 성장의 방법으로 재사용한다.',
+      'Low Barrier, High Intensity — 누구에게나 열려 있되, 끝까지 가는 사람만 남는다.',
+      'Real-world Deployment — 아이디어는 책상 위가 아니라 현실 안에서 지금 검증한다.',
     ],
   },
   coreValue: {
@@ -77,13 +95,13 @@ export const ABOUT = {
       {
         monoLabel: 'SESSIONS',
         title: '주간 세션',
-        body: '케이스 스터디·도메인 리서치·창업 시뮬레이션을 매주 한 묶음으로 진행합니다.',
+        body: '정규 4단계(10만플·프리토타이핑·아이디어톤·데모데이)와 보조 3세션(스터디·인사이트·컨벤션)을 매주 한 묶음으로 진행합니다.',
         href: '/curriculum',
       },
       {
         monoLabel: 'DEMODAY',
         title: '데모데이',
-        body: '학기 말, 실제 투자자·창업가·동문 앞에서 학회 팀의 결과물을 발표합니다.',
+        body: '학기 말, CEO·VC 심사역 앞에서 IR 피칭을 진행하고 평가·투자로 이어 나갑니다.',
         href: '/demoday',
       },
       {
@@ -120,7 +138,7 @@ export const ABOUT = {
   },
   closing: {
     label: 'NEXT',
-    title: '다음 학기, 함께 착륙할 사람을 찾고 있습니다.',
+    title: '다음 학기, 함께 착지할 사람을 찾고 있습니다.',
     body: '모집 시즌엔 노션·구글폼으로 진행됩니다. 평소엔 메일·인스타로 가볍게 연락 주세요.',
     primary: { label: 'CONTACT', href: '/contact' as const },
     secondary: {

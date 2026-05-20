@@ -6,7 +6,7 @@ import { ABOUT } from '@/lib/content/about'
 export const metadata: Metadata = {
   title: '소개',
   description:
-    '연세대학교 창업학회 VERY. 1997년 벤처창업연구회로 발족, 매 학기를 한 권의 잡지처럼 묶어 43권째 이어오고 있는 학회.',
+    '연세대학교 창업학회 VERY. 1997년 벤처창업연구회로 발족, 매 학기 더 단단해진 지반을 다음 기수에게 넘겨오며 43기째 이어오고 있는 학회.',
 }
 
 /**
@@ -22,6 +22,7 @@ export default function AboutPage() {
     <main className="pt-14 md:pt-16">
       <AboutHero />
       <OriginSection />
+      <ManifestoSection />
       <CoreValueSection />
       <MindsetSection />
       <WhatWeDoSection />
@@ -91,6 +92,43 @@ function OriginSection() {
               <span className="font-display text-sm leading-[1.6] text-fg-subtle">
                 {m.note}
               </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+function ManifestoSection() {
+  const { label, title, body, lines } = ABOUT.manifesto
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2
+          translate="no"
+          className="about-anim-title font-display text-[clamp(2.5rem,_7vw,_5.5rem)] font-bold leading-[1.05] tracking-tight text-fg-primary"
+        >
+          {title}
+        </h2>
+        <p className="about-anim-body mt-8 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          {body}
+        </p>
+        <ul className="about-anim-meta mt-12 flex flex-col gap-4 border-t border-border pt-10">
+          {lines.map((line) => (
+            <li
+              key={line}
+              className="flex gap-3 text-sm leading-[1.7] text-fg-subtle md:text-base"
+            >
+              <span
+                aria-hidden
+                translate="no"
+                className="mt-[0.3em] inline-block font-mono text-xs text-accent"
+              >
+                &gt;
+              </span>
+              <span>{line}</span>
             </li>
           ))}
         </ul>
