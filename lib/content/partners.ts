@@ -6,10 +6,10 @@
  * make the ground load-bearing. Body copy uses 지반 / 필드 / 함께 일군;
  * magazine vocabulary (책장 / 한 권 / 표지) is no longer used.
  *
- * Partner roster is intentionally placeholder-shaped. Society will fill
- * names/logos once relationships are confirmed for the current volume.
- * Three categories (corporate / capital / academic) match how the
- * society actually thinks about external relationships.
+ * Roster lists this volume's confirmed partners. Three categories
+ * (corporate / capital / academic) match how the society actually
+ * thinks about external relationships. Notes are short descriptors of
+ * each partner — partnership terms are not spelled out on the site.
  */
 export const PARTNERS = {
   hero: {
@@ -51,14 +51,28 @@ export const PARTNERS = {
   roster: {
     label: 'CURRENT VOLUME',
     title: '이번 학기를 함께 받치는 손.',
-    note: '정식 파트너 로스터는 학기 중반 공식 공지와 함께 갱신됩니다. 아래는 카테고리별 자리만 잡아둔 카드입니다.',
+    note: '이번 학기에 함께하는 파트너입니다. 학기 중 추가되는 파트너는 인스타그램으로 안내합니다.',
     items: [
-      { category: 'CORPORATE', name: 'TBA', note: '도메인 리서치 협업 트랙' },
-      { category: 'CORPORATE', name: 'TBA', note: '필드 비짓 · PoC' },
-      { category: 'CAPITAL', name: 'TBA', note: '데모데이 청중 · 후속 미팅' },
-      { category: 'CAPITAL', name: 'TBA', note: '동문 VC · 엔젤' },
-      { category: 'ACADEMIC', name: '연세대학교', note: '창업 트랙 · 산학 협력' },
-      { category: 'ACADEMIC', name: 'TBA', note: '교내 창업 지원 기관' },
+      {
+        category: 'CORPORATE',
+        name: 'ZUZU',
+        note: '스타트업 운영 플랫폼 · by KODEBOX',
+      },
+      {
+        category: 'CORPORATE',
+        name: 'NOCODERS',
+        note: '노코드 빌드 · MVP 협업',
+      },
+      {
+        category: 'CAPITAL',
+        name: 'ALPHA BROTHERS',
+        note: '초기 단계 액셀러레이터',
+      },
+      {
+        category: 'ACADEMIC',
+        name: '연세대학교',
+        note: '창업 트랙 · 산학 협력',
+      },
     ],
   },
   engage: {
