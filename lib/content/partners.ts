@@ -7,9 +7,12 @@
  * magazine vocabulary (책장 / 한 권 / 표지) is no longer used.
  *
  * Roster lists this volume's confirmed partners. Three categories
- * (corporate / capital / academic) match how the society actually
- * thinks about external relationships. Notes are short descriptors of
- * each partner — partnership terms are not spelled out on the site.
+ * (corporate / capital / academic) describe what kind of company each
+ * partner is — they do NOT describe the partnership terms. The society
+ * has decided not to expose deal specifics (sponsorship, AC commitment,
+ * etc.) publicly; every partner is framed identically as "파트너십을
+ * 통한 상호 교류" on the site. Per-row `note` is a one-line company
+ * descriptor only.
  */
 export const PARTNERS = {
   hero: {
@@ -51,27 +54,27 @@ export const PARTNERS = {
   roster: {
     label: 'CURRENT VOLUME',
     title: '이번 학기를 함께 받치는 손.',
-    note: '이번 학기에 함께하는 파트너입니다. 학기 중 추가되는 파트너는 인스타그램으로 안내합니다.',
+    note: '각 파트너와는 파트너십을 통한 상호 교류를 진행합니다. 학기 중 추가되는 파트너는 인스타그램으로 안내합니다.',
     items: [
       {
         category: 'CORPORATE',
         name: 'ZUZU',
-        note: '스타트업 운영 플랫폼 · by KODEBOX',
+        note: '주식·법무·재무를 한 곳에서 관리하는 스타트업 운영 SaaS · by KODEBOX',
       },
       {
         category: 'CORPORATE',
         name: 'NOCODERS',
-        note: '노코드 빌드 · MVP 협업',
+        note: '노코드 도구로 MVP를 빠르게 만드는 빌더·교육 커뮤니티',
       },
       {
         category: 'CAPITAL',
         name: 'ALPHA BROTHERS',
-        note: '초기 단계 액셀러레이터',
+        note: '초기 단계 스타트업에 투자하는 액셀러레이터',
       },
       {
         category: 'ACADEMIC',
         name: '연세대학교',
-        note: '창업 트랙 · 산학 협력',
+        note: 'VERY의 모교 · 학회 활동의 거점',
       },
     ],
   },
