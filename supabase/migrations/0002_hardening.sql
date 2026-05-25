@@ -2,7 +2,11 @@
 
 -- ============================================================
 -- site_config 단일 행 보장 — key는 항상 'current'
+-- 선제 DELETE: dashboard에서 수동 시드한 비-'current' 행이 있어도
+-- ADD CONSTRAINT check violation으로 마이그레이션이 실패하지 않도록.
 -- ============================================================
+delete from public.site_config where key <> 'current';
+
 alter table public.site_config
   add constraint site_config_singleton_key check (key = 'current');
 
