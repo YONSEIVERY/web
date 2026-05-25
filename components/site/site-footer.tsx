@@ -21,6 +21,7 @@ export async function SiteFooter() {
   const siteConfig = await getSiteConfig()
   const startYear = siteConfig.sinceYear
   const endYear = new Date().getFullYear()
+  const semesterDigit = siteConfig.semester === '1학기' ? '1' : '2'
 
   return (
     <footer className="relative border-t border-border bg-bg-base px-6 pb-10 pt-20 md:px-10 md:pb-12 md:pt-28">
@@ -41,7 +42,7 @@ export async function SiteFooter() {
             translate="no"
             className="mt-6 font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
           >
-            VOL.{siteConfig.cohort} / {endYear}—1 · EST. {siteConfig.sinceYear}
+            VOL.{siteConfig.cohort} / {endYear}—{semesterDigit} · EST. {siteConfig.sinceYear}
           </p>
         </div>
 
