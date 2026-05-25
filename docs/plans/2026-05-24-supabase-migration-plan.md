@@ -1092,10 +1092,15 @@ git commit -m "chore: remove notion backend code and setup doc"
 
 ```typescript
 'use server'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { sendInquiryNotification } from '@/lib/email/notifications'
 import { headers } from 'next/headers'
+
+// NOTE: anon `createClient()` would bypass-fail here — `inquiries` has no SELECT
+// policy, so `.insert().select('id').single()` returns 0 rows via RLS-filtered
+// RETURNING. Use `supabaseService` (service_role) to skip RLS. Defaults still
+// enforce `status='new'`, and `.insert({...})` hardcodes the field list.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -1139,8 +1144,7 @@ export async function submitContactInquiry(
   const rl = checkRateLimit(`contact:${await clientKey()}`, { limit: 5, windowMs: 60 * 60 * 1000 })
   if (!rl.ok) return { status: 'error', message: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)` }
 
-  const supabase = await createClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseService
     .from('inquiries')
     .insert({ type: 'GENERAL', name, email, affiliation, subject, message })
     .select('id')
@@ -1179,8 +1183,7 @@ export async function submitIndustryInquiry(
   const rl = checkRateLimit(`industry:${await clientKey()}`, { limit: 5, windowMs: 60 * 60 * 1000 })
   if (!rl.ok) return { status: 'error', message: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)` }
 
-  const supabase = await createClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseService
     .from('inquiries')
     .insert({ type: 'INDUSTRY', name, email, affiliation, subject, message })
     .select('id')
@@ -1232,9 +1235,16 @@ git commit -m "feat(actions): rewrite inquiries to Supabase (general + industry)
 ```typescript
 'use server'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { sendPartnerApplicationNotification } from '@/lib/email/notifications'
 import { headers } from 'next/headers'
+
+// Two clients: anon `supabase` exercises Storage RLS (anon upload allowed by
+// bucket policy); `supabaseService` does the DB insert because partners SELECT
+// policy `(status='approved' and published=true)` filters the RETURNING clause
+// on the just-inserted pending row → would yield empty. `.insert({...})`
+// hardcodes the field list, so defaults still enforce pending+unpublished.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MAX_LOGO_BYTES = 2 * 1024 * 1024
@@ -1293,7 +1303,7 @@ export async function submitPartnerApplication(
     logo_url = pub.publicUrl
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseService
     .from('partners')
     .insert({
       name, category, one_liner, logo_url,
@@ -1557,9 +1567,12 @@ export async function submitAlumniRegistration(
   const rl = checkRateLimit(`alumni:${await clientKey()}`, { limit: 5, windowMs: 60 * 60 * 1000 })
   if (!rl.ok) return { status: 'error', message: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)` }
 
-  // 트랜잭션 (수동: alumni insert 먼저, 실패 시 단순 return; company insert 실패 시 alumni row를 service_role로 cleanup)
+  // 수동 트랜잭션: alumni insert 먼저, 실패 시 단순 return; company insert
+  // 실패 시 alumni row를 service_role로 cleanup. `supabase` (anon)은 Storage RLS
+  // 검증용. DB insert는 `supabaseService` — alumni SELECT 정책이 RETURNING을
+  // 막아 .select('id')가 비어버리는 문제를 피한다.
   const supabase = await createClient()
-  const { data: alumniRow, error: aErr } = await supabase
+  const { data: alumniRow, error: aErr } = await supabaseService
     .from('alumni')
     .insert({ name, cohort, email, current_role, bio, linkedin_url })
     .select('id')
@@ -1579,7 +1592,7 @@ export async function submitAlumniRegistration(
     }
     const { data: pub } = supabase.storage.from('alumni-company-logos').getPublicUrl(path)
 
-    const { error: cErr } = await supabase.from('alumni_companies').insert({
+    const { error: cErr } = await supabaseService.from('alumni_companies').insert({
       founder_alumni_id: alumniRow.id,
       name: company.name,
       logo_url: pub.publicUrl,
