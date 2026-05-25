@@ -2,6 +2,8 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { PARTNERS } from '@/lib/content/partners'
+import { getPartners } from '@/lib/data/partners'
+import type { Partner } from '@/lib/data/partners'
 
 export const metadata: Metadata = {
   title: '파트너',
@@ -16,13 +18,14 @@ export const metadata: Metadata = {
  * volume's lineup. Category chip styling matches /demoday's status pill
  * pattern so all three pages read with a consistent "coming soon" voice.
  */
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  const roster = await getPartners()
   return (
     <main className="pt-14 md:pt-16">
       <PartnersHero />
       <IntroSection />
       <CategoriesSection />
-      <RosterSection />
+      <RosterSection roster={roster} />
       <EngageSection />
       <ClosingSection />
     </main>
@@ -117,8 +120,8 @@ function CategoriesSection() {
   )
 }
 
-function RosterSection() {
-  const { label, title, note, items } = PARTNERS.roster
+function RosterSection({ roster }: { roster: Partner[] }) {
+  const { label, title, note } = PARTNERS.roster
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <SectionLabel label={label} className="col-span-12 md:col-span-3" />
@@ -129,30 +132,36 @@ function RosterSection() {
         <p className="about-anim-body mt-6 max-w-[58ch] font-mono text-[11px] uppercase tracking-[0.24em] leading-[1.7] text-fg-muted md:text-xs">
           {note}
         </p>
-        <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
-          {items.map((item, i) => (
-            <li
-              key={`${item.category}-${i}`}
-              className="grid grid-cols-12 items-baseline gap-x-4 border-b border-border py-6 md:gap-x-8 md:py-8"
-            >
-              <span
-                translate="no"
-                className="col-span-4 font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:col-span-2 md:text-xs"
+        {roster.length === 0 ? (
+          <p className="about-anim-body mt-12 border-t border-border pt-10 text-sm leading-[1.7] text-fg-muted md:text-base">
+            곧 공개됩니다.
+          </p>
+        ) : (
+          <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
+            {roster.map((partner) => (
+              <li
+                key={partner.id}
+                className="grid grid-cols-12 items-baseline gap-x-4 border-b border-border py-6 md:gap-x-8 md:py-8"
               >
-                {item.category}
-              </span>
-              <span
-                translate="no"
-                className="col-span-8 font-display text-lg font-bold tracking-tight text-fg-primary md:col-span-4 md:text-xl"
-              >
-                {item.name}
-              </span>
-              <p className="col-span-12 mt-2 text-sm leading-[1.7] text-fg-subtle md:col-span-6 md:mt-0 md:text-base">
-                {item.note}
-              </p>
-            </li>
-          ))}
-        </ul>
+                <span
+                  translate="no"
+                  className="col-span-4 font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:col-span-2 md:text-xs"
+                >
+                  {partner.category}
+                </span>
+                <span
+                  translate="no"
+                  className="col-span-8 font-display text-lg font-bold tracking-tight text-fg-primary md:col-span-4 md:text-xl"
+                >
+                  {partner.name}
+                </span>
+                <p className="col-span-12 mt-2 text-sm leading-[1.7] text-fg-subtle md:col-span-6 md:mt-0 md:text-base">
+                  {partner.oneLiner}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   )
