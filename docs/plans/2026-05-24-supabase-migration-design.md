@@ -122,7 +122,7 @@ RESEND_API_KEY=
 | name | text | ✓ | |
 | cohort | int | ✓ | 기수 |
 | email | text | admin only | 회신용 |
-| current_role | text | ✓ | "현재 활동/소속" |
+| job_title | text | ✓ | "현재 활동/소속" |
 | bio | text | ✓ | 한 줄 소개 |
 | linkedin_url | text? | ✓ | 옵션 |
 | status | text | | `pending`/`approved`/`rejected` |
@@ -251,7 +251,7 @@ Client form (useActionState + useFormStatus)
 | 이름 | |
 | 기수 | int 1~50 |
 | 이메일 | admin only |
-| 현재 활동/소속 | current_role |
+| 현재 활동/소속 | job_title |
 | 한 줄 소개 | bio, max 200 |
 | LinkedIn URL | optional |
 

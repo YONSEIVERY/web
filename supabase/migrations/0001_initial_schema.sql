@@ -35,7 +35,7 @@ create table public.alumni (
   name text not null,
   cohort int not null check (cohort between 1 and 100),
   email text not null,
-  current_role text not null,
+  job_title text not null,
   bio text not null,
   linkedin_url text,
   status text not null default 'pending' check (status in ('pending','approved','rejected')),

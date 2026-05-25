@@ -107,7 +107,7 @@ create table public.alumni (
   name text not null,
   cohort int not null check (cohort between 1 and 100),
   email text not null,
-  current_role text not null,
+  job_title text not null,
   bio text not null,
   linkedin_url text,
   status text not null default 'pending' check (status in ('pending','approved','rejected')),
@@ -490,7 +490,7 @@ export async function sendAlumniRegistrationNotification(args: {
   alumniId: string
   name: string
   cohort: number
-  current_role: string
+  job_title: string
   bio: string
   hasCompany: boolean
   companyName?: string
@@ -638,7 +638,7 @@ interface Props {
   alumniId: string
   name: string
   cohort: number
-  current_role: string
+  job_title: string
   bio: string
   hasCompany: boolean
   companyName?: string
@@ -658,7 +658,7 @@ export default function AlumniRegistrationNotification(p: Props) {
           <Section>
             <Row label="이름" value={p.name} />
             <Row label="기수" value={`${p.cohort}기`} />
-            <Row label="현재" value={p.current_role} />
+            <Row label="현재" value={p.job_title} />
             {p.hasCompany && <Row label="동반 회사" value={p.companyName ?? '—'} />}
           </Section>
           <Hr style={{ margin: '16px 0', borderColor: '#e7e5e4' }} />
@@ -836,7 +836,7 @@ export interface Alumni {
   id: string
   name: string
   cohort: number
-  currentRole: string
+  jobTitle: string
   bio: string
   linkedinUrl: string | null
   companies: AlumniCompany[]
@@ -848,7 +848,7 @@ export async function getAlumni(): Promise<Alumni[]> {
     const { data, error } = await supabase
       .from('alumni')
       .select(`
-        id, name, cohort, current_role, bio, linkedin_url,
+        id, name, cohort, job_title, bio, linkedin_url,
         alumni_companies!alumni_companies_founder_alumni_id_fkey (
           id, founder_alumni_id, name, logo_url, one_liner, stage, website_url, status, published
         )
@@ -860,7 +860,7 @@ export async function getAlumni(): Promise<Alumni[]> {
       id: r.id,
       name: r.name,
       cohort: r.cohort,
-      currentRole: r.current_role,
+      jobTitle: r.job_title,
       bio: r.bio,
       linkedinUrl: r.linkedin_url,
       companies: (r.alumni_companies as Array<{
@@ -1532,7 +1532,7 @@ export async function submitAlumniRegistration(
   const cohortRaw = String(formData.get('cohort') ?? '').trim()
   const cohort = Number(cohortRaw)
   const email = String(formData.get('email') ?? '').trim()
-  const current_role = String(formData.get('current_role') ?? '').trim()
+  const job_title = String(formData.get('job_title') ?? '').trim()
   const bio = String(formData.get('bio') ?? '').trim()
   const linkedin_url = String(formData.get('linkedin_url') ?? '').trim() || null
 
@@ -1540,7 +1540,7 @@ export async function submitAlumniRegistration(
   if (!Number.isInteger(cohort) || cohort < 1 || cohort > 100)
     return { status: 'error', message: '기수를 1~100 사이로 입력해주세요.' }
   if (!EMAIL_RE.test(email)) return { status: 'error', message: '이메일 형식을 확인해주세요.' }
-  if (!current_role || current_role.length > 120) return { status: 'error', message: '현재 활동/소속을 확인해주세요.' }
+  if (!job_title || job_title.length > 120) return { status: 'error', message: '현재 활동/소속을 확인해주세요.' }
   if (!bio || bio.length > 200) return { status: 'error', message: '한 줄 소개는 200자 이하로 작성해주세요.' }
 
   // company (optional)
@@ -1574,7 +1574,7 @@ export async function submitAlumniRegistration(
   const supabase = await createClient()
   const { data: alumniRow, error: aErr } = await supabaseService
     .from('alumni')
-    .insert({ name, cohort, email, current_role, bio, linkedin_url })
+    .insert({ name, cohort, email, job_title, bio, linkedin_url })
     .select('id')
     .single()
   if (aErr || !alumniRow) return { status: 'error', message: '저장에 실패했습니다.' }
@@ -1608,7 +1608,7 @@ export async function submitAlumniRegistration(
   }
 
   await sendAlumniRegistrationNotification({
-    alumniId: alumniRow.id, name, cohort, current_role, bio,
+    alumniId: alumniRow.id, name, cohort, job_title, bio,
     hasCompany: !!company, companyName,
   })
 
@@ -1641,7 +1641,7 @@ export function AlumniRegistrationForm() {
         <Field name="name" label="이름" required />
         <Field name="cohort" label="기수" type="number" min={1} max={100} required />
         <Field name="email" label="이메일 (회신용, 비공개)" type="email" required />
-        <Field name="current_role" label="현재 활동/소속" required />
+        <Field name="job_title" label="현재 활동/소속" required />
         <Textarea name="bio" label="한 줄 소개 (200자 이내)" required maxLength={200} />
         <Field name="linkedin_url" label="LinkedIn URL (선택)" type="url" />
       </Fieldset>
@@ -2073,7 +2073,7 @@ export async function getPendingApplications() {
     supabaseService
       .from('alumni')
       .select(`
-        id, name, cohort, current_role, created_at,
+        id, name, cohort, job_title, created_at,
         alumni_companies!alumni_companies_founder_alumni_id_fkey ( id, name )
       `)
       .eq('status', 'pending')
@@ -2136,7 +2136,7 @@ export default async function ApplicationsPage() {
           {alumni.map((a) => (
             <tr key={a.id} className="border-b border-border">
               <Td>🎓 알럼나이</Td>
-              <Td>{a.name} · {a.cohort}기 · {a.current_role}{(a.alumni_companies as { id: string }[]).length > 0 ? ` (+회사 ${(a.alumni_companies as { id: string }[]).length})` : ''}</Td>
+              <Td>{a.name} · {a.cohort}기 · {a.job_title}{(a.alumni_companies as { id: string }[]).length > 0 ? ` (+회사 ${(a.alumni_companies as { id: string }[]).length})` : ''}</Td>
               <Td>{new Date(a.created_at).toLocaleDateString('ko-KR')}</Td>
               <Td><Link href={`/admin/applications/alumni/${a.id}` as any} className="underline">상세</Link></Td>
             </tr>
@@ -2459,7 +2459,7 @@ export async function togglePartnerPublished(id: string, value: boolean) {
 export async function getApprovedAlumni() {
   const { data } = await supabaseService
     .from('alumni')
-    .select('id, name, cohort, current_role, published')
+    .select('id, name, cohort, job_title, published')
     .eq('status', 'approved')
     .order('cohort', { ascending: false })
   return data ?? []
@@ -2501,7 +2501,7 @@ export default async function AdminAlumniPage() {
             <tr key={r.id} className="border-b border-border">
               <Td>{r.name}</Td>
               <Td>{r.cohort}기</Td>
-              <Td>{r.current_role}</Td>
+              <Td>{r.job_title}</Td>
               <Td>
                 <form action={async () => {
                   'use server'
