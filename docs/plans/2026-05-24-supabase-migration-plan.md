@@ -927,157 +927,292 @@ git commit -m "feat(data): add alumni + alumni_companies join reader"
 
 ### Task 8: 호출부 교체 — footer, home, partners, alumni 페이지
 
+> **Plan-실제 drift 보정 (2026-05-26)**: 원래 plan은 "호출부에 이미 `@/lib/server/site-config-cache` / `@/lib/content/partners`의 `getPartners`가 깔려 있고 import 한 줄만 바꾸면 된다"로 가정했으나, 실제 코드는 정적 const(`SITE`, `STATS`, `PARTNERS.roster.items`, `ALUMNI.spotlight.items`)를 직접 사용 중. 따라서 Task 8은 단순 import 교체가 아니라 **async server component 전환 + Supabase 데이터 wiring + 빈 배열 안내** 작업. `lib/content/{site,partners,alumni}.ts`는 정적 UI 콘텐츠로 그대로 유지 (Notion 의존 없음).
+
 **Files:**
 - Modify: `components/site/site-footer.tsx`
 - Modify: `app/(marketing)/page.tsx`
 - Modify: `app/(marketing)/partners/page.tsx`
 - Modify: `app/(marketing)/alumni/page.tsx`
-- Modify: `lib/content/site.ts` (SITE_CONFIG_FALLBACK 유지, getSiteConfig 관련 제거)
-- Modify: `lib/content/partners.ts` (한 글자만 살리고 대부분 폐기)
 
-**Step 1: `components/site/site-footer.tsx`** — import 한 줄만 교체
+`lib/content/site.ts`, `lib/content/partners.ts`, `lib/content/alumni.ts`는 **수정 안 함** (정적 UI 카피·라벨 보유).
+
+---
+
+**Step 1: `components/site/site-footer.tsx`** — async 전환 + siteConfig wiring
+
+`import { SITE } from '@/lib/content/site'` 유지. 상단에 추가:
 
 ```typescript
-// before
-import { getSiteConfig } from '@/lib/server/site-config-cache'
-
-// after
 import { getSiteConfig } from '@/lib/data/site-config'
 ```
 
-**Step 2: `app/(marketing)/page.tsx`** — 동일
+함수 시그니처 + 데이터 사용:
 
 ```typescript
 // before
-import { getSiteConfig } from '@/lib/server/site-config-cache'
+export function SiteFooter() {
+  const startYear = SITE.since
+  const endYear = new Date().getFullYear()
+  // ...
+  // VOL.{SITE.currentCohort} / {endYear}—1 · EST. {SITE.since}
 
 // after
+export async function SiteFooter() {
+  const siteConfig = await getSiteConfig()
+  const startYear = siteConfig.sinceYear
+  const endYear = new Date().getFullYear()
+  // ...
+  // VOL.{siteConfig.cohort} / {endYear}—1 · EST. {siteConfig.sinceYear}
+```
+
+`SITE.email`, `SITE.instagram`은 그대로 유지.
+
+---
+
+**Step 2: `app/(marketing)/page.tsx`** — `HomePage` async 전환 + corner labels 동적화 + stats wiring
+
+상단 import 추가:
+
+```typescript
 import { getSiteConfig } from '@/lib/data/site-config'
 ```
 
-**Step 3: `app/(marketing)/partners/page.tsx`**
-
-기존 `lib/content/partners.ts`의 `getPartners`를 `lib/data/partners.ts`의 `getPartners`로 교체:
+(a) `CORNER_LABELS`는 모듈 스코프 상수에서 `HomeHero` 내부 로컬로 이동 (siteConfig 의존). `HomeHero`를 async로:
 
 ```typescript
-// before
-import { getPartners } from '@/lib/content/partners'
-
-// after
-import { getPartners } from '@/lib/data/partners'
-```
-
-> 데이터 필드명이 살짝 바뀜 (`note` → `oneLiner`, `sortOrder` 유지). 페이지 내부에서 사용하는 속성도 함께 수정.
-
-해당 페이지 내부 `RosterSection`에서 `partner.note` → `partner.oneLiner`로 일괄 변경.
-
-**Step 4: `app/(marketing)/alumni/page.tsx`** — 신규 데이터 표시
-
-기존엔 TBA placeholder였습니다. 이제 승인된 알럼나이·회사를 표시합니다. 페이지 상단에 import 추가:
-
-```typescript
-import { getAlumni, getAlumniCompanies } from '@/lib/data/alumni'
-```
-
-페이지 컴포넌트 안에서:
-
-```typescript
-export default async function AlumniPage() {
-  const [alumni, companies] = await Promise.all([
-    getAlumni(),
-    getAlumniCompanies(),
-  ])
-  // 기존 섹션들 재사용
-  // Spotlight 섹션에 companies 사용
-  // (선택) Network 섹션에 alumni 사용
+async function HomeHero() {
+  const siteConfig = await getSiteConfig()
+  const semesterDigit = siteConfig.semester === '1학기' ? '1' : '2'
+  const cornerLabels: ReadonlyArray<{ slot: CornerSlot; text: string; accent: boolean; delayMs: number }> = [
+    { slot: 'tl', text: `VOL.${siteConfig.cohort} / ${siteConfig.year}—${semesterDigit}`, accent: true, delayMs: 0 },
+    { slot: 'tr', text: `EST. ${siteConfig.sinceYear}`, accent: false, delayMs: 100 },
+    { slot: 'bl', text: 'YONSEI UNIVERSITY', accent: false, delayMs: 200 },
+    { slot: 'br', text: 'SEOUL, KR', accent: false, delayMs: 300 },
+  ]
+  return (
+    <section className="relative h-[100dvh] w-full overflow-hidden">
+      {/* ... 기존 마크업, HeroCorners({ labels: cornerLabels }) 로 전달 ... */}
+    </section>
+  )
 }
 ```
 
-기존 spotlight TBA 카드를 `companies` 기반으로 렌더링하도록 교체. 빈 배열이면 "곧 공개됩니다." 안내. **카피 변경은 별도 세션이므로 텍스트는 최소한만 변경**.
+`HeroCorners` 시그니처는 prop 받도록 변경: `function HeroCorners({ labels }: { labels: ReadonlyArray<...> })`.
 
-**Step 5: `lib/content/site.ts` 정리**
+(b) `StatsSection`도 async로 + siteConfig wiring:
 
-`SITE_CONFIG_FALLBACK`은 그대로 둠 (legacy STATS가 참조). 다른 변경 없음.
+```typescript
+async function StatsSection() {
+  const siteConfig = await getSiteConfig()
+  const cells = [
+    { value: String(siteConfig.year - siteConfig.sinceYear), label: 'YEARS', caption: `${siteConfig.sinceYear}년부터 멈춘 적 없는 활동` },
+    { value: String(siteConfig.cohort), label: 'COHORTS', caption: '학기마다 다진 한 묶음의 지반' },
+    { value: `${STATS.alumniCount}+`, label: 'ALUMNI', caption: '누적 회원 네트워크' },
+    { value: `${STATS.startupsCount}+`, label: 'STARTUPS', caption: '학회를 거쳐간 창업팀' },
+  ]
+  // ...
+  // $ stats --vol={siteConfig.cohort}
+```
 
-**Step 6: 타입체크**
+(c) `HomePage`를 async로:
+
+```typescript
+export default async function HomePage() {
+  return (
+    <main>
+      <HomeHero />
+      <ManifestoSection />
+      <StatsSection />
+    </main>
+  )
+}
+```
+
+`HomeHero`/`StatsSection`이 async RSC라 `await` 없이 직접 JSX에 두면 React 19에서 정상 동작. `lib/content/site.ts`의 `STATS.alumniCount`, `STATS.startupsCount`는 그대로 사용. `STATS.yearsActive`, `STATS.cohorts`는 더 이상 안 씀 (siteConfig 파생값이 대체).
+
+---
+
+**Step 3: `app/(marketing)/partners/page.tsx`** — items만 DB로 교체
+
+`import { PARTNERS } from '@/lib/content/partners'` 유지 (섹션 라벨·타이틀·카피 정적). 상단에 추가:
+
+```typescript
+import { getPartners } from '@/lib/data/partners'
+```
+
+(a) `PartnersPage`를 async로 + roster 데이터 prefetch + `RosterSection`에 prop 전달:
+
+```typescript
+export default async function PartnersPage() {
+  const roster = await getPartners()
+  return (
+    <main className="pt-14 md:pt-16">
+      <PartnersHero />
+      <IntroSection />
+      <CategoriesSection />
+      <RosterSection roster={roster} />
+      <EngageSection />
+      <ClosingSection />
+    </main>
+  )
+}
+```
+
+(b) `RosterSection`을 prop 받게 + items 매핑 변경 + 빈 배열 안내:
+
+```typescript
+import type { Partner } from '@/lib/data/partners'
+
+function RosterSection({ roster }: { roster: Partner[] }) {
+  const { label, title, note } = PARTNERS.roster
+  return (
+    <section /* ... */>
+      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 /* ... */>{title}</h2>
+        <p /* ... */>{note}</p>
+        {roster.length === 0 ? (
+          <p className="about-anim-body mt-12 border-t border-border pt-10 text-sm leading-[1.7] text-fg-muted md:text-base">
+            곧 공개됩니다.
+          </p>
+        ) : (
+          <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
+            {roster.map((partner) => (
+              <li key={partner.id} className="grid grid-cols-12 items-baseline gap-x-4 border-b border-border py-6 md:gap-x-8 md:py-8">
+                <span /* mono category */>{partner.category}</span>
+                <span /* name */>{partner.name}</span>
+                <p /* oneLiner */>{partner.oneLiner}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}
+```
+
+기존 `items.map((item, i) => ...)`을 `roster.map((partner) => ...)`로 교체. key는 `partner.id`. `item.note` → `partner.oneLiner`.
+
+---
+
+**Step 4: `app/(marketing)/alumni/page.tsx`** — spotlight를 companies로 교체
+
+`import { ALUMNI } from '@/lib/content/alumni'` 유지 (섹션 라벨·hero·intro 등). 상단에 추가:
+
+```typescript
+import { getAlumniCompanies } from '@/lib/data/alumni'
+import type { AlumniCompany } from '@/lib/data/alumni'
+```
+
+(a) `AlumniPage`를 async로 + companies prefetch + `SpotlightSection`에 prop 전달:
+
+```typescript
+export default async function AlumniPage() {
+  const companies = await getAlumniCompanies()
+  return (
+    <main className="pt-14 md:pt-16">
+      <AlumniHero />
+      <IntroSection />
+      <StatsSection />
+      <SpotlightSection companies={companies} />
+      <PathwaysSection />
+      <ClosingSection />
+    </main>
+  )
+}
+```
+
+(b) `SpotlightSection`을 prop 받게 + 카드 매핑 변경 + cohort/year 제거 + 빈 배열 안내:
+
+```typescript
+function SpotlightSection({ companies }: { companies: AlumniCompany[] }) {
+  const { label, title, note } = ALUMNI.spotlight
+  return (
+    <section /* ... */>
+      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 /* ... */>{title}</h2>
+        <p /* ... */>{note}</p>
+        {companies.length === 0 ? (
+          <p className="about-anim-body mt-12 border-t border-border pt-10 text-sm leading-[1.7] text-fg-muted md:text-base">
+            곧 공개됩니다.
+          </p>
+        ) : (
+          <ul className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:grid-cols-2 md:border md:border-border">
+            {companies.map((company) => (
+              <li key={company.id} className="bg-bg-base">
+                <div className="flex h-full flex-col gap-4 px-6 py-8 md:px-8 md:py-10">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <p className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
+                      {company.name}
+                    </p>
+                    {company.stage && (
+                      <span translate="no" className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs">
+                        {company.stage}
+                      </span>
+                    )}
+                  </div>
+                  <p className="max-w-[42ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
+                    {company.oneLiner}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}
+```
+
+기존 `cohort/year` 칸은 카드에서 완전히 제거. `company.stage`는 null 가능하므로 truthy 가드. `company.logoUrl`은 이번 task에서 미사용 (추후 별도 task로 이미지 통합 가능).
+
+---
+
+**Step 5: 타입체크**
 
 ```bash
 npx tsc --noEmit
 ```
 
-오류가 나면 필드명 변경(`note` → `oneLiner`) 누락이 흔한 원인.
+자주 깨지는 곳:
+- `verbatimModuleSyntax: true` — `Partner`, `AlumniCompany`는 반드시 `import type { ... }`.
+- async function이 React 16 typedRoutes 트랩 — `Promise<JSX.Element>` 반환은 RSC에서 정상이지만 `'use client'` 컴포넌트와 섞이지 않게 주의 (이번 4파일 모두 server component).
 
-**Step 7: Commit**
+**Step 6: Commit**
 
 ```bash
-git add components/site/site-footer.tsx app/\(marketing\)/page.tsx app/\(marketing\)/partners/page.tsx app/\(marketing\)/alumni/page.tsx
-git commit -m "feat(pages): switch public reads to Supabase data modules"
+git add components/site/site-footer.tsx "app/(marketing)/page.tsx" "app/(marketing)/partners/page.tsx" "app/(marketing)/alumni/page.tsx"
+git commit -m "feat(pages): wire Supabase data into footer, home, partners, alumni"
 ```
 
 ---
 
-### Task 9: Notion 코드·문서 폐기
+### Task 9: ~~Notion 코드·문서 폐기~~ — **폐기됨 (2026-05-26)**
 
-**Files:**
-- Delete: `lib/notion/` (디렉터리 전체)
-- Delete: `lib/server/site-config-cache.ts`
-- Delete: `docs/notion-setup.md`
-- Modify: `lib/content/partners.ts` (Notion 의존 부분 제거)
-- Modify: `lib/content/site.ts` (Notion 의존 부분 제거)
+> **폐기 사유**: plan 작성 당시엔 "사이트가 Notion 백엔드에 의존 중"으로 가정했으나, 실제 코드를 grep해보니 `@/lib/notion`이나 `@/lib/server/site-config-cache`를 import하는 호출 사이트가 **없음**. `lib/content/partners.ts`도 정적 UI 콘텐츠일 뿐 Notion 의존 없음. `docs/notion-setup.md`도 존재하지 않음. 따라서 본 task의 "삭제" 단계는 거의 no-op.
+>
+> **남은 정리**: `lib/notion/parsers/.gitkeep` 한 파일만 잔존 (옛 디렉터리 placeholder). 이건 별도 task 없이 Task 8 commit과 분리해서 처리.
 
-**Step 1: Notion 파일 삭제**
+**Step 1: 잔존 빈 디렉터리 정리**
 
 ```bash
-rm -rf lib/notion
-rm lib/server/site-config-cache.ts
-rmdir lib/server 2>/dev/null  # 비어있으면 삭제
-rm docs/notion-setup.md
+rm lib/notion/parsers/.gitkeep
+rmdir lib/notion/parsers 2>/dev/null
+rmdir lib/notion 2>/dev/null
 ```
 
-**Step 2: `lib/content/partners.ts` 정리**
-
-기존엔 `ROSTER_FALLBACK` 상수와 `fetchPartners` 호출이 섞여 있었습니다. 새 구조에서는 페이지가 직접 `lib/data/partners.ts`를 호출하므로 이 파일은 더 이상 데이터를 가져오지 않습니다. **파일 전체 삭제**가 가장 깔끔:
-
-```bash
-rm lib/content/partners.ts
-```
-
-만약 다른 곳에서 import하는 곳이 있다면 그 import 라인도 같이 제거.
-
-```bash
-# 확인
-grep -r "from '@/lib/content/partners'" app components lib
-```
-
-비어있어야 통과.
-
-**Step 3: `lib/content/site.ts`에서 type import 정리**
-
-```typescript
-// before
-import type { SiteConfig } from '@/lib/notion/site-config'
-
-// after
-import type { SiteConfig } from '@/lib/data/site-config'
-```
-
-`SITE`, `SITE_CONFIG_FALLBACK`, `STATS`, `buildStats`, `formatVolume`은 유지.
-
-**Step 4: 타입체크 + 빌드**
-
-```bash
-npx tsc --noEmit
-npm run build
-```
-
-빌드까지 통과하면 Phase 2 마무리.
-
-**Step 5: Commit**
+**Step 2: Commit**
 
 ```bash
 git add -A
-git commit -m "chore: remove notion backend code and setup doc"
+git commit -m "chore: drop empty lib/notion placeholder dir"
 ```
+
+**Step 3**: 본 task는 여기서 종료. `lib/content/site.ts`, `lib/content/partners.ts`, `lib/content/alumni.ts`는 모두 **유지** (정적 UI 콘텐츠).
 
 ---
 
