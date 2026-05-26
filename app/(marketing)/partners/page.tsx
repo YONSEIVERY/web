@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import { PARTNERS } from '@/lib/content/partners'
 import { getPartners } from '@/lib/data/partners'
 import type { Partner } from '@/lib/data/partners'
+import { PartnerApplicationForm } from '@/components/forms/partner-application-form'
 
 export const metadata: Metadata = {
   title: '파트너',
@@ -27,6 +28,7 @@ export default async function PartnersPage() {
       <CategoriesSection />
       <RosterSection roster={roster} />
       <EngageSection />
+      <ApplySection />
       <ClosingSection />
     </main>
   )
@@ -198,6 +200,26 @@ function EngageSection() {
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  )
+}
+
+function ApplySection() {
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label="APPLY" className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          파트너십 신청
+        </h2>
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          기업·자본·교내 어느 갈래든, 학기 안으로 함께 들어올 분이라면 아래로
+          신청해 주세요. 검토 후 신청자 이메일로 회신드립니다.
+        </p>
+        <div className="about-anim-meta mt-12 border-t border-border pt-10">
+          <PartnerApplicationForm />
+        </div>
       </div>
     </section>
   )
