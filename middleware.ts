@@ -40,6 +40,9 @@ export async function middleware(request: NextRequest) {
 
   // is_admin RPC not yet in generated types; regen after migration applied
   const { data: ok, error } = await supabase.rpc('is_admin', { check_email: user.email })
+  if (error) {
+    console.error('[middleware] is_admin rpc failed', error)
+  }
   if (error || !ok) {
     await supabase.auth.signOut()
     const url = request.nextUrl.clone()
