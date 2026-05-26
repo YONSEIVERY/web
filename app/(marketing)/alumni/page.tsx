@@ -27,6 +27,7 @@ export default async function AlumniPage() {
       <StatsSection />
       <SpotlightSection companies={companies} />
       <PathwaysSection />
+      <RegisterCTASection />
       <ClosingSection />
     </main>
   )
@@ -194,6 +195,33 @@ function PathwaysSection() {
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  )
+}
+
+function RegisterCTASection() {
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label="REGISTER" className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          알럼나이 등록
+        </h2>
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          VERY를 거쳐간 사람이라면 누구든 — 본인 정보와 (있다면) 회사도 함께
+          알려주세요.
+        </p>
+        <div className="about-anim-meta mt-10 flex flex-wrap items-center gap-6 md:gap-8">
+          <Link
+            href={'/alumni/register' as Route}
+            translate="no"
+            className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+          >
+            알럼나이 등록하기
+            <span aria-hidden>→</span>
+          </Link>
+        </div>
       </div>
     </section>
   )
