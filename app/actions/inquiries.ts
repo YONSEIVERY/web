@@ -50,7 +50,10 @@ export async function submitIndustryInquiry(
     .insert({ type: 'INDUSTRY', name, email, affiliation, subject, message })
     .select('id')
     .single()
-  if (error || !data) return { status: 'error', message: '저장에 실패했습니다.' }
+  if (error || !data) {
+    console.error('submitIndustryInquiry insert failed', error)
+    return { status: 'error', message: '저장에 실패했습니다.' }
+  }
 
   await sendInquiryNotification({
     id: data.id,
