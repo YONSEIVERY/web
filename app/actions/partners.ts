@@ -56,6 +56,8 @@ export async function submitPartnerApplication(
     return { status: 'error', message: '신청자 이름을 확인해주세요.' }
   if (!EMAIL_RE.test(applicant_email))
     return { status: 'error', message: '신청자 이메일 형식을 확인해주세요.' }
+  if (applicant_note && applicant_note.length > 2000)
+    return { status: 'error', message: '추가 메모는 2000자 이하로 작성해주세요.' }
 
   const rl = checkRateLimit(`partner:${await clientKey()}`, {
     limit: 5,
@@ -70,6 +72,7 @@ export async function submitPartnerApplication(
   const supabase = await createClient()
 
   let logo_url: string | null = null
+  let uploadedPath: string | null = null
   if (logo && logo.size > 0) {
     if (logo.size > MAX_LOGO_BYTES)
       return { status: 'error', message: '로고는 2MB 이하만 가능합니다.' }
@@ -89,6 +92,7 @@ export async function submitPartnerApplication(
         upsert: false,
       })
     if (upErr) return { status: 'error', message: '로고 업로드에 실패했습니다.' }
+    uploadedPath = path
     const { data: pub } = supabase.storage
       .from('partner-logos')
       .getPublicUrl(path)
@@ -108,7 +112,21 @@ export async function submitPartnerApplication(
     })
     .select('id')
     .single()
-  if (error || !data) return { status: 'error', message: '저장에 실패했습니다.' }
+  if (error || !data) {
+    console.error('submitPartnerApplication insert failed', error)
+    if (uploadedPath) {
+      try {
+        const { error: rmErr } = await supabaseService.storage
+          .from('partner-logos')
+          .remove([uploadedPath])
+        if (rmErr)
+          console.error('submitPartnerApplication orphan logo cleanup failed', rmErr)
+      } catch (rmErr) {
+        console.error('submitPartnerApplication orphan logo cleanup threw', rmErr)
+      }
+    }
+    return { status: 'error', message: '저장에 실패했습니다.' }
+  }
 
   await sendPartnerApplicationNotification({
     id: data.id,
