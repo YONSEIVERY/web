@@ -134,7 +134,15 @@ export async function submitAlumniRegistration(
       })
     if (upErr) {
       console.error('submitAlumniRegistration logo upload failed', upErr)
-      await supabaseService.from('alumni').delete().eq('id', alumniRow.id)
+      const { error: delErr } = await supabaseService
+        .from('alumni')
+        .delete()
+        .eq('id', alumniRow.id)
+      if (delErr)
+        console.error(
+          'submitAlumniRegistration rollback delete failed',
+          delErr,
+        )
       return { status: 'error', message: '로고 업로드에 실패했습니다.' }
     }
     uploadedLogoPath = path
@@ -154,7 +162,15 @@ export async function submitAlumniRegistration(
       })
     if (cErr) {
       console.error('submitAlumniRegistration company insert failed', cErr)
-      await supabaseService.from('alumni').delete().eq('id', alumniRow.id)
+      const { error: delErr } = await supabaseService
+        .from('alumni')
+        .delete()
+        .eq('id', alumniRow.id)
+      if (delErr)
+        console.error(
+          'submitAlumniRegistration rollback delete failed',
+          delErr,
+        )
       try {
         const { error: rmErr } = await supabaseService.storage
           .from('alumni-company-logos')
