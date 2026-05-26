@@ -1218,12 +1218,47 @@ git commit -m "chore: drop empty lib/notion placeholder dir"
 
 ## Phase 3 — 폼 + Server Actions (5 tasks)
 
-### Task 10: 일반·산학협력 문의 Server Action
+### Task 10: 산학협력 문의 Server Action (+ rate-limit)
+
+> **Plan-실제 drift 보정 (2026-05-26)**: 원래 plan은 (1) `app/actions/inquiries.ts`가 이미 존재해서 재작성, (2) `components/contact/contact-form.tsx`가 마운트된 contact 페이지가 있다고 가정. 실제로는 둘 다 없음. `/contact` 페이지 디자인이 명시적으로 "no form, channels-only" (mailto/IG 직접 안내) — 일반 문의 폼을 둘 곳이 없음. 따라서 `submitContactInquiry`는 **폐기**, `submitIndustryInquiry`만 신규 작성 (Task 12에서 `/curriculum`에 마운트). 또한 plan에 의존성으로만 등장하는 `lib/server/rate-limit.ts`가 미생성 상태라 본 task에 포함.
 
 **Files:**
-- Modify (재작성): `app/actions/inquiries.ts`
+- Create: `lib/server/rate-limit.ts` (누락 의존성, in-memory sliding window)
+- Create: `app/actions/inquiries.ts` (`submitIndustryInquiry` only)
 
-**Step 1: 재작성**
+---
+
+**Step 0: `lib/server/rate-limit.ts`**
+
+```typescript
+import 'server-only'
+
+type Bucket = { count: number; resetAt: number }
+const buckets = new Map<string, Bucket>()
+
+export function checkRateLimit(
+  key: string,
+  opts: { limit: number; windowMs: number },
+): { ok: boolean; retryAfterSec: number } {
+  const now = Date.now()
+  const bucket = buckets.get(key)
+  if (!bucket || bucket.resetAt <= now) {
+    buckets.set(key, { count: 1, resetAt: now + opts.windowMs })
+    return { ok: true, retryAfterSec: 0 }
+  }
+  if (bucket.count >= opts.limit) {
+    return { ok: false, retryAfterSec: Math.ceil((bucket.resetAt - now) / 1000) }
+  }
+  bucket.count += 1
+  return { ok: true, retryAfterSec: 0 }
+}
+```
+
+Serverless 환경에서 instance 단위 메모리라 perfect limiter는 아니지만, 학회 사이트 규모의 abuse 방지엔 충분 (YAGNI). production에서 Redis 기반으로 교체할지는 별도 결정.
+
+---
+
+**Step 1: `app/actions/inquiries.ts`**
 
 ```typescript
 'use server'
@@ -1333,27 +1368,16 @@ export async function submitIndustryInquiry(
 }
 ```
 
-**Step 2: 기존 ContactForm 컴포넌트 호환성 확인**
+**Step 2 (폐기됨)**: 원래 plan은 ContactForm import 한 줄 교체였으나 ContactForm 컴포넌트 자체가 없음 (`/contact`는 폼 없는 디자인). 본 task에선 폼 측 작업 없음. industry 폼은 Task 12에서 신규 작성.
 
-`components/contact/contact-form.tsx`는 `useActionState(submitInquiry, INITIAL_STATE)` 형태. `submitInquiry` → `submitContactInquiry`로 이름만 변경:
-
-```typescript
-// components/contact/contact-form.tsx
-// before
-import { submitInquiry, INITIAL_STATE } from '@/app/actions/inquiries'
-// after
-import { submitContactInquiry, INITIAL_STATE } from '@/app/actions/inquiries'
-
-// useActionState 라인
-const [state, formAction] = useActionState(submitContactInquiry, INITIAL_STATE)
-```
+**`submitContactInquiry` 함수 (위 코드 블록)**: 본 task에선 **작성하지 않음**. `/contact` 페이지가 채널-only 디자인이므로 마운트 사이트 없음. 향후 학회가 폼을 원하면 그때 추가.
 
 **Step 3: 타입체크 + Commit**
 
 ```bash
 npx tsc --noEmit
-git add app/actions/inquiries.ts components/contact/contact-form.tsx
-git commit -m "feat(actions): rewrite inquiries to Supabase (general + industry)"
+git add lib/server/rate-limit.ts app/actions/inquiries.ts
+git commit -m "feat(actions): add industry inquiry server action + in-memory rate limit"
 ```
 
 ---
