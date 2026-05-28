@@ -1,5 +1,5 @@
 import { getApprovedPartners } from '@/lib/admin/queries'
-import { togglePartnerPublished } from '@/app/admin/actions/publish'
+import { PublishToggle } from '@/components/admin/publish-toggle'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,14 +23,7 @@ export default async function AdminPartnersPage() {
               <Td>{r.category}</Td>
               <Td>{r.sort_order}</Td>
               <Td>
-                <form action={async () => {
-                  'use server'
-                  await togglePartnerPublished(r.id, !r.published)
-                }}>
-                  <button className={`text-xs underline ${r.published ? 'text-green-700' : 'text-fg-muted'}`}>
-                    {r.published ? 'ON' : 'OFF'}
-                  </button>
-                </form>
+                <PublishToggle kind="partner" id={r.id} published={r.published} />
               </Td>
             </tr>
           ))}

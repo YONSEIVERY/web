@@ -1,5 +1,5 @@
 import { getApprovedAlumni } from '@/lib/admin/queries'
-import { toggleAlumniPublished } from '@/app/admin/actions/publish'
+import { PublishToggle } from '@/components/admin/publish-toggle'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,14 +23,7 @@ export default async function AdminAlumniPage() {
               <Td>{r.cohort}기</Td>
               <Td>{r.job_title}</Td>
               <Td>
-                <form action={async () => {
-                  'use server'
-                  await toggleAlumniPublished(r.id, !r.published)
-                }}>
-                  <button className={`text-xs underline ${r.published ? 'text-green-700' : 'text-fg-muted'}`}>
-                    {r.published ? 'ON' : 'OFF'}
-                  </button>
-                </form>
+                <PublishToggle kind="alumni" id={r.id} published={r.published} />
               </Td>
             </tr>
           ))}
