@@ -36,7 +36,7 @@ export default async function InquiriesPage() {
                   <button className="ml-2 text-xs underline">변경</button>
                 </form>
               </Td>
-              <Td>{new Date(r.created_at).toLocaleDateString('ko-KR')}</Td>
+              <Td>{new Date(r.created_at).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</Td>
             </tr>
           ))}
           {rows.length === 0 && <tr><Td colSpan={6}><p className="py-12 text-center text-fg-muted">문의가 없습니다.</p></Td></tr>}

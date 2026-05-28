@@ -23,7 +23,7 @@ export default async function ApplicationsPage() {
             <tr key={a.id} className="border-b border-border">
               <Td>🎓 알럼나이</Td>
               <Td>{a.name} · {a.cohort}기 · {a.job_title}{(a.alumni_companies as { id: string }[]).length > 0 ? ` (+회사 ${(a.alumni_companies as { id: string }[]).length})` : ''}</Td>
-              <Td>{new Date(a.created_at).toLocaleDateString('ko-KR')}</Td>
+              <Td>{new Date(a.created_at).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</Td>
               <Td><Link href={`/admin/applications/alumni/${a.id}` as Route} className="underline">상세</Link></Td>
             </tr>
           ))}
@@ -31,7 +31,7 @@ export default async function ApplicationsPage() {
             <tr key={p.id} className="border-b border-border">
               <Td>🤝 파트너</Td>
               <Td>{p.name} · {p.category} · {p.applicant_name}</Td>
-              <Td>{new Date(p.created_at).toLocaleDateString('ko-KR')}</Td>
+              <Td>{new Date(p.created_at).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</Td>
               <Td><Link href={`/admin/applications/partner/${p.id}` as Route} className="underline">상세</Link></Td>
             </tr>
           ))}
