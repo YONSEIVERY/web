@@ -54,3 +54,11 @@ export async function getApplicationDetail(type: 'alumni' | 'partner', id: strin
     .maybeSingle()
   return data
 }
+
+export async function getInquiries() {
+  const { data } = await supabaseService
+    .from('inquiries')
+    .select('*')
+    .order('created_at', { ascending: false })
+  return data ?? []
+}
