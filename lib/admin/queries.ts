@@ -13,3 +13,44 @@ export async function getAdminCounts() {
     inquiriesNew: inquiriesNew.count ?? 0,
   }
 }
+
+export async function getPendingApplications() {
+  const [alumni, partners] = await Promise.all([
+    supabaseService
+      .from('alumni')
+      .select(`
+        id, name, cohort, job_title, created_at,
+        alumni_companies!alumni_companies_founder_alumni_id_fkey ( id, name )
+      `)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true }),
+    supabaseService
+      .from('partners')
+      .select('id, name, category, applicant_name, created_at')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true }),
+  ])
+  return {
+    alumni: alumni.data ?? [],
+    partners: partners.data ?? [],
+  }
+}
+
+export async function getApplicationDetail(type: 'alumni' | 'partner', id: string) {
+  if (type === 'alumni') {
+    const { data } = await supabaseService
+      .from('alumni')
+      .select(`
+        *, alumni_companies!alumni_companies_founder_alumni_id_fkey ( * )
+      `)
+      .eq('id', id)
+      .maybeSingle()
+    return data
+  }
+  const { data } = await supabaseService
+    .from('partners')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle()
+  return data
+}
