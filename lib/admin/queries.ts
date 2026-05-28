@@ -62,3 +62,21 @@ export async function getInquiries() {
     .order('created_at', { ascending: false })
   return data ?? []
 }
+
+export async function getApprovedAlumni() {
+  const { data } = await supabaseService
+    .from('alumni')
+    .select('id, name, cohort, job_title, published')
+    .eq('status', 'approved')
+    .order('cohort', { ascending: false })
+  return data ?? []
+}
+
+export async function getApprovedPartners() {
+  const { data } = await supabaseService
+    .from('partners')
+    .select('id, name, category, published, sort_order')
+    .eq('status', 'approved')
+    .order('sort_order', { ascending: true })
+  return data ?? []
+}
