@@ -12,7 +12,6 @@ export default async function InquiriesPage() {
       <p translate="no" className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary">INQUIRIES</p>
       <h1 className="mt-2 font-display text-3xl text-fg-primary">문의</h1>
 
-      {/* 메시지 펼침은 후속 — MVP에선 mailto로 답장 */}
       <table className="mt-10 w-full text-sm">
         <thead className="border-b border-border">
           <tr className="text-left">
@@ -43,6 +42,8 @@ export default async function InquiriesPage() {
           {rows.length === 0 && <tr><Td colSpan={6}><p className="py-12 text-center text-fg-muted">문의가 없습니다.</p></Td></tr>}
         </tbody>
       </table>
+
+      {/* 메시지 펼침은 후속 — MVP에선 mailto로 답장 */}
     </div>
   )
 }
