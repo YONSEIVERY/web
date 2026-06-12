@@ -1,11 +1,11 @@
 'use client'
-import { useActionState } from 'react'
+import { useActionState, useEffect, useRef } from 'react'
 import { useFormStatus } from 'react-dom'
+import { submitIndustryInquiry } from '@/app/actions/inquiries'
 import {
-  submitIndustryInquiry,
   INITIAL_STATE,
   type InquiryFormState,
-} from '@/app/actions/inquiries'
+} from '@/app/actions/inquiries-state'
 
 const INPUT_CLASS =
   'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
@@ -76,8 +76,12 @@ function SubmitButton() {
 }
 
 function SuccessBlock() {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [])
   return (
-    <div className="border border-border bg-bg-base p-8">
+    <div ref={ref} className="border border-border bg-bg-base p-8">
       <p
         translate="no"
         className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"

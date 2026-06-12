@@ -4,23 +4,18 @@ import { createClient } from '@/lib/supabase/server'
 import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { sendPartnerApplicationNotification } from '@/lib/email/notifications'
+import type { PartnerFormState } from './partners-state'
 
-// Two clients: anon `supabase` exercises Storage RLS (anon upload allowed by
-// bucket policy); `supabaseService` does the DB insert because partners SELECT
-// policy `(status='approved' and published=true)` filters the RETURNING clause
-// on the just-inserted pending row → would yield empty. `.insert({...})`
-// hardcodes the field list, so defaults still enforce pending+unpublished.
+// anon `supabase` exercises Storage RLS (anon upload allowed by bucket
+// policy). DB insert uses `supabaseService` and pre-generates the UUID
+// client-side: partners SELECT policy `(status='approved' and published=true)`
+// would filter the RETURNING row (still pending), so we don't rely on
+// `.select()` after insert. `.insert({...})` hardcodes the field list, so
+// defaults still enforce pending+unpublished.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MAX_LOGO_BYTES = 2 * 1024 * 1024
 const LOGO_MIME = new Set(['image/png', 'image/jpeg', 'image/svg+xml'])
-
-export type PartnerFormState =
-  | { status: 'idle' }
-  | { status: 'success' }
-  | { status: 'error'; message: string }
-
-export const PARTNER_INITIAL_STATE: PartnerFormState = { status: 'idle' }
 
 async function clientKey() {
   const h = await headers()
@@ -99,20 +94,18 @@ export async function submitPartnerApplication(
     logo_url = pub.publicUrl
   }
 
-  const { data, error } = await supabaseService
-    .from('partners')
-    .insert({
-      name,
-      category,
-      one_liner,
-      logo_url,
-      applicant_name,
-      applicant_email,
-      applicant_note,
-    })
-    .select('id')
-    .single()
-  if (error || !data) {
+  const id = crypto.randomUUID()
+  const { error } = await supabaseService.from('partners').insert({
+    id,
+    name,
+    category,
+    one_liner,
+    logo_url,
+    applicant_name,
+    applicant_email,
+    applicant_note,
+  })
+  if (error) {
     console.error('submitPartnerApplication insert failed', error)
     if (uploadedPath) {
       try {
@@ -129,7 +122,7 @@ export async function submitPartnerApplication(
   }
 
   await sendPartnerApplicationNotification({
-    id: data.id,
+    id,
     name,
     category,
     one_liner,

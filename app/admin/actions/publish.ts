@@ -2,9 +2,7 @@
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
 import { requireAdmin } from '@/lib/admin/is-admin'
-
-export type ToggleState = { ok: boolean; error: string | null }
-export const TOGGLE_INITIAL: ToggleState = { ok: false, error: null }
+import type { ToggleState } from './publish-state'
 
 function readArgs(formData: FormData): { id: string; value: boolean } | null {
   const id = String(formData.get('id') ?? '')

@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { getApplicationDetail } from '@/lib/admin/queries'
@@ -20,10 +21,10 @@ export default async function DetailPage({ params }: { params: Promise<{ type: s
         {Object.entries(data).map(([k, v]) => {
           if (v === null || k === 'id' || typeof v === 'object') return null
           return (
-            <>
-              <dt key={`${k}-dt`} className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted">{k}</dt>
-              <dd key={`${k}-dd`} className="text-fg-subtle">{String(v)}</dd>
-            </>
+            <Fragment key={k}>
+              <dt className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted">{k}</dt>
+              <dd className="text-fg-subtle">{String(v)}</dd>
+            </Fragment>
           )
         })}
       </dl>

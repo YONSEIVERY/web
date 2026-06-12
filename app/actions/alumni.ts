@@ -4,25 +4,18 @@ import { createClient } from '@/lib/supabase/server'
 import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { sendAlumniRegistrationNotification } from '@/lib/email/notifications'
+import type { AlumniFormState } from './alumni-state'
 
-// Two clients (same rationale as partners.ts): anon `supabase` exercises
-// Storage RLS (anon upload allowed by bucket policy); `supabaseService` does
-// the DB inserts because alumni/alumni_companies SELECT policies filter to
-// approved+published rows → the RETURNING clause on a just-inserted pending
-// row would yield empty under anon. Service role also runs the rollback
-// deletes and the orphan logo cleanup (the bucket has no anon DELETE policy).
+// anon `supabase` exercises Storage RLS (anon upload allowed by bucket
+// policy). DB insert uses `supabaseService` with client-pre-generated UUIDs:
+// alumni/alumni_companies SELECT policies filter to approved+published, so
+// we don't rely on RETURNING. Rollback paths still call `supabaseService` —
+// best-effort under anon; failures are logged, not surfaced.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const STAGES = new Set(['idea', 'seed', 'seriesA', 'seriesB', 'growth', 'exit'])
 const MAX_LOGO_BYTES = 2 * 1024 * 1024
 const LOGO_MIME = new Set(['image/png', 'image/jpeg', 'image/svg+xml'])
-
-export type AlumniFormState =
-  | { status: 'idle' }
-  | { status: 'success' }
-  | { status: 'error'; message: string }
-
-export const ALUMNI_INITIAL_STATE: AlumniFormState = { status: 'idle' }
 
 async function clientKey() {
   const h = await headers()
@@ -37,7 +30,8 @@ export async function submitAlumniRegistration(
   _prev: AlumniFormState,
   formData: FormData,
 ): Promise<AlumniFormState> {
-  if (formData.get('website_hp')) return { status: 'success' }
+  // honeypot 제거: 브라우저 autofill이 hidden `website_hp`에 organization 값을
+  // 강제로 채워 트리거가 발동하는 사례 발생. rate-limit + 폼 validation으로 대체.
 
   const name = String(formData.get('name') ?? '').trim()
   const cohortRaw = String(formData.get('cohort') ?? '').trim()
@@ -106,12 +100,11 @@ export async function submitAlumniRegistration(
     }
 
   const supabase = await createClient()
-  const { data: alumniRow, error: aErr } = await supabaseService
+  const alumniId = crypto.randomUUID()
+  const { error: aErr } = await supabaseService
     .from('alumni')
-    .insert({ name, cohort, email, job_title, bio, linkedin_url })
-    .select('id')
-    .single()
-  if (aErr || !alumniRow) {
+    .insert({ id: alumniId, name, cohort, email, job_title, bio, linkedin_url })
+  if (aErr) {
     console.error('submitAlumniRegistration alumni insert failed', aErr)
     return { status: 'error', message: '저장에 실패했습니다.' }
   }
@@ -137,7 +130,7 @@ export async function submitAlumniRegistration(
       const { error: delErr } = await supabaseService
         .from('alumni')
         .delete()
-        .eq('id', alumniRow.id)
+        .eq('id', alumniId)
       if (delErr)
         console.error(
           'submitAlumniRegistration rollback delete failed',
@@ -153,7 +146,7 @@ export async function submitAlumniRegistration(
     const { error: cErr } = await supabaseService
       .from('alumni_companies')
       .insert({
-        founder_alumni_id: alumniRow.id,
+        founder_alumni_id: alumniId,
         name: company.name,
         logo_url: pub.publicUrl,
         one_liner: company.one_liner,
@@ -165,7 +158,7 @@ export async function submitAlumniRegistration(
       const { error: delErr } = await supabaseService
         .from('alumni')
         .delete()
-        .eq('id', alumniRow.id)
+        .eq('id', alumniId)
       if (delErr)
         console.error(
           'submitAlumniRegistration rollback delete failed',
@@ -192,7 +185,7 @@ export async function submitAlumniRegistration(
   }
 
   await sendAlumniRegistrationNotification({
-    alumniId: alumniRow.id,
+    alumniId,
     name,
     cohort,
     job_title,

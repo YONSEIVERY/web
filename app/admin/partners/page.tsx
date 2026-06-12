@@ -1,5 +1,6 @@
 import { getApprovedPartners } from '@/lib/admin/queries'
 import { PublishToggle } from '@/components/admin/publish-toggle'
+import { DeleteButton } from '@/components/admin/delete-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,7 +14,7 @@ export default async function AdminPartnersPage() {
       <table className="mt-10 w-full text-sm">
         <thead className="border-b border-border">
           <tr className="text-left">
-            <Th>회사</Th><Th>카테고리</Th><Th>순서</Th><Th>노출</Th>
+            <Th>회사</Th><Th>카테고리</Th><Th>순서</Th><Th>노출</Th><Th>삭제</Th>
           </tr>
         </thead>
         <tbody>
@@ -25,9 +26,12 @@ export default async function AdminPartnersPage() {
               <Td>
                 <PublishToggle kind="partner" id={r.id} published={r.published} />
               </Td>
+              <Td>
+                <DeleteButton kind="partner" id={r.id} label={r.name} />
+              </Td>
             </tr>
           ))}
-          {rows.length === 0 && <tr><Td colSpan={4}><p className="py-12 text-center text-fg-muted">아직 승인된 파트너가 없습니다.</p></Td></tr>}
+          {rows.length === 0 && <tr><Td colSpan={5}><p className="py-12 text-center text-fg-muted">아직 승인된 파트너가 없습니다.</p></Td></tr>}
         </tbody>
       </table>
     </div>

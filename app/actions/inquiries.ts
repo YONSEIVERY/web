@@ -3,15 +3,9 @@ import { headers } from 'next/headers'
 import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { sendInquiryNotification } from '@/lib/email/notifications'
+import type { InquiryFormState } from './inquiries-state'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-export type InquiryFormState =
-  | { status: 'idle' }
-  | { status: 'success' }
-  | { status: 'error'; message: string }
-
-export const INITIAL_STATE: InquiryFormState = { status: 'idle' }
 
 async function clientKey() {
   const h = await headers()
@@ -45,18 +39,17 @@ export async function submitIndustryInquiry(
   const rl = checkRateLimit(`industry:${await clientKey()}`, { limit: 5, windowMs: 60 * 60 * 1000 })
   if (!rl.ok) return { status: 'error', message: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)` }
 
-  const { data, error } = await supabaseService
+  const id = crypto.randomUUID()
+  const { error } = await supabaseService
     .from('inquiries')
-    .insert({ type: 'INDUSTRY', name, email, affiliation, subject, message })
-    .select('id')
-    .single()
-  if (error || !data) {
+    .insert({ id, type: 'INDUSTRY', name, email, affiliation, subject, message })
+  if (error) {
     console.error('submitIndustryInquiry insert failed', error)
     return { status: 'error', message: '저장에 실패했습니다.' }
   }
 
   await sendInquiryNotification({
-    id: data.id,
+    id,
     type: 'INDUSTRY',
     name,
     email,

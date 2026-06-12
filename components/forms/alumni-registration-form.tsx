@@ -1,11 +1,11 @@
 'use client'
-import { useActionState, useState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { useFormStatus } from 'react-dom'
+import { submitAlumniRegistration } from '@/app/actions/alumni'
 import {
-  submitAlumniRegistration,
   ALUMNI_INITIAL_STATE,
   type AlumniFormState,
-} from '@/app/actions/alumni'
+} from '@/app/actions/alumni-state'
 
 const INPUT_CLASS =
   'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
@@ -23,15 +23,6 @@ export function AlumniRegistrationForm() {
 
   return (
     <form action={action} className="grid grid-cols-1 gap-8">
-      <input
-        type="text"
-        name="website_hp"
-        tabIndex={-1}
-        autoComplete="off"
-        className="absolute -left-[9999px]"
-        aria-hidden
-      />
-
       <Fieldset legend="알럼나이 정보">
         <Field name="name" label="이름" required maxLength={80} />
         <Field
@@ -127,8 +118,12 @@ function SubmitButton() {
 }
 
 function Success() {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [])
   return (
-    <div className="border border-border bg-bg-base p-8">
+    <div ref={ref} className="border border-border bg-bg-base p-8">
       <p
         translate="no"
         className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"

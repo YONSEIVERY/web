@@ -2,12 +2,14 @@
 import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import {
-  TOGGLE_INITIAL,
   toggleAlumniCompanyPublished,
   toggleAlumniPublished,
   togglePartnerPublished,
-  type ToggleState,
 } from '@/app/admin/actions/publish'
+import {
+  TOGGLE_INITIAL,
+  type ToggleState,
+} from '@/app/admin/actions/publish-state'
 
 type Kind = 'alumni' | 'alumni_company' | 'partner'
 
