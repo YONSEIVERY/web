@@ -59,7 +59,7 @@ export default async function DetailPage({ params }: { params: Promise<{ type: s
           await rejectApplication(type as 'alumni' | 'partner', id, String(formData.get('reason') ?? ''))
         }} className="flex gap-2">
           <input name="reason" placeholder="거절 사유 (선택)" className="border border-border px-3 py-2 text-sm" />
-          <button className="font-mono text-xs uppercase tracking-[0.28em] border border-red-600 text-red-600 px-6 py-3">거절</button>
+          <button className="font-mono text-xs uppercase tracking-[0.28em] border border-red-600 text-red-600 px-6 py-3 hover:bg-red-600 hover:text-bg-base transition-colors">거절</button>
         </form>
       </div>
     </div>
