@@ -20,7 +20,7 @@ export const CURRICULUM = {
     headlineLine1: '실패를 통해,',
     headlineLine2: '앞으로 나아가다.',
     subline:
-      'Be ready to fail forward. 한 학기, 네 단계의 정규 트랙과 세 갈래의 보조 세션 — 책장이 아니라 실험실로 묶인 커리큘럼.',
+      '한 학기, 네 단계의 정규 트랙과 세 갈래의 보조 세션. 책상 위가 아니라 시장 위에서 굴러갑니다.',
   },
   tracks: {
     label: 'CURRICULUM',
@@ -103,8 +103,8 @@ export const CURRICULUM = {
   },
   closing: {
     label: 'JOIN',
-    title: '다음 권의 페이지를 함께 채울 사람을 찾습니다.',
-    body: '모집 시즌엔 노션·구글폼으로 진행됩니다. 평소엔 메일·인스타로 가볍게 연락 주세요.',
+    title: '다음 학기를 함께 굴릴 사람을 찾습니다.',
+    body: '메일이나 인스타그램으로 가볍게 연락 주세요. 시즌 일정은 인스타에 가장 먼저 올라갑니다.',
     primary: { label: 'CONTACT', href: '/contact' as const },
     secondary: {
       label: '@VERY_YONSEI',

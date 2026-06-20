@@ -21,7 +21,7 @@ export const DEMODAY = {
     headlineLine1: 'IR 피칭,',
     headlineLine2: 'CEO·VC 앞에.',
     subline:
-      'IR pitch · MVP. 학기의 마지막 무대. 학회의 모든 Unit이 한 학기 동안 다진 Mission을 CEO·VC 심사역 앞에 올려, 평가와 투자로 이어 나가는 자리.',
+      '학기의 마지막 무대. 한 학기 동안 다진 프로젝트를 CEO·VC 심사역 앞에 올려, 평가와 투자로 이어 나가는 자리.',
   },
   about: {
     label: 'WHAT IS IT',
@@ -88,8 +88,8 @@ export const DEMODAY = {
   },
   closing: {
     label: 'JOIN',
-    title: '다음 무대에 올라설 Unit을 찾습니다.',
-    body: '발표 무대에 서는 Unit의 시작은 모집입니다. 시즌엔 노션·구글폼으로 진행됩니다.',
+    title: '다음 무대에 올라설 팀을 찾습니다.',
+    body: '메일이나 인스타그램으로 가볍게 연락 주세요. 시즌 일정은 인스타에 가장 먼저 올라갑니다.',
     primary: { label: 'CONTACT', href: '/contact' as const },
     secondary: {
       label: '@VERY_YONSEI',

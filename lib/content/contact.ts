@@ -19,7 +19,7 @@ export const CONTACT = {
     headlineLine1: '문은 세 개,',
     headlineLine2: '모두 사람이 받습니다.',
     subline:
-      'Three real doors, no contact form. Recruiting, partnership, press — 어떤 용건이든 실제 사람이 받습니다.',
+      '모집·파트너십·언론 — 어떤 용건이든 실제 사람이 직접 받습니다. 폼은 두지 않았습니다.',
   },
   intro: {
     label: 'NOTE',

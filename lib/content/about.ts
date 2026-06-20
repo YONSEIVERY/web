@@ -20,7 +20,7 @@ export const ABOUT = {
     headlineLine1: '아이디어가 현실을',
     headlineLine2: '처음 마주하는 땅.',
     subline:
-      'We are the very first ground where ideas meet reality. 매 학기, 더 단단해진 지반 위에서 다음 기수가 착지합니다.',
+      '매 학기, 더 단단해진 지반 위에서 다음 기수가 착지합니다.',
   },
   origin: {
     label: 'ORIGIN',
@@ -138,8 +138,8 @@ export const ABOUT = {
   },
   closing: {
     label: 'NEXT',
-    title: '다음 학기, 함께 착지할 사람을 찾고 있습니다.',
-    body: '모집 시즌엔 노션·구글폼으로 진행됩니다. 평소엔 메일·인스타로 가볍게 연락 주세요.',
+    title: '다음 학기에 함께 착지할 사람을 찾고 있습니다.',
+    body: '메일이나 인스타그램으로 가볍게 연락 주세요. 시즌 일정은 인스타에 가장 먼저 올라갑니다.',
     primary: { label: 'CONTACT', href: '/contact' as const },
     secondary: {
       label: '@VERY_YONSEI',

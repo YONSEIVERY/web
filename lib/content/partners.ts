@@ -20,7 +20,7 @@ export const PARTNERS = {
     headlineLine1: '땅 밑을 받치는',
     headlineLine2: '단단한 지반.',
     subline:
-      'Bedrock under the field. 우리가 일구는 땅은 우리 혼자 다지지 않습니다. 기업·자본·대학이 그 아래를 함께 받칩니다.',
+      '우리가 일구는 땅은 우리 혼자 다지지 않습니다. 기업·자본·대학이 그 아래를 함께 받칩니다.',
   },
   intro: {
     label: 'WHY',
@@ -55,28 +55,6 @@ export const PARTNERS = {
     label: 'CURRENT VOLUME',
     title: '이번 학기를 함께 받치는 손.',
     note: '각 파트너와는 파트너십을 통한 상호 교류를 진행합니다. 학기 중 추가되는 파트너는 인스타그램으로 안내합니다.',
-    items: [
-      {
-        category: 'CORPORATE',
-        name: 'ZUZU',
-        note: '주식·법무·재무를 한 곳에서 관리하는 스타트업 운영 SaaS · by KODEBOX',
-      },
-      {
-        category: 'CORPORATE',
-        name: 'NOCODERS',
-        note: '노코드 도구로 MVP를 빠르게 만드는 빌더·교육 커뮤니티',
-      },
-      {
-        category: 'CAPITAL',
-        name: 'ALPHA BROTHERS',
-        note: '초기 단계 스타트업에 투자하는 액셀러레이터',
-      },
-      {
-        category: 'ACADEMIC',
-        name: '연세대학교',
-        note: 'VERY의 모교 · 학회 활동의 거점',
-      },
-    ],
   },
   engage: {
     label: 'ENGAGE',
@@ -110,3 +88,19 @@ export const PARTNERS = {
     },
   },
 } as const
+
+/**
+ * Logos for the pre-footer marquee strip rendered site-wide via
+ * `(marketing)/layout.tsx`. Order is the order they appear in the loop.
+ * Source files live in `/public/partners/`.
+ */
+export const PARTNER_LOGOS = [
+  { name: '모두닥', src: '/partners/modudoc.jpeg' },
+  { name: '노코더스', src: '/partners/nocoders.jpeg' },
+  { name: '티오더', src: '/partners/toorder.jpeg' },
+  { name: 'ZUZU', src: '/partners/zuzu.svg' },
+  { name: '알파브라더스', src: '/partners/alphabrothers.png' },
+  { name: 'abmlab', src: '/partners/abmlab.jpeg' },
+  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.png' },
+  { name: '벤처캐피탈협회', src: '/partners/kvca.jpg' },
+] as const
