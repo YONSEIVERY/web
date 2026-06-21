@@ -26,7 +26,7 @@ export const DEMODAY = {
   about: {
     label: 'WHAT IS IT',
     title: '아이디어를, 창업의 현실로.',
-    body: '데모데이는 학회의 Unit이 CEO와 VC 심사역 앞에서 IR 피칭을 진행하여 평가 및 투자를 받는 자리입니다. 학기 동안 다진 지반 위에서 처음으로 외부 청중을 마주하는 무대로, 한 학기의 마지막이자 다음 학기 모집의 첫 신호가 됩니다.',
+    body: '데모데이는 학회의 Unit이 CEO·VC 심사역 앞에서 IR 피칭을 선보이며 평가와 투자로 이어 가는 자리입니다. 한 학기 동안 다져 온 지반 위에서 처음으로 외부 청중을 마주하는 무대이자, 한 학기의 마지막이며 다음 학기 모집의 첫 신호가 됩니다.',
   },
   format: {
     label: 'FORMAT',
@@ -72,7 +72,7 @@ export const DEMODAY = {
       {
         mono: 'ALUMNI',
         title: '학회 동문',
-        body: '직전 학기를 함께 끝낸 졸업 Operators·이전 기수의 회장단·창업가 동문이 객석의 절반을 차지합니다.',
+        body: '직전 학기를 함께 마친 졸업 Operators와 이전 기수의 회장단, 그리고 창업가 동문이 객석의 절반을 채웁니다.',
       },
       {
         mono: 'INVESTORS',

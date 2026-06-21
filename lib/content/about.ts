@@ -25,7 +25,7 @@ export const ABOUT = {
   origin: {
     label: 'ORIGIN',
     title: 'Since 1997.',
-    body: '1997년 벤처창업연구회로 발족한 이래, 연세대학교에서 가장 오래 이어진 창업학회로서 매 학기 더 단단해진 지반을 다음 기수에게 넘겨왔습니다. 학기마다 새로 일군 땅, 그 누적이 학회의 정체성입니다.',
+    body: '1997년 벤처창업연구회로 발족한 이래, 연세대학교에서 가장 오랜 명맥을 이어 온 창업학회로서 매 학기 더 단단해진 지반을 다음 기수에게 물려주어 왔습니다. 학기마다 새로 일군 땅, 그 누적이 곧 학회의 정체성입니다.',
     milestones: [
       { year: '1997', label: 'FOUNDED', note: '벤처창업연구회로 발족' },
       { year: '2026', label: 'VOL.43', note: '43기, 현재 진행 중' },
@@ -44,7 +44,7 @@ export const ABOUT = {
   coreValue: {
     label: 'CORE VALUE',
     title: 'VERY의 핵심가치.',
-    body: '학회를 받치는 세 개의 기둥. 지식·경험·사람으로 학회를 운영합니다.',
+    body: 'VERY를 떠받치는 세 기둥. 지식과 경험, 그리고 사람으로 학회가 움직입니다.',
     items: [
       {
         mono: 'KNOWLEDGE',
@@ -113,7 +113,7 @@ export const ABOUT = {
       {
         monoLabel: 'PARTNERS',
         title: '산학·시장 파트너',
-        body: '기업·VC·교내 창업 트랙과의 파트너십으로 실전 경험을 확장합니다.',
+        body: '기업과 VC, 교내 창업 트랙과의 파트너십을 통해 실전 경험의 폭을 넓혀 갑니다.',
         href: '/partners',
       },
     ],

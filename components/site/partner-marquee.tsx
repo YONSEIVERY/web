@@ -16,10 +16,18 @@ import { PARTNER_LOGOS } from '@/lib/content/partners'
 
 export function PartnerMarquee() {
   return (
-    <div
-      aria-label="이번 학기 파트너"
+    <section
+      aria-label="이번 학기 협력사"
       className="relative overflow-hidden border-y border-border bg-bg-base py-6 md:py-10"
     >
+      <div className="mb-4 flex items-center justify-between px-6 md:mb-6 md:px-10">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-fg-muted md:text-xs">
+          Partners — Vol.43
+        </p>
+        <p className="text-xs text-fg-muted md:text-sm">
+          이번 학기를 함께 받치는 협력사
+        </p>
+      </div>
       <div className="very-marquee-track flex w-max items-center gap-12 md:gap-20" aria-hidden>
         {[...PARTNER_LOGOS, ...PARTNER_LOGOS].map((logo, i) => (
           <div key={i} className="relative h-10 w-32 shrink-0 md:h-14 md:w-44">
@@ -28,7 +36,7 @@ export function PartnerMarquee() {
               alt=""
               fill
               sizes="(max-width: 768px) 128px, 176px"
-              className="object-contain"
+              className="object-contain brightness-0 invert opacity-80"
             />
           </div>
         ))}
@@ -38,6 +46,6 @@ export function PartnerMarquee() {
           <li key={logo.name}>{logo.name}</li>
         ))}
       </ul>
-    </div>
+    </section>
   )
 }
