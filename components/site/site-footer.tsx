@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import veryMark from '@/public/brand/very-mark.png'
 import { NAV_ITEMS } from '@/lib/content/nav'
 import { SITE } from '@/lib/content/site'
+import { getSiteConfig } from '@/lib/data/site-config'
 
 /**
  * Site Footer — magazine colophon.
@@ -16,9 +17,11 @@ import { SITE } from '@/lib/content/site'
  * Pure RSC, content sourced from `lib/content/site.ts` and `nav.ts` so
  * there's a single edit point for IA + contact info.
  */
-export function SiteFooter() {
-  const startYear = SITE.since
+export async function SiteFooter() {
+  const siteConfig = await getSiteConfig()
+  const startYear = siteConfig.sinceYear
   const endYear = new Date().getFullYear()
+  const semesterDigit = siteConfig.semester === '1학기' ? '1' : '2'
 
   return (
     <footer className="relative border-t border-border bg-bg-base px-6 pb-10 pt-20 md:px-10 md:pb-12 md:pt-28">
@@ -39,7 +42,7 @@ export function SiteFooter() {
             translate="no"
             className="mt-6 font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
           >
-            VOL.{SITE.currentCohort} / {endYear}—1 · EST. {SITE.since}
+            VOL.{siteConfig.cohort} / {endYear}—{semesterDigit} · EST. {siteConfig.sinceYear}
           </p>
         </div>
 

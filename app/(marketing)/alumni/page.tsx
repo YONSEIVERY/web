@@ -2,6 +2,8 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { ALUMNI } from '@/lib/content/alumni'
+import { getAlumniCompanies } from '@/lib/data/alumni'
+import type { AlumniCompany } from '@/lib/data/alumni'
 
 export const metadata: Metadata = {
   title: '알럼나이',
@@ -16,14 +18,16 @@ export const metadata: Metadata = {
  * wired. Status pill ("TBA") is styled like /demoday's status column so
  * users read it as "coming soon" rather than missing data.
  */
-export default function AlumniPage() {
+export default async function AlumniPage() {
+  const companies = await getAlumniCompanies()
   return (
     <main className="pt-14 md:pt-16">
       <AlumniHero />
       <IntroSection />
       <StatsSection />
-      <SpotlightSection />
+      <SpotlightSection companies={companies} />
       <PathwaysSection />
+      <RegisterCTASection />
       <ClosingSection />
     </main>
   )
@@ -110,8 +114,8 @@ function StatsSection() {
   )
 }
 
-function SpotlightSection() {
-  const { label, title, note, items } = ALUMNI.spotlight
+function SpotlightSection({ companies }: { companies: AlumniCompany[] }) {
+  const { label, title, note } = ALUMNI.spotlight
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <SectionLabel label={label} className="col-span-12 md:col-span-3" />
@@ -122,45 +126,39 @@ function SpotlightSection() {
         <p className="about-anim-body mt-6 max-w-[58ch] font-mono text-[11px] uppercase tracking-[0.24em] leading-[1.7] text-fg-muted md:text-xs">
           {note}
         </p>
-        <ul className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:grid-cols-2 md:border md:border-border">
-          {items.map((item) => (
-            <li key={`${item.cohort}-${item.domain}`} className="bg-bg-base">
-              <div className="flex h-full flex-col gap-4 px-6 py-8 md:px-8 md:py-10">
-                <div className="flex items-baseline gap-4">
-                  <span
-                    translate="no"
-                    className="font-display text-2xl font-bold leading-none tracking-tight text-fg-muted md:text-3xl"
-                  >
-                    {item.cohort}
-                  </span>
-                  <span
-                    translate="no"
-                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
-                  >
-                    {item.year}
-                  </span>
-                </div>
-                <div className="flex items-baseline justify-between gap-4">
-                  <p
-                    translate="no"
-                    className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl"
-                  >
-                    {item.name}
+        {companies.length === 0 ? (
+          <p className="about-anim-body mt-12 border-t border-border pt-10 text-sm leading-[1.7] text-fg-muted md:text-base">
+            곧 공개됩니다.
+          </p>
+        ) : (
+          <ul className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:grid-cols-2 md:border md:border-border">
+            {companies.map((company) => (
+              <li key={company.id} className="bg-bg-base">
+                <div className="flex h-full flex-col gap-4 px-6 py-8 md:px-8 md:py-10">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <p
+                      translate="no"
+                      className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl"
+                    >
+                      {company.name}
+                    </p>
+                    {company.stage && (
+                      <span
+                        translate="no"
+                        className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                      >
+                        {company.stage}
+                      </span>
+                    )}
+                  </div>
+                  <p className="max-w-[42ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
+                    {company.oneLiner}
                   </p>
-                  <span
-                    translate="no"
-                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
-                  >
-                    {item.domain}
-                  </span>
                 </div>
-                <p className="max-w-[42ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
-                  {item.note}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   )
@@ -197,6 +195,33 @@ function PathwaysSection() {
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  )
+}
+
+function RegisterCTASection() {
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label="REGISTER" className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          알럼나이 등록
+        </h2>
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          VERY를 거쳐간 사람이라면 누구든 — 본인 정보와 (있다면) 회사도 함께
+          알려주세요.
+        </p>
+        <div className="about-anim-meta mt-10 flex flex-wrap items-center gap-6 md:gap-8">
+          <Link
+            href={'/alumni/register' as Route}
+            translate="no"
+            className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+          >
+            알럼나이 등록하기
+            <span aria-hidden>→</span>
+          </Link>
+        </div>
       </div>
     </section>
   )

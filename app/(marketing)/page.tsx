@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { MANIFESTO } from '@/lib/content/manifesto'
-import { SITE, STATS } from '@/lib/content/site'
+import { STATS } from '@/lib/content/site'
+import { getSiteConfig } from '@/lib/data/site-config'
 
 /**
  * Home Hero — Editorial Cinematic.
@@ -14,7 +15,20 @@ import { SITE, STATS } from '@/lib/content/site'
  *
  * All motion is CSS-only (see globals.css), so this stays a server component.
  */
-function HomeHero() {
+async function HomeHero() {
+  const siteConfig = await getSiteConfig()
+  const semesterDigit = siteConfig.semester === '1학기' ? '1' : '2'
+  const cornerLabels: ReadonlyArray<{
+    slot: CornerSlot
+    text: string
+    accent: boolean
+    delayMs: number
+  }> = [
+    { slot: 'tl', text: `VOL.${siteConfig.cohort} / ${siteConfig.year}—${semesterDigit}`, accent: true, delayMs: 0 },
+    { slot: 'tr', text: `EST. ${siteConfig.sinceYear}`, accent: false, delayMs: 100 },
+    { slot: 'bl', text: 'YONSEI UNIVERSITY', accent: false, delayMs: 200 },
+    { slot: 'br', text: 'SEOUL, KR', accent: false, delayMs: 300 },
+  ]
   return (
     <section className="relative h-[100dvh] w-full overflow-hidden">
       <h1 className="sr-only" translate="no">
@@ -23,7 +37,7 @@ function HomeHero() {
 
       <HeroGlow />
       <HeroFrame />
-      <HeroCorners />
+      <HeroCorners labels={cornerLabels} />
       <HeroCenterStack />
       <HeroScrollHint />
     </section>
@@ -86,22 +100,10 @@ function FrameVertical({ side }: { side: 'left' | 'right' }) {
 
 type CornerSlot = 'tl' | 'tr' | 'bl' | 'br'
 
-const CORNER_LABELS: ReadonlyArray<{
-  slot: CornerSlot
-  text: string
-  accent: boolean
-  delayMs: number
-}> = [
-  { slot: 'tl', text: 'VOL.43 / 2026—1', accent: true, delayMs: 0 },
-  { slot: 'tr', text: 'EST. 1997', accent: false, delayMs: 100 },
-  { slot: 'bl', text: 'YONSEI UNIVERSITY', accent: false, delayMs: 200 },
-  { slot: 'br', text: 'SEOUL, KR', accent: false, delayMs: 300 },
-]
-
-function HeroCorners() {
+function HeroCorners({ labels }: { labels: ReadonlyArray<{ slot: CornerSlot; text: string; accent: boolean; delayMs: number }> }) {
   return (
     <>
-      {CORNER_LABELS.map((label) => (
+      {labels.map((label) => (
         <CornerLabel key={label.slot} {...label} />
       ))}
     </>
@@ -343,19 +345,21 @@ function ManifestoBlock({
  * the `+` sign signals "at least this many" so the copy reads honestly
  * until the authoritative numbers land.
  */
-function StatsSection() {
+async function StatsSection() {
+  const siteConfig = await getSiteConfig()
+  const yearsActive = siteConfig.year - siteConfig.sinceYear
   const cells: ReadonlyArray<{
     value: string
     label: string
     caption: string
   }> = [
     {
-      value: String(STATS.yearsActive),
+      value: String(yearsActive),
       label: 'YEARS',
-      caption: `${SITE.since}년부터 멈춘 적 없는 활동`,
+      caption: `${siteConfig.sinceYear}년부터 멈춘 적 없는 활동`,
     },
     {
-      value: String(STATS.cohorts),
+      value: String(siteConfig.cohort),
       label: 'COHORTS',
       caption: '학기마다 다진 한 묶음의 지반',
     },
@@ -383,7 +387,7 @@ function StatsSection() {
         className="stats-anim-eyebrow flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
       >
         <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-        $ stats --vol={STATS.cohorts}
+        $ stats --vol={siteConfig.cohort}
       </p>
 
       <hr
@@ -455,7 +459,7 @@ function StatCell({
   )
 }
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <main>
       <HomeHero />

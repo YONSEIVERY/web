@@ -6,10 +6,11 @@
  * Magazine vocabulary (책장 / 표지 / 한 권) is reserved for masthead-style
  * markers (VOL.43 etc.); body copy uses 지반 / 기수 / 누적.
  *
- * Society-side data is not yet wired (no Notion DB, no canonical alumni
- * roster). Spotlight cards are intentionally placeholder-shaped so the
- * layout reads as "coming soon" rather than fake. Pull from `STATS` so
- * the counters stay aligned with the home page's marquee.
+ * Canonical alumni roster is managed in the Supabase admin DB; entries
+ * appear here after the operator approves them. Spotlight cards below
+ * are intentionally placeholder-shaped so the layout reads as "coming
+ * soon" rather than fake. Pull from `STATS` so the counters stay aligned
+ * with the home page's marquee.
  */
 import { STATS } from './site'
 
@@ -19,12 +20,12 @@ export const ALUMNI = {
     headlineLine1: '졸업은 끝이 아니라,',
     headlineLine2: '다음 지반의 시작.',
     subline:
-      'Once VERY, always VERY. 학회를 거친 사람은 학기와 함께 사라지지 않습니다. 매 기수가 더 단단해진 지반으로 누적됩니다.',
+      '학회를 거친 사람은 학기와 함께 사라지지 않습니다. 매 기수가 더 단단해진 지반으로 누적됩니다.',
   },
   intro: {
     label: 'NETWORK',
-    title: '한 학기 끝나도, 지반은 닫히지 않습니다.',
-    body: 'VERY의 알럼나이 네트워크는 학기가 끝나도 이어지는 누적된 지반입니다. 매 기수의 회원이 다음 기수의 멘토·투자자·동료가 되는 구조로, 30년 가까이 그 두께를 더해왔습니다.',
+    title: '학기로 끝나지 않는 네트워크.',
+    body: '학기가 끝나도 네트워크의 문은 닫히지 않습니다. 선배 기수가 후배 팀의 멘토와 투자자, 동료로 다시 돌아와 30년 가까운 시간 동안 그 두께를 더해 왔습니다.',
   },
   stats: {
     label: 'BY THE NUMBERS',
@@ -55,7 +56,7 @@ export const ALUMNI = {
   spotlight: {
     label: 'SPOTLIGHT',
     title: '지반 위에 선 회사들.',
-    note: '정식 알럼나이 로스터는 노션 DB 연동 시 자동으로 갱신됩니다. 아래는 자리를 잡아둔 카드들입니다.',
+    note: '정식 알럼나이 명단은 운영진 검토를 거쳐 순차적으로 공개됩니다. 아래는 그 자리를 미리 마련해 둔 카드입니다.',
     items: [
       {
         cohort: 'VOL.40',
@@ -110,8 +111,8 @@ export const ALUMNI = {
   },
   closing: {
     label: 'JOIN',
-    title: '다음 기수에 이름을 올릴 사람을 찾고 있습니다.',
-    body: '알럼나이 네트워크의 시작은 한 학기를 함께 끝내는 것입니다. 모집 시즌엔 노션·구글폼으로, 평소엔 메일·인스타로 연락 주세요.',
+    title: '다음 기수에 합류할 사람을 찾고 있습니다.',
+    body: '메일이나 인스타그램으로 가볍게 연락 주세요. 시즌 일정은 인스타에 가장 먼저 올라갑니다.',
     primary: { label: 'CONTACT', href: '/contact' as const },
     secondary: {
       label: '@VERY_YONSEI',
