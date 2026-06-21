@@ -36,7 +36,7 @@ export function PartnerMarquee() {
               alt=""
               fill
               sizes="(max-width: 768px) 128px, 176px"
-              className="object-contain brightness-0 invert opacity-80"
+              className="object-contain"
             />
           </div>
         ))}
