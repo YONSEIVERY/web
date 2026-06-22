@@ -1,17 +1,22 @@
 /**
  * Partner marquee — pre-footer band.
  *
- * Replaces the prior `VeryMarquee` wordmark pattern. Renders the current
- * volume's partner logos as a horizontally-scrolling strip directly above
- * the colophon footer. Tokens are duplicated so the CSS `translateX(-50%)`
- * loop reads seamless; animation is gated by `prefers-reduced-motion`
- * in globals.css.
+ * Renders the current volume's partner logos as a horizontally-scrolling
+ * strip directly above the colophon footer. Tokens are duplicated so the
+ * CSS `translateX(-50%)` loop reads seamless; animation is gated by
+ * `prefers-reduced-motion` in globals.css.
  *
- * Decorative + informational — `aria-hidden` on the visual loop, but each
- * Image carries an alt so screen readers still get the partner name once
- * (we don't repeat it 16 times).
+ * Sizing: each logo gets a fixed height with `w-auto` so its native
+ * aspect ratio is preserved — fitting variable-shape SVGs into a fixed
+ * box (Image with `fill` + `object-contain`) leaves visible whitespace
+ * around square marks. Plain `<img>` is used instead of next/image
+ * because (a) SVG doesn't benefit from raster optimization and (b) we
+ * need width to follow each SVG's intrinsic aspect.
+ *
+ * Decorative + informational — `aria-hidden` on the visual loop, but
+ * each logo's name is exposed once via the sr-only list below so screen
+ * readers don't have to read it 16 times.
  */
-import Image from 'next/image'
 import { PARTNER_LOGOS } from '@/lib/content/partners'
 
 export function PartnerMarquee() {
@@ -30,15 +35,13 @@ export function PartnerMarquee() {
       </div>
       <div className="very-marquee-track flex w-max items-center gap-14 md:gap-24" aria-hidden>
         {[...PARTNER_LOGOS, ...PARTNER_LOGOS].map((logo, i) => (
-          <div key={i} className="relative h-16 w-44 shrink-0 md:h-24 md:w-64">
-            <Image
-              src={logo.src}
-              alt=""
-              fill
-              sizes="(max-width: 768px) 176px, 256px"
-              className={`object-contain${logo.invert ? ' brightness-0 invert' : ''}`}
-            />
-          </div>
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={i}
+            src={logo.src}
+            alt=""
+            className={`block h-12 w-auto shrink-0 md:h-20${logo.invert ? ' brightness-0 invert' : ''}`}
+          />
         ))}
       </div>
       <ul className="sr-only">
