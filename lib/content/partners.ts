@@ -108,11 +108,11 @@ export type PartnerLogo = {
 
 export const PARTNER_LOGOS: readonly PartnerLogo[] = [
   { name: '모두닥', src: '/partners/modudoc.svg' },
-  { name: '노코더스', src: '/partners/nocoders.svg', invert: true },
+  { name: '노코더스', src: '/partners/nocoders.svg' },
   { name: '티오더', src: '/partners/toorder.svg' },
   { name: 'ZUZU', src: '/partners/zuzu.svg' },
   { name: '알파브라더스', src: '/partners/alphabrothers.svg' },
   { name: 'abmlab', src: '/partners/abmlab.svg' },
-  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.svg', invert: true },
-  { name: '벤처캐피탈협회', src: '/partners/kvca.svg', invert: true },
+  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.svg' },
+  { name: '벤처캐피탈협회', src: '/partners/kvca.svg' },
 ]
