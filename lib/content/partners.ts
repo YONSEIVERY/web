@@ -95,12 +95,12 @@ export const PARTNERS = {
  * Source files live in `/public/partners/`.
  */
 export const PARTNER_LOGOS = [
-  { name: '모두닥', src: '/partners/modudoc.jpeg' },
-  { name: '노코더스', src: '/partners/nocoders.jpeg' },
-  { name: '티오더', src: '/partners/toorder.jpeg' },
+  { name: '모두닥', src: '/partners/modudoc.svg' },
+  { name: '노코더스', src: '/partners/nocoders.svg' },
+  { name: '티오더', src: '/partners/toorder.svg' },
   { name: 'ZUZU', src: '/partners/zuzu.svg' },
-  { name: '알파브라더스', src: '/partners/alphabrothers.png' },
-  { name: 'abmlab', src: '/partners/abmlab.jpeg' },
-  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.png' },
-  { name: '벤처캐피탈협회', src: '/partners/kvca.jpg' },
+  { name: '알파브라더스', src: '/partners/alphabrothers.svg' },
+  { name: 'abmlab', src: '/partners/abmlab.svg' },
+  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.svg' },
+  { name: '벤처캐피탈협회', src: '/partners/kvca.svg' },
 ] as const
