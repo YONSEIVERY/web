@@ -94,13 +94,25 @@ export const PARTNERS = {
  * `(marketing)/layout.tsx`. Order is the order they appear in the loop.
  * Source files live in `/public/partners/`.
  */
-export const PARTNER_LOGOS = [
+/**
+ * `invert: true` forces the logo to render as a pure white silhouette
+ * via CSS `brightness-0 invert` — used for marks whose source artwork
+ * only contains dark fills and would otherwise read as black-on-black
+ * against the site background.
+ */
+export type PartnerLogo = {
+  name: string
+  src: string
+  invert?: boolean
+}
+
+export const PARTNER_LOGOS: readonly PartnerLogo[] = [
   { name: '모두닥', src: '/partners/modudoc.svg' },
-  { name: '노코더스', src: '/partners/nocoders.svg' },
+  { name: '노코더스', src: '/partners/nocoders.svg', invert: true },
   { name: '티오더', src: '/partners/toorder.svg' },
   { name: 'ZUZU', src: '/partners/zuzu.svg' },
   { name: '알파브라더스', src: '/partners/alphabrothers.svg' },
   { name: 'abmlab', src: '/partners/abmlab.svg' },
-  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.svg' },
-  { name: '벤처캐피탈협회', src: '/partners/kvca.svg' },
-] as const
+  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.svg', invert: true },
+  { name: '벤처캐피탈협회', src: '/partners/kvca.svg', invert: true },
+]

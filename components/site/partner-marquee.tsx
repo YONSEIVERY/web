@@ -28,15 +28,15 @@ export function PartnerMarquee() {
           이번 학기를 함께 받치는 협력사
         </p>
       </div>
-      <div className="very-marquee-track flex w-max items-center gap-12 md:gap-20" aria-hidden>
+      <div className="very-marquee-track flex w-max items-center gap-14 md:gap-24" aria-hidden>
         {[...PARTNER_LOGOS, ...PARTNER_LOGOS].map((logo, i) => (
-          <div key={i} className="relative h-10 w-32 shrink-0 md:h-14 md:w-44">
+          <div key={i} className="relative h-16 w-44 shrink-0 md:h-24 md:w-64">
             <Image
               src={logo.src}
               alt=""
               fill
-              sizes="(max-width: 768px) 128px, 176px"
-              className="object-contain"
+              sizes="(max-width: 768px) 176px, 256px"
+              className={`object-contain${logo.invert ? ' brightness-0 invert' : ''}`}
             />
           </div>
         ))}
