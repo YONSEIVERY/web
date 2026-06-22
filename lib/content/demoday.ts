@@ -1,23 +1,17 @@
 /**
- * /demoday page content.
+ * /demoday 정적 카피.
  *
- * Tone anchored to VERY_43기_OT.pdf p.4 — "데모데이 / #IR PITCH #MVP /
- * 여러분의 아이디어를 창업을 통해 현실로 만드세요." Demoday is the IR
- * pitch in front of CEO/VC reviewers, not a generic show-and-tell. Keep
- * the copy faithful to that framing.
+ * 회차별로 바뀌는 정보(헤드라인의 회차 표기, 일정, 포스터, 신청 폼 옵션,
+ * 과거 회차 목록)는 모두 `demoday_events` 테이블에서 가져온다. 여기 남는
+ * 것은 시즌이 바뀌어도 그대로 유지되는 톤·카피뿐이다.
  *
- * Vocabulary note: this page (and /contact recruit) is where the FIELD
- * vocabulary from the VERY BI doc lands — teams are "Unit", projects are
- * "Mission", members are "Operators". Elsewhere on the site we still say
- * 회원·팀·프로젝트 in plain Korean.
- *
- * Recent volume titles and dates are placeholders — society will replace
- * with the canonical lineup from past programs. Keep the array length
- * stable (3 entries) so the layout grid doesn't have to handle empty cells.
+ * Tone: VERY_43기_OT.pdf p.4 — "데모데이 / #IR PITCH #MVP". CEO/VC 심사역
+ * 앞 IR 피칭이라는 프레임을 유지한다. 이 페이지에서는 학회 팀을 "Unit"이 아닌
+ * "창업팀"으로 표기 (회장 지침). FIELD 어휘는 /contact recruit에서만 사용.
  */
 export const DEMODAY = {
   hero: {
-    eyebrow: 'Demoday — Vol.43 / 2026—1',
+    eventTitle: 'VERIFY',
     headlineLine1: 'IR 피칭,',
     headlineLine2: 'CEO·VC 앞에.',
     subline:
@@ -26,44 +20,21 @@ export const DEMODAY = {
   about: {
     label: 'WHAT IS IT',
     title: '아이디어를, 창업의 현실로.',
-    body: '데모데이는 학회의 Unit이 CEO·VC 심사역 앞에서 IR 피칭을 선보이며 평가와 투자로 이어 가는 자리입니다. 한 학기 동안 다져 온 지반 위에서 처음으로 외부 청중을 마주하는 무대이자, 한 학기의 마지막이며 다음 학기 모집의 첫 신호가 됩니다.',
+    body: '데모데이는 학회의 창업팀이 CEO·VC 심사역 앞에서 IR 피칭을 선보이며 평가와 투자로 이어 가는 자리입니다. 한 학기 동안 다져 온 지반 위에서 처음으로 외부 청중을 마주하는 무대이자, 한 학기의 마지막이며 다음 학기 모집의 첫 신호가 됩니다.',
   },
   format: {
     label: 'FORMAT',
-    title: '한 저녁, 모든 Unit, IR 피칭.',
-    body: '학기 말 하루 저녁, 학회의 모든 Unit이 같은 무대에서 IR 피칭을 진행합니다. CEO·VC 심사역의 평가와 동문·교수진의 합석으로 세 막이 이어집니다.',
+    title: '최종 무대, 모든 창업팀, IR 피칭.',
+    body: '학기 말 하루, 학회의 모든 창업팀이 같은 무대에 오릅니다. CEO·VC 심사역의 평가와 동문·교수진의 합석으로 한 학기 커리큘럼의 결산이 이루어집니다.',
     stats: [
-      { value: '1일', label: 'SINGLE NIGHT', note: '학기 말 하루 저녁' },
-      { value: '10+', label: 'UNITS', note: '학회의 모든 팀(Unit)' },
-      { value: '3막', label: 'ACTS', note: 'IR 피칭 · 심사 · 네트워킹' },
+      { value: '1일', label: 'ONE STAGE', note: '학기 말 결산 무대' },
+      { value: '10+', label: 'TEAMS', note: '액팅 · 알럼 양쪽 모두' },
+      { value: '100+', label: 'GUESTS', note: '심사역 · 동문 · 교내 게스트' },
     ],
   },
   volumes: {
     label: 'RECENT VOLUMES',
     title: '최근의 무대들.',
-    items: [
-      {
-        volume: 'VOL.43',
-        year: '2026',
-        status: 'UPCOMING',
-        title: '준비 중',
-        note: '현재 진행 중인 학기의 데모데이. 일정은 모집 시즌에 함께 공지됩니다.',
-      },
-      {
-        volume: 'VOL.42',
-        year: '2025',
-        status: 'CLOSED',
-        title: '직전 회차',
-        note: '동문·외부 청중과 함께 마무리한 직전 데모데이. 정식 리캡은 추후 아카이브로 정리됩니다.',
-      },
-      {
-        volume: 'VOL.41',
-        year: '2025',
-        status: 'CLOSED',
-        title: '한 학기 더 전',
-        note: '학회가 매 학기 다져온 누적의 무대. 자세한 기록은 향후 아카이브 페이지에서.',
-      },
-    ],
   },
   audience: {
     label: 'AUDIENCE',
@@ -85,6 +56,10 @@ export const DEMODAY = {
         body: '연세대학교 창업 트랙과 산학 파트너십을 함께 가져가는 교내·외부 관계자가 객석에 함께합니다.',
       },
     ],
+  },
+  schedule: {
+    label: 'SCHEDULE',
+    title: '타임테이블.',
   },
   closing: {
     label: 'JOIN',

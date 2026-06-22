@@ -3,6 +3,7 @@ import { resend, NOTIFY_TO, NOTIFY_FROM } from './client'
 import InquiryNotification from '@/emails/inquiry-notification'
 import PartnerApplicationNotification from '@/emails/partner-application-notification'
 import AlumniRegistrationNotification from '@/emails/alumni-registration-notification'
+import DemodayAttendeeNotification from '@/emails/demoday-attendee-notification'
 
 export async function sendInquiryNotification(args: {
   id: string
@@ -43,6 +44,34 @@ export async function sendPartnerApplicationNotification(args: {
     })
   } catch (e) {
     console.error('sendPartnerApplicationNotification failed', e)
+  }
+}
+
+export async function sendDemodayAttendeeNotification(args: {
+  eventId: string
+  attendeeId: string
+  volume: number
+  semester: string
+  name: string
+  affiliation: string
+  email: string
+  phone: string
+  isVeryAlumni: boolean
+  veryCohort: number | null
+  attendAfterparty: boolean | null
+  purposes: string[]
+  role: string
+  referralSources: string[]
+}) {
+  try {
+    await resend.emails.send({
+      from: NOTIFY_FROM,
+      to: NOTIFY_TO,
+      subject: `[VERY] 데모데이 Vol.${args.volume} 참관 신청 — ${args.name}`,
+      react: DemodayAttendeeNotification(args),
+    })
+  } catch (e) {
+    console.error('sendDemodayAttendeeNotification failed', e)
   }
 }
 

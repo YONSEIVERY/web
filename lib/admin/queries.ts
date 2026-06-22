@@ -2,16 +2,33 @@ import 'server-only'
 import { supabaseService } from '@/lib/supabase/service'
 
 export async function getAdminCounts() {
-  const [alumniPending, partnerPending, inquiriesNew] = await Promise.all([
-    supabaseService.from('alumni').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabaseService.from('partners').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabaseService.from('inquiries').select('id', { count: 'exact', head: true }).eq('status', 'new'),
-  ])
+  const [alumniPending, partnerPending, inquiriesNew, demodayCurrentAttendees] =
+    await Promise.all([
+      supabaseService.from('alumni').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabaseService.from('partners').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabaseService.from('inquiries').select('id', { count: 'exact', head: true }).eq('status', 'new'),
+      currentDemodayAttendeeCount(),
+    ])
   return {
     alumniPending: alumniPending.count ?? 0,
     partnerPending: partnerPending.count ?? 0,
     inquiriesNew: inquiriesNew.count ?? 0,
+    demodayCurrentAttendees,
   }
+}
+
+async function currentDemodayAttendeeCount(): Promise<number> {
+  const { data } = await supabaseService
+    .from('demoday_events')
+    .select('id')
+    .eq('is_current', true)
+    .maybeSingle()
+  if (!data) return 0
+  const { count } = await supabaseService
+    .from('demoday_attendees')
+    .select('id', { count: 'exact', head: true })
+    .eq('event_id', (data as { id: string }).id)
+  return count ?? 0
 }
 
 export async function getPendingApplications() {

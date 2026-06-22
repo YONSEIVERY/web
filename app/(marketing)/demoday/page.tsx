@@ -2,36 +2,92 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { DEMODAY } from '@/lib/content/demoday'
+import {
+  getCurrentDemoday,
+  getDemodayVolumes,
+  type DemodayEvent,
+  type DemodayScheduleItem,
+} from '@/lib/demoday/queries'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: '데모데이',
   description:
-    'VERY의 학기 말 데모데이. 학회의 모든 팀이 한 무대에서 발표하고, 동문·투자자·교수진이 객석에서 함께하는 한 저녁의 표지.',
+    'VERY의 학기 말 데모데이. 학회의 모든 창업팀이 한 무대에 올라 IR 피칭으로 한 학기를 결산하는 자리.',
 }
 
-/**
- * /demoday — semester finale stage page.
- *
- * Shares the `about-anim-*` reveal namespace so cross-page motion stays
- * unified. The recent-volumes block uses a status pill ("UPCOMING" /
- * "CLOSED") instead of explicit dates, since the society hasn't published
- * the canonical schedule yet.
- */
-export default function DemodayPage() {
+const SEMESTER_LABEL: Record<string, string> = {
+  '1학기': '1',
+  '2학기': '2',
+}
+
+function formatVolumeMono(event: DemodayEvent) {
+  const year = formatVolumeYear(event)
+  const sem = SEMESTER_LABEL[event.semester] ?? '1'
+  return year
+    ? `Demoday — Vol.${event.volume} / ${year}—${sem}`
+    : `Demoday — Vol.${event.volume} / ${event.semester}`
+}
+
+function formatVolumeYear(event: DemodayEvent): number | null {
+  if (!event.event_date) return null
+  return new Date(event.event_date).getFullYear()
+}
+
+const DOW_MONO = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const
+
+function formatHM(date: Date) {
+  const hh = String(date.getHours()).padStart(2, '0')
+  const mm = String(date.getMinutes()).padStart(2, '0')
+  return `${hh}:${mm}`
+}
+
+function formatVolumeDate(event: DemodayEvent) {
+  if (!event.event_date) return null
+  const start = new Date(event.event_date)
+  const y = start.getFullYear()
+  const m = String(start.getMonth() + 1).padStart(2, '0')
+  const d = String(start.getDate()).padStart(2, '0')
+  const dow = DOW_MONO[start.getDay()]
+  const startTime = formatHM(start)
+  if (event.event_end_date) {
+    const end = new Date(event.event_end_date)
+    return `${y}.${m}.${d} (${dow}) ${startTime}–${formatHM(end)}`
+  }
+  return `${y}.${m}.${d} (${dow}) ${startTime}`
+}
+
+export default async function DemodayPage() {
+  const [current, volumes] = await Promise.all([
+    getCurrentDemoday(),
+    getDemodayVolumes(),
+  ])
   return (
     <main className="pt-14 md:pt-16">
-      <DemodayHero />
+      <DemodayHero current={current} />
       <AboutSection />
       <FormatSection />
-      <VolumesSection />
+      {current && current.schedule.length > 0 && (
+        <ScheduleSection schedule={current.schedule} />
+      )}
+      <VolumesSection volumes={volumes} />
       <AudienceSection />
-      <ClosingSection />
+      <ClosingSection current={current} />
     </main>
   )
 }
 
-function DemodayHero() {
-  const { eyebrow, headlineLine1, headlineLine2, subline } = DEMODAY.hero
+function DemodayHero({ current }: { current: DemodayEvent | null }) {
+  const { eventTitle, headlineLine1, headlineLine2, subline } = DEMODAY.hero
+  const eyebrow = current
+    ? formatVolumeMono(current)
+    : 'Demoday'
+  const dateLine = current ? formatVolumeDate(current) : null
+  const location = current?.location ?? null
+  const locationNote = current?.location_note ?? null
+  const introText = current?.intro_text ?? subline
+  const showRegister = current?.register_open ?? false
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
       <p
@@ -41,20 +97,97 @@ function DemodayHero() {
         <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
         {eyebrow}
       </p>
-      <h1 className="about-anim-headline mt-8 font-display font-bold tracking-tight text-fg-primary md:mt-10">
-        <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
-          {headlineLine1}
-        </span>
-        <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05] text-fg-subtle">
-          {headlineLine2}
+      <h1
+        translate="no"
+        className="about-anim-headline mt-4 block font-sans font-bold tracking-tight text-fg-primary md:mt-6"
+      >
+        <span className="block text-[clamp(3.5rem,_11vw,_9rem)] leading-[0.95]">
+          {eventTitle}
         </span>
       </h1>
+      <p className="about-anim-subline mt-6 font-display font-bold tracking-tight text-fg-primary md:mt-8">
+        <span className="block text-[clamp(1.75rem,_4.5vw,_3rem)] leading-[1.15]">
+          {headlineLine1}
+        </span>
+        <span className="block text-[clamp(1.75rem,_4.5vw,_3rem)] leading-[1.15] text-fg-subtle">
+          {headlineLine2}
+        </span>
+      </p>
       <p
         translate="no"
         className="about-anim-subline mt-8 max-w-[58ch] font-display text-sm italic lowercase tracking-[0.12em] text-fg-subtle md:mt-10 md:text-base"
       >
-        {subline}
+        {introText}
       </p>
+      {(dateLine || location || locationNote || showRegister) && (
+        <div className="about-anim-meta mt-10 flex flex-col gap-5 md:mt-12 md:gap-6">
+          {(dateLine || location) && (
+            <dl className="flex flex-col gap-2 md:gap-3">
+              {dateLine && (
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <dt
+                    translate="no"
+                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
+                  >
+                    When
+                  </dt>
+                  <dd
+                    translate="no"
+                    className="font-mono text-xs uppercase tracking-[0.28em] text-fg-primary md:text-sm"
+                  >
+                    {dateLine}
+                  </dd>
+                </div>
+              )}
+              {location && (
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <dt
+                    translate="no"
+                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
+                  >
+                    Where
+                  </dt>
+                  <dd className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span
+                      translate="no"
+                      className="font-mono text-xs uppercase tracking-[0.28em] text-fg-primary md:text-sm"
+                    >
+                      {location}
+                    </span>
+                    {locationNote && (
+                      <span className="font-display text-xs text-fg-subtle md:text-sm">
+                        {locationNote}
+                      </span>
+                    )}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          )}
+          {showRegister && (
+            <div>
+              <Link
+                href={'/demoday/register' as Route}
+                translate="no"
+                className="inline-flex items-center gap-3 rounded-full border-2 border-fg-primary px-7 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:px-8 md:py-4 md:text-sm"
+              >
+                참관 신청
+                <span aria-hidden className="text-base md:text-lg">→</span>
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+      {current?.poster_url && (
+        <div className="about-anim-meta mt-12 max-w-md md:mt-16">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={current.poster_url}
+            alt={`Vol.${current.volume} 데모데이 포스터`}
+            className="w-full border border-border"
+          />
+        </div>
+      )}
     </section>
   )
 }
@@ -114,8 +247,8 @@ function FormatSection() {
   )
 }
 
-function VolumesSection() {
-  const { label, title, items } = DEMODAY.volumes
+function ScheduleSection({ schedule }: { schedule: DemodayScheduleItem[] }) {
+  const { label, title } = DEMODAY.schedule
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <SectionLabel label={label} className="col-span-12 md:col-span-3" />
@@ -124,41 +257,84 @@ function VolumesSection() {
           {title}
         </h2>
         <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
-          {items.map((item) => (
+          {schedule.map((s, idx) => (
             <li
-              key={item.volume}
-              className="grid grid-cols-12 items-baseline gap-x-4 border-b border-border py-8 md:gap-x-8 md:py-10"
+              key={`${s.time}-${idx}`}
+              className="grid grid-cols-12 items-baseline gap-x-4 border-b border-border py-6 md:gap-x-8 md:py-8"
             >
               <span
                 translate="no"
-                className="col-span-4 font-display text-2xl font-bold tracking-tight text-fg-primary md:col-span-2 md:text-3xl"
+                className="col-span-4 font-mono text-sm uppercase tracking-[0.2em] text-fg-primary md:col-span-2 md:text-base"
               >
-                {item.volume}
+                {s.time}
               </span>
-              <span
-                translate="no"
-                className="col-span-3 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:col-span-1 md:text-xs"
-              >
-                {item.year}
+              <span className="col-span-8 font-display text-base text-fg-subtle md:col-span-10 md:text-lg">
+                {s.label}
               </span>
-              <span
-                translate="no"
-                className={`col-span-5 font-mono text-[10px] uppercase tracking-[0.32em] md:col-span-2 md:text-xs ${
-                  item.status === 'UPCOMING' ? 'text-accent' : 'text-fg-muted'
-                }`}
-              >
-                {item.status}
-              </span>
-              <div className="col-span-12 mt-3 md:col-span-7 md:mt-0">
-                <p className="font-display text-base font-bold tracking-tight text-fg-primary md:text-lg">
-                  {item.title}
-                </p>
-                <p className="mt-1 max-w-[58ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
-                  {item.note}
-                </p>
-              </div>
             </li>
           ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
+  const { label, title } = DEMODAY.volumes
+  if (volumes.length === 0) return null
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          {title}
+        </h2>
+        <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
+          {volumes.map((v) => {
+            const status = v.is_current
+              ? v.register_open
+                ? 'OPEN'
+                : 'UPCOMING'
+              : 'CLOSED'
+            const year = formatVolumeYear(v)
+            return (
+              <li
+                key={v.id}
+                className="grid grid-cols-12 items-baseline gap-x-4 border-b border-border py-8 md:gap-x-8 md:py-10"
+              >
+                <span
+                  translate="no"
+                  className="col-span-4 font-display text-2xl font-bold tracking-tight text-fg-primary md:col-span-2 md:text-3xl"
+                >
+                  VOL.{v.volume}
+                </span>
+                <span
+                  translate="no"
+                  className="col-span-3 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:col-span-1 md:text-xs"
+                >
+                  {year ?? '—'}
+                </span>
+                <span
+                  translate="no"
+                  className={`col-span-5 font-mono text-[10px] uppercase tracking-[0.32em] md:col-span-2 md:text-xs ${
+                    status === 'CLOSED' ? 'text-fg-muted' : 'text-accent'
+                  }`}
+                >
+                  {status}
+                </span>
+                <div className="col-span-12 mt-3 md:col-span-7 md:mt-0">
+                  <p className="font-display text-base font-bold tracking-tight text-fg-primary md:text-lg">
+                    {v.semester}
+                  </p>
+                  {v.intro_text && (
+                    <p className="mt-1 max-w-[58ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
+                      {v.intro_text}
+                    </p>
+                  )}
+                </div>
+              </li>
+            )
+          })}
         </ul>
       </div>
     </section>
@@ -201,8 +377,9 @@ function AudienceSection() {
   )
 }
 
-function ClosingSection() {
+function ClosingSection({ current }: { current: DemodayEvent | null }) {
   const { label, title, body, primary, secondary } = DEMODAY.closing
+  const registerOpen = current?.register_open ?? false
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
       <SectionLabel label={label} className="col-span-12 md:col-span-3" />
@@ -214,10 +391,20 @@ function ClosingSection() {
           {body}
         </p>
         <div className="about-anim-meta mt-10 flex flex-wrap items-center gap-6 md:gap-8">
+          {registerOpen && (
+            <Link
+              href={'/demoday/register' as Route}
+              translate="no"
+              className="inline-flex items-center gap-3 rounded-full border-2 border-fg-primary px-7 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:px-8 md:py-4 md:text-sm"
+            >
+              참관 신청
+              <span aria-hidden className="text-base md:text-lg">→</span>
+            </Link>
+          )}
           <Link
             href={primary.href as Route}
             translate="no"
-            className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+            className="inline-flex items-center gap-3 rounded-full border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
           >
             {primary.label}
             <span aria-hidden>→</span>

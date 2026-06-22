@@ -19,6 +19,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <NavLink href="/admin/inquiries">문의</NavLink>
         <NavLink href="/admin/alumni">알럼나이</NavLink>
         <NavLink href="/admin/partners">파트너</NavLink>
+        <NavLink href="/admin/demoday">데모데이</NavLink>
       </aside>
       <main className="ml-56 p-10">{children}</main>
     </div>

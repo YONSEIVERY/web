@@ -5,7 +5,12 @@ import { getAdminCounts } from '@/lib/admin/queries'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboard() {
-  const { alumniPending, partnerPending, inquiriesNew } = await getAdminCounts()
+  const {
+    alumniPending,
+    partnerPending,
+    inquiriesNew,
+    demodayCurrentAttendees,
+  } = await getAdminCounts()
   const total = alumniPending + partnerPending
 
   return (
@@ -25,6 +30,12 @@ export default async function AdminDashboard() {
           label="미처리 문의"
           count={inquiriesNew}
           hint="GENERAL + INDUSTRY"
+        />
+        <Card
+          href="/admin/demoday"
+          label="데모데이 신청자"
+          count={demodayCurrentAttendees}
+          hint="현 회차 누적"
         />
       </div>
     </div>
