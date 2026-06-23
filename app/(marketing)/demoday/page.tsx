@@ -110,7 +110,7 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
   const introText = current?.intro_text ?? subline
   const showRegister = current?.register_open ?? false
   return (
-    <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
+    <section className="about-hero relative px-6 pb-24 pt-28 md:px-10 md:pb-32 md:pt-44">
       <div className="md:grid md:grid-cols-12 md:items-start md:gap-x-10 lg:gap-x-16">
         <div className="md:col-span-7">
       <p
