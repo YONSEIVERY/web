@@ -30,32 +30,53 @@ function formatVolumeMono(event: DemodayEvent) {
     : `Demoday — Vol.${event.volume} / ${event.semester}`
 }
 
-function formatVolumeYear(event: DemodayEvent): number | null {
-  if (!event.event_date) return null
-  return new Date(event.event_date).getFullYear()
+// 표시는 항상 한국 시간 기준. 서버 런타임(Vercel)의 TZ는 UTC이므로
+// Date의 getHours/getFullYear가 아닌 Intl + timeZone:'Asia/Seoul'로 변환한다.
+const KST = 'Asia/Seoul'
+
+function getKSTParts(date: Date) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: KST,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date)
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? ''
+  return {
+    year: get('year'),
+    month: get('month'),
+    day: get('day'),
+    weekday: get('weekday').toUpperCase(),
+    hour: get('hour'),
+    minute: get('minute'),
+  }
 }
 
-const DOW_MONO = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const
+function formatVolumeYear(event: DemodayEvent): number | null {
+  if (!event.event_date) return null
+  const { year } = getKSTParts(new Date(event.event_date))
+  return year ? Number(year) : null
+}
 
 function formatHM(date: Date) {
-  const hh = String(date.getHours()).padStart(2, '0')
-  const mm = String(date.getMinutes()).padStart(2, '0')
-  return `${hh}:${mm}`
+  const { hour, minute } = getKSTParts(date)
+  return `${hour}:${minute}`
 }
 
 function formatVolumeDate(event: DemodayEvent) {
   if (!event.event_date) return null
   const start = new Date(event.event_date)
-  const y = start.getFullYear()
-  const m = String(start.getMonth() + 1).padStart(2, '0')
-  const d = String(start.getDate()).padStart(2, '0')
-  const dow = DOW_MONO[start.getDay()]
+  const { year, month, day, weekday } = getKSTParts(start)
   const startTime = formatHM(start)
   if (event.event_end_date) {
     const end = new Date(event.event_end_date)
-    return `${y}.${m}.${d} (${dow}) ${startTime}–${formatHM(end)}`
+    return `${year}.${month}.${day} (${weekday}) ${startTime}–${formatHM(end)}`
   }
-  return `${y}.${m}.${d} (${dow}) ${startTime}`
+  return `${year}.${month}.${day} (${weekday}) ${startTime}`
 }
 
 export default async function DemodayPage() {
