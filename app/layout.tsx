@@ -16,6 +16,21 @@ export const metadata: Metadata = {
     siteName: 'VERY',
     locale: 'ko_KR',
     type: 'website',
+    url: '/',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1080,
+        height: 1080,
+        alt: 'VERY ─ 연세대학교 창업학회',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'VERY ─ 연세대학교 창업학회',
+    description: '1997년부터 시작된 연세대학교의 가장 뿌리깊은 창업학회.',
+    images: ['/opengraph-image.png'],
   },
 }
 
