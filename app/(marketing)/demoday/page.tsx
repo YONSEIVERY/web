@@ -111,6 +111,8 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
   const showRegister = current?.register_open ?? false
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
+      <div className="md:grid md:grid-cols-12 md:items-start md:gap-x-10 lg:gap-x-16">
+        <div className="md:col-span-7">
       <p
         translate="no"
         className="about-anim-eyebrow flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
@@ -199,16 +201,18 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
           )}
         </div>
       )}
-      {current?.poster_url && (
-        <div className="about-anim-meta mt-12 max-w-md md:mt-16">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={current.poster_url}
-            alt={`Vol.${current.volume} 데모데이 포스터`}
-            className="w-full border border-border"
-          />
         </div>
-      )}
+        {current?.poster_url && (
+          <div className="about-anim-meta mt-12 max-w-md md:col-span-5 md:mt-0 md:justify-self-end md:max-w-none">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={current.poster_url}
+              alt={`Vol.${current.volume} 데모데이 포스터`}
+              className="w-full border border-border"
+            />
+          </div>
+        )}
+      </div>
     </section>
   )
 }
