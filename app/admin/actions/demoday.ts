@@ -19,6 +19,10 @@ import type { DemodayActionState } from './demoday-state'
 const POSTER_MIME = new Set(['image/png', 'image/jpeg', 'image/webp'])
 const MAX_POSTER_BYTES = 5 * 1024 * 1024
 
+function kstLocalToISO(local: string): string {
+  return new Date(`${local}:00+09:00`).toISOString()
+}
+
 function parseSchedule(raw: string) {
   if (!raw.trim()) return []
   try {
@@ -117,10 +121,11 @@ export async function updateDemodayEvent(
     return { status: 'error', message: (e as Error).message }
   }
 
-  const eventDate = eventDateRaw ? new Date(eventDateRaw).toISOString() : null
-  const eventEndDate = eventEndDateRaw
-    ? new Date(eventEndDateRaw).toISOString()
-    : null
+  // input[datetime-local] 값은 timezone이 없는 wall-clock("YYYY-MM-DDTHH:mm").
+  // 어드민이 입력한 시각은 항상 KST로 해석한다. 서버 런타임 TZ가 무엇이든
+  // 결과가 동일하도록 +09:00을 명시한 뒤 toISOString으로 UTC 직렬화.
+  const eventDate = eventDateRaw ? kstLocalToISO(eventDateRaw) : null
+  const eventEndDate = eventEndDateRaw ? kstLocalToISO(eventEndDateRaw) : null
 
   const { error } = await supabaseService
     .from('demoday_events')

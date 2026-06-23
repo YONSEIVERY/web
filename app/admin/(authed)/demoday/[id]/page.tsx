@@ -126,8 +126,19 @@ export default async function AdminDemodayDetailPage({
   )
 }
 
+// 서버 런타임 TZ(Vercel UTC)와 무관하게 input[datetime-local]을 항상
+// KST wall-clock으로 채운다. 어드민이 본 그대로 다시 저장될 수 있도록
+// 서버 액션에서도 동일한 가정으로 +09:00을 붙여 해석한다.
 function toDatetimeLocal(iso: string) {
-  const d = new Date(iso)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(new Date(iso))
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? ''
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`
 }
