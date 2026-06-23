@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import { getDemodayById } from '@/lib/demoday/queries'
 import { EditDemodayForm } from '@/components/admin/demoday/edit-form'
 import { PosterUploadForm } from '@/components/admin/demoday/poster-upload-form'
+import { GroupPhotoUploadForm } from '@/components/admin/demoday/group-photo-upload-form'
 import { DemodayToggles } from '@/components/admin/demoday/toggles'
 import { DeleteDemodayForm } from '@/components/admin/demoday/delete-form'
 
@@ -87,6 +88,31 @@ export default async function AdminDemodayDetailPage({
           )}
           <PosterUploadForm id={event.id} />
         </div>
+      </section>
+
+      <section className="mt-10 max-w-5xl border border-border p-6">
+        <h2
+          translate="no"
+          className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary"
+        >
+          GROUP PHOTO
+        </h2>
+        <p className="mt-2 text-xs text-fg-muted">
+          지난 회차 단체사진. 마케팅 페이지 회차 목록에 노출됩니다.
+        </p>
+        {event.group_photo_url ? (
+          <div className="mt-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={event.group_photo_url}
+              alt="현재 단체사진"
+              className="max-h-64 border border-border"
+            />
+          </div>
+        ) : (
+          <p className="mt-4 text-xs text-fg-muted">아직 등록된 단체사진이 없습니다.</p>
+        )}
+        <GroupPhotoUploadForm id={event.id} />
       </section>
 
       <section className="mt-10 max-w-5xl border border-border p-6">

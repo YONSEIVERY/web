@@ -357,6 +357,16 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
                     </p>
                   )}
                 </div>
+                {v.group_photo_url && (
+                  <div className="col-span-12 mt-5 md:col-start-3 md:col-span-10 md:mt-6">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={v.group_photo_url}
+                      alt={`Vol.${v.volume} 데모데이 단체사진`}
+                      className="w-full border border-border"
+                    />
+                  </div>
+                )}
               </li>
             )
           })}

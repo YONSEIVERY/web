@@ -34,6 +34,7 @@ export type DemodayEvent = {
   location_note: string | null
   intro_text: string | null
   poster_url: string | null
+  group_photo_url: string | null
   schedule: DemodayScheduleItem[]
   form_choices: DemodayFormChoices
   created_at: string
@@ -84,6 +85,7 @@ function toDemodayEvent(row: Record<string, unknown>): DemodayEvent {
     location_note: (row.location_note as string | null) ?? null,
     intro_text: (row.intro_text as string | null) ?? null,
     poster_url: (row.poster_url as string | null) ?? null,
+    group_photo_url: (row.group_photo_url as string | null) ?? null,
     schedule: normalizeSchedule(row.schedule),
     form_choices: normalizeChoices(row.form_choices),
     created_at: String(row.created_at),

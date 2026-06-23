@@ -202,6 +202,62 @@ export async function uploadDemodayPoster(
   return { status: 'success', message: '포스터가 교체되었습니다.' }
 }
 
+export async function uploadDemodayGroupPhoto(
+  _prev: DemodayActionState,
+  formData: FormData,
+): Promise<DemodayActionState> {
+  try {
+    await requireAdmin()
+  } catch {
+    return { status: 'error', message: '권한이 없습니다.' }
+  }
+  const id = String(formData.get('id') ?? '')
+  if (!id) return { status: 'error', message: '잘못된 요청입니다.' }
+  const file = formData.get('group_photo') as File | null
+  if (!file || file.size === 0)
+    return { status: 'error', message: '단체사진 파일을 선택해주세요.' }
+  if (file.size > MAX_POSTER_BYTES)
+    return { status: 'error', message: '5MB 이하로 올려주세요.' }
+  if (!POSTER_MIME.has(file.type))
+    return { status: 'error', message: 'PNG/JPEG/WEBP만 허용됩니다.' }
+
+  const supabase = await createClient()
+  const ext =
+    file.type === 'image/png'
+      ? 'png'
+      : file.type === 'image/webp'
+        ? 'webp'
+        : 'jpg'
+  // 포스터와 같은 bucket을 path prefix(group/)로 구분해 재사용.
+  const path = `${id}/group/${crypto.randomUUID()}.${ext}`
+  const { error: upErr } = await supabase.storage
+    .from('demoday-posters')
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (upErr) {
+    console.error('[uploadDemodayGroupPhoto] upload failed', upErr)
+    return { status: 'error', message: '업로드에 실패했습니다.' }
+  }
+  const { data: pub } = supabase.storage
+    .from('demoday-posters')
+    .getPublicUrl(path)
+
+  const { error: dbErr } = await supabaseService
+    .from('demoday_events')
+    .update({
+      group_photo_url: pub.publicUrl,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+  if (dbErr) {
+    console.error('[uploadDemodayGroupPhoto] db update failed', dbErr)
+    return { status: 'error', message: '저장에 실패했습니다.' }
+  }
+  revalidatePath('/admin/demoday')
+  revalidatePath(`/admin/demoday/${id}`)
+  revalidatePath('/demoday')
+  return { status: 'success', message: '단체사진이 교체되었습니다.' }
+}
+
 export async function toggleDemodayRegisterOpen(
   _prev: DemodayActionState,
   formData: FormData,
