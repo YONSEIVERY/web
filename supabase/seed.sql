@@ -95,7 +95,7 @@ on conflict (volume, semester) do nothing;
 -- ============================================================
 update public.demoday_events set
   event_date = '2026-07-18 14:00:00+09'::timestamptz,
-  event_end_date = '2026-07-18 18:00:00+09'::timestamptz,
+  event_end_date = '2026-07-18 17:50:00+09'::timestamptz,
   location = '티오더 사옥',
   location_note = '서울시 영등포구 여의대로 108, 파크원 타워2, 46층',
   schedule = '[
