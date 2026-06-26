@@ -132,9 +132,11 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
         <span className="block text-[clamp(1.75rem,_4.5vw,_3rem)] leading-[1.15]">
           {headlineLine1}
         </span>
-        <span className="block text-[clamp(1.75rem,_4.5vw,_3rem)] leading-[1.15] text-fg-subtle">
-          {headlineLine2}
-        </span>
+        {headlineLine2 && (
+          <span className="block text-[clamp(1.75rem,_4.5vw,_3rem)] leading-[1.15] text-fg-subtle">
+            {headlineLine2}
+          </span>
+        )}
       </p>
       <p
         translate="no"
@@ -192,7 +194,7 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
               <Link
                 href={'/demoday/register' as Route}
                 translate="no"
-                className="inline-flex items-center gap-3 rounded-full border-2 border-fg-primary px-7 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:px-8 md:py-4 md:text-sm"
+                className="inline-flex items-center gap-3 rounded-full bg-accent px-7 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.32em] text-fg-primary shadow-[0_8px_24px_-12px_rgba(51,64,200,0.6)] transition-[filter,transform] hover:brightness-110 active:translate-y-px md:px-8 md:py-4 md:text-sm"
               >
                 참관 신청
                 <span aria-hidden className="text-base md:text-lg">→</span>

@@ -12,8 +12,8 @@
 export const DEMODAY = {
   hero: {
     eventTitle: 'VERIFY',
-    headlineLine1: 'IR 피칭,',
-    headlineLine2: 'CEO·VC 앞에.',
+    headlineLine1: 'VERY 43기 데모데이',
+    headlineLine2: '',
     subline:
       '학기의 마지막 무대. 한 학기 동안 다진 프로젝트를 CEO·VC 심사역 앞에 올려, 평가와 투자로 이어 나가는 자리.',
   },
