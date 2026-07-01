@@ -34,6 +34,17 @@ export const metadata: Metadata = {
     description: '1997년부터 시작된 연세대학교의 가장 뿌리깊은 창업학회.',
     images: ['/opengraph-image.png'],
   },
+  // Search Console / Naver Webmaster / Bing 소유권 확인용 meta.
+  // 각 사이트에서 발급받은 코드를 Vercel env로 주입한다. 값이 없으면
+  // meta 자체가 렌더되지 않아 무해.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: {
+      ...(process.env.NAVER_SITE_VERIFICATION
+        ? { 'naver-site-verification': process.env.NAVER_SITE_VERIFICATION }
+        : {}),
+    },
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
