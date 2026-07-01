@@ -36,7 +36,8 @@ export default async function AdminDemodayPage() {
         <CreateDemodayForm />
       </section>
 
-      <table className="mt-12 w-full text-sm">
+      <div className="mt-12 overflow-x-auto">
+      <table className="w-full min-w-[640px] text-sm">
         <thead className="border-b border-border">
           <tr className="text-left">
             <Th>회차</Th>
@@ -99,6 +100,7 @@ export default async function AdminDemodayPage() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

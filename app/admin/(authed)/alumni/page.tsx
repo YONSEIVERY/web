@@ -11,7 +11,8 @@ export default async function AdminAlumniPage() {
       <p translate="no" className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary">ALUMNI</p>
       <h1 className="mt-2 font-display text-3xl text-fg-primary">승인된 알럼나이</h1>
 
-      <table className="mt-10 w-full text-sm">
+      <div className="mt-10 overflow-x-auto">
+      <table className="w-full min-w-[560px] text-sm">
         <thead className="border-b border-border">
           <tr className="text-left">
             <Th>이름</Th><Th>기수</Th><Th>현재</Th><Th>노출</Th><Th>삭제</Th>
@@ -34,6 +35,7 @@ export default async function AdminAlumniPage() {
           {rows.length === 0 && <tr><Td colSpan={5}><p className="py-12 text-center text-fg-muted">아직 승인된 알럼나이가 없습니다.</p></Td></tr>}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

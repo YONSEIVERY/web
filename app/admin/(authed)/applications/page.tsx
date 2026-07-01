@@ -12,7 +12,8 @@ export default async function ApplicationsPage() {
       <p translate="no" className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary">QUEUE</p>
       <h1 className="mt-2 font-display text-3xl text-fg-primary">신청 큐</h1>
 
-      <table className="mt-10 w-full text-sm">
+      <div className="mt-10 overflow-x-auto">
+      <table className="w-full min-w-[640px] text-sm">
         <thead className="border-b border-border">
           <tr className="text-left">
             <Th>종류</Th><Th>요약</Th><Th>접수일</Th><Th>액션</Th>
@@ -40,6 +41,7 @@ export default async function ApplicationsPage() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
