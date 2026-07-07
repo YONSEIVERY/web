@@ -14,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/alumni', label: '알럼나이' },
   { href: '/admin/partners', label: '파트너' },
   { href: '/admin/demoday', label: '데모데이' },
+  { href: '/admin/sponsors' as Route, label: '후원자' },
 ]
 
 function isActive(pathname: string, href: string) {

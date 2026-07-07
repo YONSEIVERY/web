@@ -4,6 +4,10 @@ import type { Route } from 'next'
 import { ALUMNI } from '@/lib/content/alumni'
 import { getAlumniCompanies } from '@/lib/data/alumni'
 import type { AlumniCompany } from '@/lib/data/alumni'
+import { getSponsors } from '@/lib/sponsors/queries'
+import type { Sponsor } from '@/lib/sponsors/queries'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: '알럼나이',
@@ -19,7 +23,10 @@ export const metadata: Metadata = {
  * users read it as "coming soon" rather than missing data.
  */
 export default async function AlumniPage() {
-  const companies = await getAlumniCompanies()
+  const [companies, sponsors] = await Promise.all([
+    getAlumniCompanies(),
+    getSponsors(),
+  ])
   return (
     <main className="pt-14 md:pt-16">
       <AlumniHero />
@@ -27,6 +34,7 @@ export default async function AlumniPage() {
       <StatsSection />
       <SpotlightSection companies={companies} />
       <PathwaysSection />
+      <HallOfHonorSection sponsors={sponsors} />
       <RegisterCTASection />
       <ClosingSection />
     </main>
@@ -197,6 +205,109 @@ function PathwaysSection() {
         </ul>
       </div>
     </section>
+  )
+}
+
+function HallOfHonorSection({ sponsors }: { sponsors: Sponsor[] }) {
+  if (sponsors.length === 0) return null
+  const prize = sponsors.filter((s) => s.category === 'prize')
+  const operations = sponsors.filter((s) => s.category === 'operations')
+  return (
+    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
+      <SectionLabel label="HALL OF HONOR" className="col-span-12 md:col-span-3" />
+      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
+          명예의 전당.
+        </h2>
+        <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
+          VERY의 데모데이 상금과 학회 운영을 뒷받침해 주신 분들. 이 자리를
+          지켜 온 것은 이 이름들 덕분입니다.
+        </p>
+        <div className="about-anim-meta mt-12 flex flex-col gap-14 md:gap-16">
+          {prize.length > 0 && (
+            <SponsorSubsection
+              mono="DEMODAY · PRIZE"
+              title="데모데이 상금 후원"
+              items={prize}
+            />
+          )}
+          {operations.length > 0 && (
+            <SponsorSubsection
+              mono="OPERATIONS"
+              title="운영자금 후원"
+              items={operations}
+            />
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const SPONSOR_KIND_LABEL: Record<Sponsor['kind'], string> = {
+  individual: 'INDIVIDUAL',
+  company: 'COMPANY',
+}
+
+function SponsorSubsection({
+  mono,
+  title,
+  items,
+}: {
+  mono: string
+  title: string
+  items: Sponsor[]
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-3">
+        <span aria-hidden className="inline-block h-px w-8 bg-fg-primary" />
+        <span
+          translate="no"
+          className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
+        >
+          {mono}
+        </span>
+      </div>
+      <p className="mt-3 font-display text-lg font-bold tracking-tight text-fg-primary md:text-xl">
+        {title}
+      </p>
+      <ul className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 md:grid-cols-3">
+        {items.map((s) => (
+          <li key={s.id} className="bg-bg-base">
+            <div className="flex h-full flex-col gap-3 px-6 py-6 md:px-7 md:py-7">
+              <div className="flex items-baseline justify-between gap-3">
+                <p
+                  translate="no"
+                  className="font-display text-lg font-bold tracking-tight text-fg-primary md:text-xl"
+                >
+                  {s.name}
+                </p>
+                <span
+                  translate="no"
+                  className="font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted"
+                >
+                  {SPONSOR_KIND_LABEL[s.kind]}
+                </span>
+              </div>
+              {s.cohort_label && (
+                <span
+                  translate="no"
+                  className="font-mono text-[10px] uppercase tracking-[0.28em] text-accent"
+                >
+                  {s.cohort_label}
+                </span>
+              )}
+              {s.note && (
+                <p className="max-w-[36ch] text-sm leading-[1.7] text-fg-subtle">
+                  {s.note}
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
