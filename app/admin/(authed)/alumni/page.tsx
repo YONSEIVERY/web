@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import type { Route } from 'next'
 import { getApprovedAlumni } from '@/lib/admin/queries'
 import { PublishToggle } from '@/components/admin/publish-toggle'
 import { DeleteButton } from '@/components/admin/delete-button'
@@ -21,7 +23,14 @@ export default async function AdminAlumniPage() {
         <tbody>
           {rows.map((r) => (
             <tr key={r.id} className="border-b border-border">
-              <Td>{r.name}</Td>
+              <Td>
+                <Link
+                  href={`/admin/alumni/${r.id}` as Route}
+                  className="underline hover:text-fg-primary"
+                >
+                  {r.name}
+                </Link>
+              </Td>
               <Td>{r.cohort}기</Td>
               <Td>{r.job_title}</Td>
               <Td>
