@@ -64,6 +64,7 @@ export default async function AdminDemodayDetailPage({
             id={event.id}
             isCurrent={event.is_current}
             registerOpen={event.register_open}
+            afterpartyEnabled={event.afterparty_field_enabled}
           />
         </div>
 

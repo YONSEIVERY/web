@@ -3,6 +3,7 @@ import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import {
   setDemodayCurrent,
+  toggleDemodayAfterpartyEnabled,
   toggleDemodayRegisterOpen,
 } from '@/app/admin/actions/demoday'
 import {
@@ -14,15 +15,18 @@ export function DemodayToggles({
   id,
   isCurrent,
   registerOpen,
+  afterpartyEnabled,
 }: {
   id: string
   isCurrent: boolean
   registerOpen: boolean
+  afterpartyEnabled: boolean
 }) {
   return (
     <div className="mt-4 flex flex-col gap-4 text-sm">
       <CurrentRow id={id} isCurrent={isCurrent} />
       <RegisterRow id={id} registerOpen={registerOpen} />
+      <AfterpartyRow id={id} enabled={afterpartyEnabled} />
       <p className="text-[10px] text-fg-muted">
         한 시점에 하나의 회차만 <em>현재</em>가 됩니다. 다른 회차로 현재를
         옮기면 기존 회차는 자동으로 해제됩니다.
@@ -122,6 +126,56 @@ function RegisterButton({ registerOpen }: { registerOpen: boolean }) {
       }`}
     >
       {pending ? '...' : registerOpen ? 'OPEN · 닫기' : 'CLOSED · 열기'}
+    </button>
+  )
+}
+
+function AfterpartyRow({
+  id,
+  enabled,
+}: {
+  id: string
+  enabled: boolean
+}) {
+  const [state, action] = useActionState<DemodayActionState, FormData>(
+    toggleDemodayAfterpartyEnabled,
+    DEMODAY_ACTION_INITIAL,
+  )
+  return (
+    <form action={action} className="flex items-center justify-between gap-3">
+      <input type="hidden" name="id" value={id} />
+      <input type="hidden" name="value" value={String(!enabled)} />
+      <div className="flex flex-col">
+        <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-fg-primary">
+          뒷풀이 필드
+        </span>
+        <span className="text-xs text-fg-subtle">
+          ON이면 신청 폼에 뒷풀이 참석 여부 질문이 노출됩니다 (VERY 동문에게).
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <AfterpartyButton enabled={enabled} />
+        {state.status === 'error' && (
+          <span className="text-[10px] text-red-600">{state.message}</span>
+        )}
+      </div>
+    </form>
+  )
+}
+
+function AfterpartyButton({ enabled }: { enabled: boolean }) {
+  const { pending } = useFormStatus()
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] disabled:opacity-50 ${
+        enabled
+          ? 'border-green-700 text-green-700 hover:bg-green-700 hover:text-bg-base'
+          : 'border-fg-muted text-fg-muted hover:border-fg-primary hover:text-fg-primary'
+      }`}
+    >
+      {pending ? '...' : enabled ? 'ON · 끄기' : 'OFF · 켜기'}
     </button>
   )
 }

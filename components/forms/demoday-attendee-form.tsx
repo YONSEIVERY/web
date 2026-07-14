@@ -16,9 +16,15 @@ type Props = {
   purposes: string[]
   roles: string[]
   sources: string[]
+  afterpartyEnabled: boolean
 }
 
-export function DemodayAttendeeForm({ purposes, roles, sources }: Props) {
+export function DemodayAttendeeForm({
+  purposes,
+  roles,
+  sources,
+  afterpartyEnabled,
+}: Props) {
   const [state, action] = useActionState<DemodayFormState, FormData>(
     submitDemodayAttendee,
     DEMODAY_INITIAL_STATE,
@@ -72,7 +78,7 @@ export function DemodayAttendeeForm({ purposes, roles, sources }: Props) {
             required
           />
         )}
-        {isAlumni === 'yes' && (
+        {isAlumni === 'yes' && afterpartyEnabled && (
           <RadioGroup
             name="attend_afterparty"
             label="뒷풀이 참석 여부 (선택)"

@@ -107,6 +107,7 @@ export default async function DemodayRegisterPage() {
             purposes={[...current.form_choices.purposes]}
             roles={[...current.form_choices.roles]}
             sources={[...current.form_choices.sources]}
+            afterpartyEnabled={current.afterparty_field_enabled}
           />
         </div>
       </section>

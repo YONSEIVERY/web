@@ -37,6 +37,7 @@ export type DemodayEvent = {
   group_photo_url: string | null
   schedule: DemodayScheduleItem[]
   form_choices: DemodayFormChoices
+  afterparty_field_enabled: boolean
   created_at: string
   updated_at: string
 }
@@ -88,6 +89,9 @@ function toDemodayEvent(row: Record<string, unknown>): DemodayEvent {
     group_photo_url: (row.group_photo_url as string | null) ?? null,
     schedule: normalizeSchedule(row.schedule),
     form_choices: normalizeChoices(row.form_choices),
+    afterparty_field_enabled: row.afterparty_field_enabled == null
+      ? true
+      : Boolean(row.afterparty_field_enabled),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
   }

@@ -284,6 +284,35 @@ export async function toggleDemodayRegisterOpen(
   return { status: 'success' }
 }
 
+export async function toggleDemodayAfterpartyEnabled(
+  _prev: DemodayActionState,
+  formData: FormData,
+): Promise<DemodayActionState> {
+  try {
+    await requireAdmin()
+  } catch {
+    return { status: 'error', message: '권한이 없습니다.' }
+  }
+  const id = String(formData.get('id') ?? '')
+  const value = String(formData.get('value') ?? '') === 'true'
+  if (!id) return { status: 'error', message: '잘못된 요청입니다.' }
+  const { error } = await supabaseService
+    .from('demoday_events')
+    .update({
+      afterparty_field_enabled: value,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+  if (error) {
+    console.error('[toggleDemodayAfterpartyEnabled] update failed', error)
+    return { status: 'error', message: '저장에 실패했습니다.' }
+  }
+  revalidatePath('/admin/demoday')
+  revalidatePath(`/admin/demoday/${id}`)
+  revalidatePath('/demoday/register')
+  return { status: 'success' }
+}
+
 export async function setDemodayCurrent(
   _prev: DemodayActionState,
   formData: FormData,
