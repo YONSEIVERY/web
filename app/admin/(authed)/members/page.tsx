@@ -27,6 +27,7 @@ export default async function AdminMembersPage({
     Number.isInteger(requested) && requested > 0
       ? requested
       : (cohortList[0]?.cohort ?? 43)
+  const nextCohort = (cohortList[0]?.cohort ?? 42) + 1
   const rows = await getAdminMembersByCohort(selectedCohort)
 
   return (
@@ -47,29 +48,33 @@ export default async function AdminMembersPage({
         </Link>
       </p>
 
-      {cohortList.length > 0 && (
-        <div className="mt-6 flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted">
-            기수
-          </span>
-          {cohortList.map((c) => {
-            const active = c.cohort === selectedCohort
-            return (
-              <Link
-                key={c.cohort}
-                href={`/admin/members?cohort=${c.cohort}` as Route}
-                className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] ${
-                  active
-                    ? 'border-fg-primary text-fg-primary'
-                    : 'border-border text-fg-subtle hover:border-fg-primary hover:text-fg-primary'
-                }`}
-              >
-                {c.cohort}기 · {c.published}/{c.total}
-              </Link>
-            )
-          })}
-        </div>
-      )}
+      <div className="mt-6 flex flex-wrap items-center gap-2">
+        <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted">
+          기수
+        </span>
+        {cohortList.map((c) => {
+          const active = c.cohort === selectedCohort
+          return (
+            <Link
+              key={c.cohort}
+              href={`/admin/members?cohort=${c.cohort}` as Route}
+              className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] ${
+                active
+                  ? 'border-fg-primary text-fg-primary'
+                  : 'border-border text-fg-subtle hover:border-fg-primary hover:text-fg-primary'
+              }`}
+            >
+              {c.cohort}기 · {c.published}/{c.total}
+            </Link>
+          )
+        })}
+        <Link
+          href={`/admin/members/new?cohort=${nextCohort}` as Route}
+          className="border border-dashed border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted hover:border-fg-primary hover:text-fg-primary"
+        >
+          + 새 기수 시작 ({nextCohort}기)
+        </Link>
+      </div>
 
       <div className="mt-10 overflow-x-auto">
         <table className="w-full min-w-[820px] text-sm">
