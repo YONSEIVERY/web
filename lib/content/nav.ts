@@ -14,6 +14,7 @@ export type NavItem = {
 
 export const NAV_ITEMS: ReadonlyArray<NavItem> = [
   { href: '/about', label: '소개', monoLabel: 'ABOUT' },
+  { href: '/cohorts', label: '학회원', monoLabel: 'MEMBERS' },
   { href: '/curriculum', label: '커리큘럼', monoLabel: 'CURRICULUM' },
   { href: '/demoday', label: '데모데이', monoLabel: 'DEMODAY' },
   { href: '/alumni', label: '알럼나이', monoLabel: 'ALUMNI' },
