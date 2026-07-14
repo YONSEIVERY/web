@@ -4,7 +4,7 @@ import { CONTACT } from '@/lib/content/contact'
 export const metadata: Metadata = {
   title: '연락',
   description:
-    'VERY 학회 연락처. 모집·파트너십·언론 문의는 메일·인스타그램으로 직접 받습니다. 폼은 두지 않습니다.',
+    'VERY 학회 연락처. 모집·파트너십·언론 문의는 이메일과 인스타그램으로 받습니다. 담당자가 직접 확인해 회신드립니다.',
 }
 
 /**
@@ -21,7 +21,6 @@ export default function ContactPage() {
       <ContactHero />
       <IntroSection />
       <ChannelsSection />
-      <TracksSection />
       <FaqSection />
       <ClosingSection />
     </main>
@@ -114,48 +113,6 @@ function ChannelsSection() {
             </li>
           ))}
         </ul>
-      </div>
-    </section>
-  )
-}
-
-function TracksSection() {
-  const { label, title, items } = CONTACT.tracks
-  return (
-    <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
-        <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
-          {title}
-        </h2>
-        <ol className="about-anim-meta mt-12 grid grid-cols-1 gap-px overflow-hidden border-t border-border bg-border md:grid-cols-3 md:border md:border-border">
-          {items.map((item) => (
-            <li key={item.num} className="bg-bg-base">
-              <div className="flex h-full flex-col gap-4 px-6 py-8 md:px-8 md:py-10">
-                <div className="flex items-baseline gap-4">
-                  <span
-                    translate="no"
-                    className="font-display text-3xl font-bold leading-none tracking-tight text-fg-muted md:text-4xl"
-                  >
-                    {item.num}
-                  </span>
-                  <span
-                    translate="no"
-                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
-                  >
-                    {item.mono}
-                  </span>
-                </div>
-                <p className="font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
-                  {item.title}
-                </p>
-                <p className="max-w-[42ch] text-sm leading-[1.7] text-fg-subtle md:text-base">
-                  {item.body}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
       </div>
     </section>
   )

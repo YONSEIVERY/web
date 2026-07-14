@@ -1,79 +1,49 @@
 /**
  * /contact page content.
  *
- * No form on this page yet. The society doesn't have a routing inbox
- * wired, and a fake form is worse than no form. We surface the three
- * real channels (email, instagram, recruit form when open) and tell
- * users which one to use for what.
- *
- * Vocabulary note: this page (and /demoday) is where the FIELD vocabulary
- * from the VERY BI doc lands — members are "Operators", teams are "Unit",
- * projects are "Mission". Elsewhere on the site we stay with plain 회원/
- * 팀/프로젝트.
+ * Channels-only. 신청 폼은 두지 않고 실제 담당자가 회신하는 채널만
+ * 노출한다. 43기 진행 중(landing)에는 모집 접수를 열지 않으므로,
+ * 상단 STATUS 섹션에서 그 상태를 먼저 알린다.
  */
 import { SITE } from './site'
 
 export const CONTACT = {
   hero: {
     eyebrow: 'Contact — Vol.43 / 2026—1',
-    headlineLine1: '문은 세 개,',
-    headlineLine2: '모두 사람이 받습니다.',
+    headlineLine1: 'Get in touch.',
+    headlineLine2: '사람이 직접 답장합니다.',
     subline:
-      '모집·파트너십·언론 — 어떤 용건이든 실제 사람이 직접 받습니다. 폼은 두지 않았습니다.',
+      '모집·파트너십·언론 문의는 이메일과 인스타그램으로 받고 있습니다.',
   },
   intro: {
-    label: 'NOTE',
-    title: '폼은 두지 않습니다.',
-    body: '문의 폼 대신 실제로 사람이 읽는 채널만 열어 두고 있습니다. 학기 중에는 메일이 가장 확실한 길이고, 평소 학회의 분위기는 인스타그램에서 가장 빠르게 확인하실 수 있습니다.',
+    label: 'STATUS',
+    title: '지금은 신청 기간이 아닙니다.',
+    body: '현재 43기가 landing 중입니다. 다음 기수 모집이 열리기 전까지는 별도의 신청 폼을 두지 않고, 아래 채널로 보내주시는 문의는 실제 담당자가 확인해 회신드립니다.',
   },
   channels: {
     label: 'CHANNELS',
-    title: '세 개의 문.',
+    title: 'Three channels.',
     items: [
       {
         mono: 'EMAIL',
         label: SITE.email,
         href: `mailto:${SITE.email}`,
-        note: '학회 공식 메일. 파트너십·언론 문의·일반 문의 모두 이곳으로.',
+        note: '학회 공식 메일. 파트너십·언론·일반 문의를 모두 이곳에서 받습니다.',
         external: false,
       },
       {
         mono: 'INSTAGRAM',
         label: '@very_yonsei',
         href: SITE.instagram,
-        note: '학기 중 가장 자주 갱신되는 채널. 모집 시즌 공지도 가장 먼저 올라갑니다.',
+        note: '학기 중 가장 자주 업데이트되는 채널. 모집 시즌 공지도 여기에 가장 먼저 올라옵니다.',
         external: true,
       },
       {
         mono: 'RECRUIT',
         label: '시즌별 노션 · 구글폼',
         href: SITE.recruitFormUrl,
-        note: 'Operators 모집은 학기 시작 전에 노션·구글폼으로 받습니다. 시즌 오픈 시 인스타로 안내.',
+        note: '모집 시즌에만 노션·구글폼으로 접수합니다. 현재는 43기 landing 중이라 다음 시즌 오픈 시 인스타그램으로 안내드립니다.',
         external: true,
-      },
-    ],
-  },
-  tracks: {
-    label: 'TRACKS',
-    title: '용건별로 어디로 가는 게 좋은지.',
-    items: [
-      {
-        num: '01',
-        mono: 'RECRUIT',
-        title: 'Operator 지원',
-        body: '모집 시즌엔 노션·구글폼으로 받습니다. 새 학기의 Unit으로 합류하고 싶다면 이쪽. 시즌이 닫혀 있다면 인스타그램에서 다음 시즌 일정을 확인해 주세요.',
-      },
-      {
-        num: '02',
-        mono: 'PARTNERSHIP',
-        title: '파트너십 · 산학',
-        body: '기업·VC·교내 트랙 등 학기 단위 파트너십 문의는 메일로 받습니다. 학기 시작 전에 연결해 주시면 트랙에 얹기 수월합니다.',
-      },
-      {
-        num: '03',
-        mono: 'PRESS',
-        title: '언론 · 외부 협업',
-        body: '인터뷰·기사·외부 행사 협업은 메일로 받습니다. 회신은 학기 일정에 따라 다소 시간이 걸릴 수 있습니다.',
       },
     ],
   },
@@ -97,8 +67,8 @@ export const CONTACT = {
   },
   closing: {
     label: 'STILL HERE',
-    title: '여기까지 읽었다면, 일단 한 줄 보내주세요.',
-    body: '완성된 문장이 아니어도 괜찮습니다. 어떤 용건인지 한 줄만 적어주시면, 다음 학기 같이 다질 자리부터 찾아보겠습니다.',
+    title: '메시지를 기다리고 있습니다.',
+    body: '문의든 협업 제안이든, 짧게 남겨주시면 담당자가 확인 후 이메일로 회신드립니다.',
     primary: { label: 'EMAIL US', href: `mailto:${SITE.email}` },
     secondary: { label: '@VERY_YONSEI', href: SITE.instagram },
   },

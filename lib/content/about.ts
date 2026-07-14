@@ -90,30 +90,30 @@ export const ABOUT = {
   },
   whatWeDo: {
     label: 'WHAT WE DO',
-    title: '학회는 네 갈래로 움직입니다.',
+    title: '학회는 네 가지 축으로 움직입니다.',
     items: [
       {
         monoLabel: 'SESSIONS',
         title: '주간 세션',
-        body: '정규 4단계(10만플·프리토타이핑·아이디어톤·데모데이)와 보조 3세션(스터디·인사이트·컨벤션)을 매주 한 묶음으로 진행합니다.',
+        body: '정규 커리큘럼 4단계(10만플·프리토타이핑·아이디어톤·데모데이)와 스터디·인사이트·컨벤션 세션을 매주 병행합니다.',
         href: '/curriculum',
       },
       {
         monoLabel: 'DEMODAY',
         title: '데모데이',
-        body: '학기 말, CEO·VC 심사역 앞에서 IR 피칭을 진행하고 평가·투자로 이어 나갑니다.',
+        body: '학기 말에 CEO·VC 심사역 앞에서 IR 피칭을 진행하고, 그 결과가 실제 평가와 투자로 이어집니다.',
         href: '/demoday',
       },
       {
         monoLabel: 'ALUMNI',
         title: '알럼나이 네트워크',
-        body: '재학·졸업 회원이 멘토링·투자·후속 합류로 이어지는 누적 네트워크입니다.',
+        body: '재학생과 졸업생을 잇는 네트워크입니다. 멘토링·투자·팀 합류가 여기서 시작됩니다.',
         href: '/alumni',
       },
       {
         monoLabel: 'PARTNERS',
         title: '산학·시장 파트너',
-        body: '기업과 VC, 교내 창업 트랙과의 파트너십을 통해 실전 경험의 폭을 넓혀 갑니다.',
+        body: '기업, VC, 교내 창업 지원 프로그램과 협력하며, 학회원이 실제 시장·자본과 만나는 자리를 만듭니다.',
         href: '/partners',
       },
     ],
