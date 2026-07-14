@@ -358,6 +358,14 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
                       {v.intro_text}
                     </p>
                   )}
+                  <Link
+                    href={`/cohorts/${v.volume}` as Route}
+                    translate="no"
+                    className="mt-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
+                  >
+                    Members
+                    <span aria-hidden>→</span>
+                  </Link>
                 </div>
                 {v.group_photo_url && (
                   <div className="col-span-12 mt-5 md:col-start-3 md:col-span-10 md:mt-6">

@@ -108,17 +108,27 @@ export async function getPublicMembersByCohort(
   return sortMembers((data as Record<string, unknown>[]).map(toPublicMember))
 }
 
+export type PublicLeader = PublicMember & { email: string | null }
+
+/**
+ * 회장·부회장은 공식 대표 연락처로 이메일을 함께 노출한다.
+ * 일반 학회원의 이메일은 계속 비공개(PublicMember 타입에서 제외).
+ */
 export async function getPublicLeadership(
   cohort: number,
-): Promise<PublicMember[]> {
+): Promise<PublicLeader[]> {
   const { data, error } = await supabaseService
     .from('cohort_members')
-    .select(PUBLIC_COLUMNS)
+    .select(`${PUBLIC_COLUMNS}, email`)
     .eq('cohort', cohort)
     .eq('published', true)
     .in('role_tier', ['president', 'vice_president'])
   if (error || !data) return []
-  return sortMembers((data as Record<string, unknown>[]).map(toPublicMember))
+  const rows = (data as Record<string, unknown>[]).map((r) => ({
+    ...toPublicMember(r),
+    email: (r.email as string | null) ?? null,
+  }))
+  return sortMembers(rows)
 }
 
 export async function getPublishedCohortList(): Promise<

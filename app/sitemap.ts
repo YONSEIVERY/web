@@ -22,5 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/alumni/register`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/partners`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/cohorts`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/cohorts/43`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
   ]
 }

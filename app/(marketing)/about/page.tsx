@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { ABOUT } from '@/lib/content/about'
-import { getLeadership } from '@/lib/leadership/queries'
+import { getPublicLeadership } from '@/lib/cohort-members/queries'
 
 export const metadata: Metadata = {
   title: '소개',
@@ -12,22 +12,29 @@ export const metadata: Metadata = {
 
 export const revalidate = 60
 
+const CURRENT_COHORT = 43
+
 /**
  * /about — society profile page.
  *
- * Leadership 섹션은 DB(getLeadership)에서 조회하고, 비어 있으면
- * lib/content/about.ts의 상수 members로 폴백한다. 마이그레이션 미적용/
- * 초기 부팅 상황을 안전하게 처리하기 위함.
+ * Leadership 섹션은 cohort_members(role_tier in (president, vice_president))
+ * 에서 조회. 데이터가 없으면 ABOUT.leadership.members 상수로 폴백한다.
+ * "전체 멤버 보기" 링크로 /cohorts/[cohort] 로 이동.
  */
 export default async function AboutPage() {
-  const leadership = await getLeadership()
+  const leaders = await getPublicLeadership(CURRENT_COHORT)
   const members: LeadershipMember[] =
-    leadership.length > 0
-      ? leadership.map((l) => ({
-          roleMono: l.role_mono,
-          role: l.role,
+    leaders.length > 0
+      ? leaders.map((l) => ({
+          roleMono:
+            l.role_tier === 'president'
+              ? 'PRESIDENT'
+              : l.role_tier === 'vice_president'
+                ? 'VICE PRESIDENT'
+                : 'OFFICER',
+          role: l.role_label ?? '',
           name: l.name,
-          monoName: l.mono_name,
+          monoName: l.mono_name ?? '',
           email: l.email,
         }))
       : ABOUT.leadership.members.map((m) => ({ ...m, email: null }))
@@ -39,7 +46,7 @@ export default async function AboutPage() {
       <CoreValueSection />
       <MindsetSection />
       <WhatWeDoSection />
-      <LeadershipSection members={members} />
+      <LeadershipSection members={members} cohort={CURRENT_COHORT} />
       <ClosingSection />
     </main>
   )
@@ -309,7 +316,13 @@ function WhatWeDoSection() {
   )
 }
 
-function LeadershipSection({ members }: { members: LeadershipMember[] }) {
+function LeadershipSection({
+  members,
+  cohort,
+}: {
+  members: LeadershipMember[]
+  cohort: number
+}) {
   const { label, title } = ABOUT.leadership
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
@@ -319,39 +332,54 @@ function LeadershipSection({ members }: { members: LeadershipMember[] }) {
           {title}
         </h2>
         <ul className="about-anim-meta mt-10 grid grid-cols-1 gap-8 md:mt-14 md:grid-cols-2 md:gap-12">
-          {members.map((m) => (
-            <li
-              key={`${m.roleMono}-${m.name}`}
-              className="flex flex-col gap-3 border-t border-border pt-6"
-            >
-              <span
-                translate="no"
-                className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
+          {members.map((m) => {
+            const meta = [m.monoName, m.role].filter(Boolean).join(' · ')
+            return (
+              <li
+                key={`${m.roleMono}-${m.name}`}
+                className="flex flex-col gap-3 border-t border-border pt-6"
               >
-                {m.roleMono}
-              </span>
-              <p className="font-display text-3xl font-bold tracking-tight text-fg-primary md:text-4xl">
-                {m.name}
-              </p>
-              <p
-                translate="no"
-                className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-subtle md:text-xs"
-              >
-                {m.monoName} · {m.role}
-              </p>
-              {m.email && (
-                <a
-                  href={`mailto:${m.email}`}
+                <span
                   translate="no"
-                  className="mt-1 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
+                  className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
                 >
-                  {m.email}
-                  <span aria-hidden>→</span>
-                </a>
-              )}
-            </li>
-          ))}
+                  {m.roleMono}
+                </span>
+                <p className="font-display text-3xl font-bold tracking-tight text-fg-primary md:text-4xl">
+                  {m.name}
+                </p>
+                {meta && (
+                  <p
+                    translate="no"
+                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-subtle md:text-xs"
+                  >
+                    {meta}
+                  </p>
+                )}
+                {m.email && (
+                  <a
+                    href={`mailto:${m.email}`}
+                    translate="no"
+                    className="mt-1 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
+                  >
+                    {m.email}
+                    <span aria-hidden>→</span>
+                  </a>
+                )}
+              </li>
+            )
+          })}
         </ul>
+        <div className="mt-10 md:mt-14">
+          <Link
+            href={`/cohorts/${cohort}` as Route}
+            translate="no"
+            className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+          >
+            {cohort}기 전체 멤버 보기
+            <span aria-hidden>→</span>
+          </Link>
+        </div>
       </div>
     </section>
   )
