@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { ABOUT } from '@/lib/content/about'
+import { getLeadership } from '@/lib/leadership/queries'
 
 export const metadata: Metadata = {
   title: '소개',
@@ -9,15 +10,27 @@ export const metadata: Metadata = {
     '연세대학교 창업학회 VERY. 1997년 벤처창업연구회로 발족, 매 학기 더 단단해진 지반을 다음 기수에게 넘겨오며 43기째 이어오고 있는 학회.',
 }
 
+export const revalidate = 60
+
 /**
  * /about — society profile page.
  *
- * Five stacked editorial blocks under a hero. Sections inherit the same
- * eyebrow + hairline + content rhythm as the home manifesto/stats so the
- * page reads as the back-half of one continuous magazine, not a separate
- * design system.
+ * Leadership 섹션은 DB(getLeadership)에서 조회하고, 비어 있으면
+ * lib/content/about.ts의 상수 members로 폴백한다. 마이그레이션 미적용/
+ * 초기 부팅 상황을 안전하게 처리하기 위함.
  */
-export default function AboutPage() {
+export default async function AboutPage() {
+  const leadership = await getLeadership()
+  const members: LeadershipMember[] =
+    leadership.length > 0
+      ? leadership.map((l) => ({
+          roleMono: l.role_mono,
+          role: l.role,
+          name: l.name,
+          monoName: l.mono_name,
+          email: l.email,
+        }))
+      : ABOUT.leadership.members.map((m) => ({ ...m, email: null }))
   return (
     <main className="pt-14 md:pt-16">
       <AboutHero />
@@ -26,10 +39,18 @@ export default function AboutPage() {
       <CoreValueSection />
       <MindsetSection />
       <WhatWeDoSection />
-      <LeadershipSection />
+      <LeadershipSection members={members} />
       <ClosingSection />
     </main>
   )
+}
+
+type LeadershipMember = {
+  roleMono: string
+  role: string
+  name: string
+  monoName: string
+  email: string | null
 }
 
 function AboutHero() {
@@ -288,8 +309,8 @@ function WhatWeDoSection() {
   )
 }
 
-function LeadershipSection() {
-  const { label, title, members } = ABOUT.leadership
+function LeadershipSection({ members }: { members: LeadershipMember[] }) {
+  const { label, title } = ABOUT.leadership
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <SectionLabel label={label} className="col-span-12 md:col-span-3" />
@@ -299,7 +320,10 @@ function LeadershipSection() {
         </h2>
         <ul className="about-anim-meta mt-10 grid grid-cols-1 gap-8 md:mt-14 md:grid-cols-2 md:gap-12">
           {members.map((m) => (
-            <li key={m.roleMono} className="flex flex-col gap-3 border-t border-border pt-6">
+            <li
+              key={`${m.roleMono}-${m.name}`}
+              className="flex flex-col gap-3 border-t border-border pt-6"
+            >
               <span
                 translate="no"
                 className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
@@ -315,6 +339,16 @@ function LeadershipSection() {
               >
                 {m.monoName} · {m.role}
               </p>
+              {m.email && (
+                <a
+                  href={`mailto:${m.email}`}
+                  translate="no"
+                  className="mt-1 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
+                >
+                  {m.email}
+                  <span aria-hidden>→</span>
+                </a>
+              )}
             </li>
           ))}
         </ul>
