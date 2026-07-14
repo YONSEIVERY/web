@@ -96,7 +96,7 @@ export const ABOUT = {
         monoLabel: 'SESSIONS',
         title: '주간 세션',
         body: '정규 커리큘럼 4단계(10만플·프리토타이핑·아이디어톤·데모데이)와 스터디·인사이트·컨벤션 세션을 매주 병행합니다.',
-        href: '/curriculum',
+        href: '/sessions',
       },
       {
         monoLabel: 'DEMODAY',
