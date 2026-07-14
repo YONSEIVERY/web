@@ -41,6 +41,22 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  async redirects() {
+    // /admin/leadership · 하위 페이지는 P7에서 cohort_members로 통합되며
+    // 삭제됨. 북마크·이전 세션 링크가 남아 있어도 이 리다이렉트가 처리한다.
+    return [
+      {
+        source: '/admin/leadership',
+        destination: '/admin/members',
+        permanent: true,
+      },
+      {
+        source: '/admin/leadership/:path*',
+        destination: '/admin/members',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 export default nextConfig
