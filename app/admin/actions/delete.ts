@@ -113,7 +113,7 @@ export async function deletePartner(
       console.error('[deletePartner] logo storage cleanup failed', rmErr)
   }
 
-  revalidatePath('/partners')
   revalidatePath('/admin/partners')
+  revalidatePath('/', 'layout')
   return { ok: true, error: null }
 }

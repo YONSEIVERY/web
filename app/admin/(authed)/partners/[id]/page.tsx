@@ -13,6 +13,7 @@ type PartnerRow = {
   category: 'CORPORATE' | 'CAPITAL' | 'ACADEMIC'
   one_liner: string
   logo_url: string | null
+  marquee_logo_url: string | null
   sort_order: number
   published: boolean
   status: 'pending' | 'approved' | 'rejected'
@@ -63,6 +64,7 @@ export default async function AdminPartnerDetailPage({
             category: partner.category,
             one_liner: partner.one_liner,
             logo_url: partner.logo_url ?? '',
+            marquee_logo_url: partner.marquee_logo_url ?? '',
             sort_order: partner.sort_order,
             published: partner.published,
           }}

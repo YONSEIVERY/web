@@ -79,7 +79,7 @@ export async function togglePartnerPublished(
     console.error('[togglePartnerPublished] partners update failed', error)
     return { ok: false, error: '저장에 실패했습니다.' }
   }
-  revalidatePath('/partners')
   revalidatePath('/admin/partners')
+  revalidatePath('/', 'layout')
   return { ok: true, error: null }
 }

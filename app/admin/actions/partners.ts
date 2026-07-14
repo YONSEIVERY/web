@@ -21,6 +21,7 @@ type Parsed = {
   category: string
   oneLiner: string
   logoUrl: string | null
+  marqueeLogoUrl: string | null
   sortOrder: number
   published: boolean
 }
@@ -30,6 +31,8 @@ function parseCommon(formData: FormData): Parsed {
   const category = String(formData.get('category') ?? '').trim()
   const oneLiner = String(formData.get('one_liner') ?? '').trim()
   const logoUrl = String(formData.get('logo_url') ?? '').trim() || null
+  const marqueeLogoUrl =
+    String(formData.get('marquee_logo_url') ?? '').trim() || null
   const sortOrderRaw = String(formData.get('sort_order') ?? '100').trim()
   const sortOrder = Number.parseInt(sortOrderRaw, 10)
   const published = formData.get('published') === 'on'
@@ -39,7 +42,15 @@ function parseCommon(formData: FormData): Parsed {
   if (!oneLiner) throw new Error('한 줄 소개를 입력해주세요.')
   if (!Number.isFinite(sortOrder))
     throw new Error('정렬 순서를 숫자로 입력해주세요.')
-  return { name, category, oneLiner, logoUrl, sortOrder, published }
+  return {
+    name,
+    category,
+    oneLiner,
+    logoUrl,
+    marqueeLogoUrl,
+    sortOrder,
+    published,
+  }
 }
 
 export async function createPartner(
@@ -63,6 +74,7 @@ export async function createPartner(
     category: parsed.category,
     one_liner: parsed.oneLiner,
     logo_url: parsed.logoUrl,
+    marquee_logo_url: parsed.marqueeLogoUrl,
     sort_order: parsed.sortOrder,
     applicant_name: 'ADMIN',
     applicant_email: SITE.email,
@@ -74,9 +86,7 @@ export async function createPartner(
     console.error('[createPartner] failed', error)
     return { status: 'error', message: '저장에 실패했습니다.' }
   }
-  revalidatePath('/admin/partners')
-  revalidatePath('/partners')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
   redirect('/admin/partners' as Route)
 }
 
@@ -104,6 +114,7 @@ export async function updatePartner(
       category: parsed.category,
       one_liner: parsed.oneLiner,
       logo_url: parsed.logoUrl,
+      marquee_logo_url: parsed.marqueeLogoUrl,
       sort_order: parsed.sortOrder,
       published: parsed.published,
       updated_at: new Date().toISOString(),
@@ -113,9 +124,6 @@ export async function updatePartner(
     console.error('[updatePartner] failed', error)
     return { status: 'error', message: '저장에 실패했습니다.' }
   }
-  revalidatePath('/admin/partners')
-  revalidatePath(`/admin/partners/${id}`)
-  revalidatePath('/partners')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
   return { status: 'success', message: '저장되었습니다.' }
 }

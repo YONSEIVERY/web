@@ -15,6 +15,7 @@ type Initial = {
   category: Category
   one_liner: string
   logo_url: string
+  marquee_logo_url: string
   sort_order: number
   published: boolean
 }
@@ -72,15 +73,32 @@ export function PartnerForm({ initial }: { initial: Initial }) {
 
       <label className="grid gap-1">
         <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted">
-          로고 URL (선택 · 공개 페이지 marquee에 사용)
+          로고 URL (카드용 · 원본 로고 · 선택)
         </span>
         <input
-          type="url"
+          type="text"
           name="logo_url"
           defaultValue={initial.logo_url}
-          placeholder="https://…"
+          placeholder="/partners/foo.png 또는 https://…"
           className="w-full border border-border bg-bg-base px-3 py-2 text-sm text-fg-primary focus:border-fg-primary focus:outline-none"
         />
+      </label>
+
+      <label className="grid gap-1">
+        <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted">
+          마퀴 배너 로고 URL (다크 배경용 흑백 SVG · 선택)
+        </span>
+        <input
+          type="text"
+          name="marquee_logo_url"
+          defaultValue={initial.marquee_logo_url}
+          placeholder="/partners/foo.svg 또는 https://…"
+          className="w-full border border-border bg-bg-base px-3 py-2 text-sm text-fg-primary focus:border-fg-primary focus:outline-none"
+        />
+        <span className="text-[10px] text-fg-muted">
+          비워두면 사이트 하단 마퀴 배너에 노출되지 않습니다. 카드용
+          로고와 별도 저장(다크 배경에 맞춘 흰색/실루엣 SVG 권장).
+        </span>
       </label>
 
       <label className="grid gap-1">

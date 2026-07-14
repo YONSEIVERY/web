@@ -89,29 +89,6 @@ export const PARTNERS = {
   },
 } as const
 
-/**
- * Logos for the pre-footer marquee strip rendered site-wide via
- * `(marketing)/layout.tsx`. Order is the order they appear in the loop.
- * Source files live in `/public/partners/`.
- */
-/**
- * `invert: true` forces the logo to render as a pure white silhouette
- * via CSS `brightness-0 invert` — used for marks whose source artwork
- * only contains dark fills and would otherwise read as black-on-black
- * against the site background.
- */
-export type PartnerLogo = {
-  name: string
-  src: string
-  invert?: boolean
-}
-
-export const PARTNER_LOGOS: readonly PartnerLogo[] = [
-  { name: '노코더스', src: '/partners/nocoders.svg' },
-  { name: '티오더', src: '/partners/toorder.svg' },
-  { name: 'ZUZU', src: '/partners/zuzu.svg' },
-  { name: '알파브라더스', src: '/partners/alphabrothers.svg' },
-  { name: 'abmlab', src: '/partners/abmlab.svg' },
-  { name: '연세대 공과대학', src: '/partners/yonsei-engineering.svg' },
-  { name: '벤처캐피탈협회', src: '/partners/kvca.svg' },
-]
+// 마퀴 배너 로고 목록은 partners 테이블(marquee_logo_url 컬럼)로 이전.
+// components/site/partner-marquee.tsx가 lib/partners/queries.ts의
+// getMarqueePartners()로 조회한다.

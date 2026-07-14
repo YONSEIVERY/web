@@ -1,25 +1,26 @@
 /**
  * Partner marquee — pre-footer band.
  *
- * Renders the current volume's partner logos as a horizontally-scrolling
- * strip directly above the colophon footer. Tokens are duplicated so the
- * CSS `translateX(-50%)` loop reads seamless; animation is gated by
- * `prefers-reduced-motion` in globals.css.
+ * partners 테이블에서 approved+published+marquee_logo_url 있는 파트너만
+ * sort_order 순으로 조회해 하단 스트립에 노출. 어드민에서 파트너 추가/
+ * 노출 토글/삭제하면 즉시 반영된다(관련 action은 revalidatePath('/',
+ * 'layout')으로 layout 트리 전체 재검증).
  *
- * Sizing: each logo gets a fixed height with `w-auto` so its native
- * aspect ratio is preserved — fitting variable-shape SVGs into a fixed
- * box (Image with `fill` + `object-contain`) leaves visible whitespace
- * around square marks. Plain `<img>` is used instead of next/image
- * because (a) SVG doesn't benefit from raster optimization and (b) we
- * need width to follow each SVG's intrinsic aspect.
+ * 로고 자산: `marquee_logo_url`은 다크 배경용 흑백 실루엣 SVG를 권장
+ * 하지만, 원본 로고와 별개 컬럼이라 어드민이 배너용 로고를 카드용과
+ * 다르게 지정할 수 있다. 값이 null이면 마퀴에 노출되지 않는다.
  *
- * Decorative + informational — `aria-hidden` on the visual loop, but
- * each logo's name is exposed once via the sr-only list below so screen
- * readers don't have to read it 16 times.
+ * Rendering:
+ * - `<img>` (SVG 최적화 대상 아님 + intrinsic aspect 유지)
+ * - 토큰 2회 반복 → CSS translateX(-50%) 루프 seamless
+ * - prefers-reduced-motion은 globals.css에서 처리
+ * - 파트너 이름은 sr-only 리스트로 한 번만 노출
  */
-import { PARTNER_LOGOS } from '@/lib/content/partners'
+import { getMarqueePartners } from '@/lib/partners/queries'
 
-export function PartnerMarquee() {
+export async function PartnerMarquee() {
+  const logos = await getMarqueePartners()
+  if (logos.length === 0) return null
   return (
     <section
       aria-label="이번 학기 협력사"
@@ -33,20 +34,23 @@ export function PartnerMarquee() {
           이번 학기를 함께 받치는 협력사
         </p>
       </div>
-      <div className="very-marquee-track flex w-max items-center gap-14 md:gap-24" aria-hidden>
-        {[...PARTNER_LOGOS, ...PARTNER_LOGOS].map((logo, i) => (
+      <div
+        className="very-marquee-track flex w-max items-center gap-14 md:gap-24"
+        aria-hidden
+      >
+        {[...logos, ...logos].map((logo, i) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            key={i}
-            src={logo.src}
+            key={`${logo.id}-${i}`}
+            src={logo.marquee_logo_url}
             alt=""
-            className={`block h-12 w-auto shrink-0 md:h-20${logo.invert ? ' brightness-0 invert' : ''}`}
+            className="block h-12 w-auto shrink-0 md:h-20"
           />
         ))}
       </div>
       <ul className="sr-only">
-        {PARTNER_LOGOS.map((logo) => (
-          <li key={logo.name}>{logo.name}</li>
+        {logos.map((logo) => (
+          <li key={logo.id}>{logo.name}</li>
         ))}
       </ul>
     </section>

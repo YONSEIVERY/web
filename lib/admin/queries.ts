@@ -92,7 +92,7 @@ export async function getApprovedAlumni() {
 export async function getApprovedPartners() {
   const { data } = await supabaseService
     .from('partners')
-    .select('id, name, category, published, sort_order')
+    .select('id, name, category, published, sort_order, marquee_logo_url')
     .eq('status', 'approved')
     .order('sort_order', { ascending: true })
   return data ?? []

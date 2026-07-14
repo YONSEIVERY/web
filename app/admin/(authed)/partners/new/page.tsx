@@ -26,6 +26,7 @@ export default function NewPartnerPage() {
           category: 'CORPORATE',
           one_liner: '',
           logo_url: '',
+          marquee_logo_url: '',
           sort_order: 100,
           published: true,
         }}
