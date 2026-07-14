@@ -107,7 +107,6 @@ export type PartnerLogo = {
 }
 
 export const PARTNER_LOGOS: readonly PartnerLogo[] = [
-  { name: '모두닥', src: '/partners/modudoc.svg' },
   { name: '노코더스', src: '/partners/nocoders.svg' },
   { name: '티오더', src: '/partners/toorder.svg' },
   { name: 'ZUZU', src: '/partners/zuzu.svg' },
