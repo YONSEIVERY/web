@@ -5,6 +5,7 @@ import {
   getDemodayAttendees,
   getDemodayById,
 } from '@/lib/demoday/queries'
+import { ExportAttendeesButtons } from '@/components/admin/demoday/export-buttons'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,14 +39,11 @@ export default async function AdminDemodayAttendeesPage({
         >
           ← 회차 편집
         </Link>
-        <span className="mx-2">·</span>
-        <a
-          href={`/admin/demoday/${event.id}/attendees/export.csv`}
-          className="underline"
-        >
-          CSV 내려받기
-        </a>
       </p>
+
+      <div className="mt-6">
+        <ExportAttendeesButtons eventId={event.id} />
+      </div>
 
       <table className="mt-10 w-full text-sm">
         <thead className="border-b border-border">
