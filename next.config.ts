@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
   poweredByHeader: false,
+  // exceljs는 dynamic require(archiver/unzipper 등)를 써서 Next.js 서버 번들에
+  // 포함되면 런타임에 500으로 실패한다. 외부 패키지로 표시해 native require로
+  // 로드하도록 한다.
+  serverExternalPackages: ['exceljs'],
   // 포스터 업로드(server action)는 최대 5MB까지 허용한다(uploadDemodayPoster).
   // Next.js 기본 1MB 한도 그대로면 파일이 server action에 도달하지 못해 400으로 막힌다.
   experimental: {
