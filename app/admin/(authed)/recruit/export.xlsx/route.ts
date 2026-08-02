@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import ExcelJS from 'exceljs'
 import { requireAdmin } from '@/lib/admin/is-admin'
+import { formatKstDateTime } from '@/lib/utils/format-date'
 import {
   getApplications,
   getCurrentRecruitRound,
@@ -21,12 +22,6 @@ const COLUMNS: { header: string; width: number }[] = [
   { header: '비대면 면접 사유', width: 40 },
   { header: '상태', width: 12 },
 ]
-
-function formatCreated(iso: string) {
-  const d = new Date(iso)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
 
 export async function GET(req: Request) {
   try {
@@ -59,7 +54,7 @@ export async function GET(req: Request) {
 
   for (const a of applications) {
     ws.addRow([
-      formatCreated(a.created_at),
+      formatKstDateTime(a.created_at),
       a.name,
       a.phone,
       a.email,

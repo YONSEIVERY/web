@@ -6,6 +6,7 @@ import {
   getDemodayById,
 } from '@/lib/demoday/queries'
 import { ExportAttendeesButtons } from '@/components/admin/demoday/export-buttons'
+import { formatKstDateTime } from '@/lib/utils/format-date'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,7 +64,7 @@ export default async function AdminDemodayAttendeesPage({
         <tbody>
           {attendees.map((a) => (
             <tr key={a.id} className="border-b border-border align-top">
-              <Td>{formatCreated(a.created_at)}</Td>
+              <Td>{formatKstDateTime(a.created_at)}</Td>
               <Td>{a.name}</Td>
               <Td>{a.affiliation}</Td>
               <Td>{a.phone}</Td>
@@ -121,10 +122,4 @@ function Td({
       {children}
     </td>
   )
-}
-
-function formatCreated(iso: string) {
-  const d = new Date(iso)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 }

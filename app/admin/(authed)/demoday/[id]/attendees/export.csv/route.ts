@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/admin/is-admin'
+import { formatKstDateTime } from '@/lib/utils/format-date'
 import {
   getDemodayAttendees,
   getDemodayById,
@@ -44,7 +45,7 @@ export async function GET(
 
   const rows = attendees.map((a) =>
     [
-      a.created_at,
+      formatKstDateTime(a.created_at),
       a.name,
       a.affiliation,
       a.phone,
