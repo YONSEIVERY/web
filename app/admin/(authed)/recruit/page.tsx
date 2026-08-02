@@ -11,6 +11,7 @@ import {
   setApplicationStatus,
   toggleRecruitOpen,
 } from '@/app/admin/actions/recruit'
+import { DeleteButton } from '@/components/admin/delete-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -91,6 +92,7 @@ export default async function AdminRecruitPage() {
             <Th>지원서</Th>
             <Th>비대면 사유</Th>
             <Th>상태</Th>
+            <Th>삭제</Th>
           </tr>
         </thead>
         <tbody>
@@ -99,7 +101,7 @@ export default async function AdminRecruitPage() {
           ))}
           {applications.length === 0 && (
             <tr>
-              <Td colSpan={7}>
+              <Td colSpan={8}>
                 <p className="py-12 text-center text-fg-muted">
                   아직 지원자가 없습니다.
                 </p>
@@ -172,6 +174,13 @@ function ApplicationRow({
             저장
           </button>
         </form>
+      </Td>
+      <Td>
+        <DeleteButton
+          kind="application"
+          id={app.id}
+          label={`${app.name} (${app.email})`}
+        />
       </Td>
     </tr>
   )

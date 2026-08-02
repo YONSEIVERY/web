@@ -120,19 +120,19 @@ export const ABOUT = {
   },
   leadership: {
     label: 'LEADERSHIP',
-    title: '43기 회장단',
+    title: '44기 회장단',
     members: [
       {
         roleMono: 'PRESIDENT',
-        role: '회장',
-        name: '신현우',
-        monoName: 'HYUNWOO SHIN',
+        role: '학회장',
+        name: '고민서',
+        monoName: 'MINSEO KO',
       },
       {
         roleMono: 'VICE PRESIDENT',
-        role: '부회장',
-        name: '구원근',
-        monoName: 'WONKEUN KOO',
+        role: '부학회장',
+        name: '임서현',
+        monoName: 'SEOHYUN LIM',
       },
     ],
   },

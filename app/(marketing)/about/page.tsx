@@ -7,12 +7,12 @@ import { getPublicLeadership } from '@/lib/cohort-members/queries'
 export const metadata: Metadata = {
   title: '소개',
   description:
-    '연세대학교 창업학회 VERY. 1997년 벤처창업연구회로 발족, 매 학기 더 단단해진 지반을 다음 기수에게 넘겨오며 43기째 이어오고 있는 학회.',
+    '연세대학교 창업학회 VERY. 1997년 벤처창업연구회로 발족, 매 학기 더 단단해진 지반을 다음 기수에게 넘겨오며 44기째 이어오고 있는 학회.',
 }
 
 export const revalidate = 60
 
-const CURRENT_COHORT = 43
+const CURRENT_COHORT = 44
 
 /**
  * /about — society profile page.

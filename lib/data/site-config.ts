@@ -10,9 +10,9 @@ export interface SiteConfig {
 }
 
 const FALLBACK: SiteConfig = {
-  cohort: 43,
+  cohort: 44,
   year: 2026,
-  semester: '1학기',
+  semester: '2학기',
   sinceYear: 1997,
 }
 

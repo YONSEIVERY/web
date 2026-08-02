@@ -2,7 +2,7 @@ export const SITE = {
   name: 'VERY',
   fullName: 'VERY ─ 연세대학교 창업학회',
   since: 1997,
-  currentCohort: 43,
+  currentCohort: 44,
   email: 'yonseivery1997@gmail.com',
   instagram: 'https://instagram.com/very_yonsei',
   recruitFormUrl: process.env.RECRUIT_FORM_URL ?? '#',
