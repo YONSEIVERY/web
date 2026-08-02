@@ -4,6 +4,7 @@ import InquiryNotification from '@/emails/inquiry-notification'
 import PartnerApplicationNotification from '@/emails/partner-application-notification'
 import AlumniRegistrationNotification from '@/emails/alumni-registration-notification'
 import DemodayAttendeeNotification from '@/emails/demoday-attendee-notification'
+import RecruitApplicationNotification from '@/emails/recruit-application-notification'
 
 export async function sendInquiryNotification(args: {
   id: string
@@ -72,6 +73,27 @@ export async function sendDemodayAttendeeNotification(args: {
     })
   } catch (e) {
     console.error('sendDemodayAttendeeNotification failed', e)
+  }
+}
+
+export async function sendRecruitApplicationNotification(args: {
+  applicationId: string
+  cohort: number
+  name: string
+  phone: string
+  email: string
+  remoteReason: string | null
+  fileName: string
+}) {
+  try {
+    await resend.emails.send({
+      from: NOTIFY_FROM,
+      to: NOTIFY_TO,
+      subject: `[VERY] ${args.cohort}기 지원서 접수 — ${args.name}`,
+      react: RecruitApplicationNotification(args),
+    })
+  } catch (e) {
+    console.error('sendRecruitApplicationNotification failed', e)
   }
 }
 

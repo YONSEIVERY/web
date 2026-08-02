@@ -9,6 +9,7 @@ type NavItem = { href: Route; label: string }
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/admin', label: '대시보드' },
+  { href: '/admin/recruit' as Route, label: '리크루팅' },
   { href: '/admin/applications', label: '신청 큐' },
   { href: '/admin/inquiries', label: '문의' },
   { href: '/admin/alumni', label: '알럼나이' },

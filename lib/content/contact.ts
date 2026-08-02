@@ -9,7 +9,7 @@ import { SITE } from './site'
 
 export const CONTACT = {
   hero: {
-    eyebrow: 'Contact — Vol.43 / 2026—1',
+    eyebrow: 'Contact — Vol.44 / 2026—2',
     headlineLine1: 'Get in touch.',
     headlineLine2: '사람이 직접 답장합니다.',
     subline:
@@ -17,8 +17,8 @@ export const CONTACT = {
   },
   intro: {
     label: 'STATUS',
-    title: '지금은 신청 기간이 아닙니다.',
-    body: '현재 43기가 landing 중입니다. 다음 기수 모집이 열리기 전까지는 별도의 신청 폼을 두지 않고, 아래 채널로 보내주시는 문의는 실제 담당자가 확인해 회신드립니다.',
+    title: '모집 접수는 RECRUIT 페이지에서.',
+    body: '학회원 지원은 시즌 중 yonseivery.com/recruit에서 직접 접수합니다. 접수 기간이 아닐 때에도 파트너십·언론 등 일반 문의는 아래 채널로 보내주시면 담당자가 확인해 회신드립니다.',
   },
   channels: {
     label: 'CHANNELS',
@@ -40,10 +40,10 @@ export const CONTACT = {
       },
       {
         mono: 'RECRUIT',
-        label: '시즌별 노션 · 구글폼',
-        href: SITE.recruitFormUrl,
-        note: '모집 시즌에만 노션·구글폼으로 접수합니다. 현재는 43기 landing 중이라 다음 시즌 오픈 시 인스타그램으로 안내드립니다.',
-        external: true,
+        label: 'yonseivery.com/recruit',
+        href: '/recruit',
+        note: '학회원 지원은 시즌 중 사이트에서 직접 접수합니다. 모집 일정은 인스타그램에 가장 먼저 공지됩니다.',
+        external: false,
       },
     ],
   },
