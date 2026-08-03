@@ -33,18 +33,23 @@ export default async function MemberSessionPage({
         {session.title}
       </h1>
 
-      <dl className="mt-6 grid grid-cols-1 gap-2 border border-border p-5 text-sm sm:grid-cols-2">
-        {session.event_date && (
-          <MetaRow label="일시" value={formatKstDateTime(session.event_date)} />
-        )}
-        {session.location && (
-          <MetaRow label="장소" value={session.location} />
-        )}
-        {session.speaker && <MetaRow label="연사" value={session.speaker} />}
-        {session.location_note && (
-          <MetaRow label="안내" value={session.location_note} />
-        )}
-      </dl>
+      {(session.event_date ||
+        session.location ||
+        session.speaker ||
+        session.location_note) && (
+        <dl className="mt-6 grid grid-cols-1 gap-2 border border-border p-5 text-sm sm:grid-cols-2">
+          {session.event_date && (
+            <MetaRow label="일시" value={formatKstDateTime(session.event_date)} />
+          )}
+          {session.location && (
+            <MetaRow label="장소" value={session.location} />
+          )}
+          {session.speaker && <MetaRow label="연사" value={session.speaker} />}
+          {session.location_note && (
+            <MetaRow label="안내" value={session.location_note} />
+          )}
+        </dl>
+      )}
 
       {session.content_md ? (
         <div className="mt-8">
