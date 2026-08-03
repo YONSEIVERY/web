@@ -18,8 +18,13 @@ export default async function RecruitPage() {
     getCurrentRecruitRound(),
     getSiteConfig(),
   ])
-  const open = Boolean(round?.apply_open)
+  const deadlinePassed = Boolean(
+    round?.apply_deadline &&
+      Date.now() > new Date(round.apply_deadline).getTime(),
+  )
+  const open = Boolean(round?.apply_open) && !deadlinePassed
   const heroEyebrow = `Recruit · ${volLabel(siteConfig)}`
+  const notice = deadlinePassed ? RECRUIT.deadlineNotice : RECRUIT.closedNotice
 
   if (!open) {
     return (
@@ -33,10 +38,10 @@ export default async function RecruitPage() {
             {heroEyebrow}
           </p>
           <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
-            {RECRUIT.closedNotice.title}
+            {notice.title}
           </h1>
           <p className="mt-6 max-w-[58ch] font-display text-base leading-[1.8] text-fg-subtle md:text-lg">
-            {RECRUIT.closedNotice.body}
+            {notice.body}
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-6">
             <a

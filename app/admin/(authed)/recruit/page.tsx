@@ -32,25 +32,20 @@ export default async function AdminRecruitPage() {
   }
 
   const applications = await getApplications(round.id)
-  // 서명 URL은 배치 한 번으로 발급한다. per-file download 파일명은 배치
-  // API가 지원하지 않고, 한글 파일명은 인코딩이 깨지므로 쓰지 않는다.
-  const fileUrls = new Map<string, string>()
-  if (applications.length > 0) {
+  // 서명 URL은 3종 첨부 전체를 배치 한 번으로 발급한다.
+  const urlByPath = new Map<string, string>()
+  const allPaths = applications.flatMap((a) =>
+    [a.file_path, a.business_plan_path, a.portfolio_path].filter(
+      (p): p is string => Boolean(p),
+    ),
+  )
+  if (allPaths.length > 0) {
     const { data } = await supabaseService.storage
       .from('recruit-applications')
-      .createSignedUrls(
-        applications.map((a) => a.file_path),
-        SIGNED_URL_TTL_SEC,
-      )
+      .createSignedUrls(allPaths, SIGNED_URL_TTL_SEC)
     if (data) {
-      const byPath = new Map(
-        data
-          .filter((d) => d.signedUrl)
-          .map((d) => [d.path ?? '', d.signedUrl]),
-      )
-      for (const a of applications) {
-        const url = byPath.get(a.file_path)
-        if (url) fileUrls.set(a.id, url)
+      for (const d of data) {
+        if (d.path && d.signedUrl) urlByPath.set(d.path, d.signedUrl)
       }
     }
   }
@@ -103,6 +98,8 @@ export default async function AdminRecruitPage() {
             <Th>연락처</Th>
             <Th>이메일</Th>
             <Th>지원서</Th>
+            <Th>사업계획서</Th>
+            <Th>작업물</Th>
             <Th>비대면 사유</Th>
             <Th>상태</Th>
             <Th>삭제</Th>
@@ -110,11 +107,11 @@ export default async function AdminRecruitPage() {
         </thead>
         <tbody>
           {applications.map((a) => (
-            <ApplicationRow key={a.id} app={a} fileUrl={fileUrls.get(a.id)} />
+            <ApplicationRow key={a.id} app={a} urls={urlByPath} />
           ))}
           {applications.length === 0 && (
             <tr>
-              <Td colSpan={8}>
+              <Td colSpan={10}>
                 <p className="py-12 text-center text-fg-muted">
                   아직 지원자가 없습니다.
                 </p>
@@ -138,12 +135,36 @@ function Header() {
   )
 }
 
+function FileLink({
+  path,
+  urls,
+  label,
+}: {
+  path: string | null
+  urls: Map<string, string>
+  label: string
+}) {
+  if (!path) return <>-</>
+  const url = urls.get(path)
+  if (!url) return <>-</>
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline hover:text-fg-primary"
+    >
+      {label}
+    </a>
+  )
+}
+
 function ApplicationRow({
   app,
-  fileUrl,
+  urls,
 }: {
   app: Application
-  fileUrl: string | undefined
+  urls: Map<string, string>
 }) {
   return (
     <tr className="border-b border-border align-top">
@@ -152,18 +173,13 @@ function ApplicationRow({
       <Td>{app.phone}</Td>
       <Td>{app.email}</Td>
       <Td>
-        {fileUrl ? (
-          <a
-            href={fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-fg-primary"
-          >
-            PDF 열기
-          </a>
-        ) : (
-          '-'
-        )}
+        <FileLink path={app.file_path} urls={urls} label="PDF" />
+      </Td>
+      <Td>
+        <FileLink path={app.business_plan_path} urls={urls} label="열기" />
+      </Td>
+      <Td>
+        <FileLink path={app.portfolio_path} urls={urls} label="ZIP" />
       </Td>
       <Td>{app.remote_interview_reason ?? '-'}</Td>
       <Td>

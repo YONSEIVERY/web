@@ -19,6 +19,8 @@ const COLUMNS: { header: string; width: number }[] = [
   { header: '연락처', width: 16 },
   { header: '이메일', width: 26 },
   { header: '지원서 파일명', width: 28 },
+  { header: '사업계획서', width: 24 },
+  { header: '작업물', width: 24 },
   { header: '비대면 면접 사유', width: 40 },
   { header: '상태', width: 12 },
 ]
@@ -59,12 +61,14 @@ export async function GET(req: Request) {
       a.phone,
       a.email,
       a.file_name,
+      a.business_plan_name ?? '',
+      a.portfolio_name ?? '',
       a.remote_interview_reason ?? '',
       APPLICATION_STATUS_LABELS[a.status],
     ])
   }
 
-  ws.autoFilter = { from: 'A1', to: 'G1' }
+  ws.autoFilter = { from: 'A1', to: 'I1' }
   ws.views = [{ state: 'frozen', ySplit: 1 }]
 
   const buffer = await wb.xlsx.writeBuffer()

@@ -43,7 +43,7 @@ export async function deleteApplication(
 
   const { data: row, error: fetchErr } = await supabaseService
     .from('applications')
-    .select('id, file_path')
+    .select('id, file_path, business_plan_path, portfolio_path')
     .eq('id', id)
     .maybeSingle()
   if (fetchErr) {
@@ -61,12 +61,15 @@ export async function deleteApplication(
     return { ok: false, error: '삭제에 실패했습니다.' }
   }
 
-  // 지원서 PDF도 함께 제거 (best-effort - 실패해도 행 삭제는 유지)
-  if (row.file_path) {
+  // 첨부 3종도 함께 제거 (best-effort - 실패해도 행 삭제는 유지)
+  const paths = [row.file_path, row.business_plan_path, row.portfolio_path]
+    .filter(Boolean)
+    .map(String)
+  if (paths.length > 0) {
     try {
       const { error: rmErr } = await supabaseService.storage
         .from('recruit-applications')
-        .remove([String(row.file_path)])
+        .remove(paths)
       if (rmErr)
         console.error('[deleteApplication] storage cleanup failed', rmErr)
     } catch (rmErr) {

@@ -1,48 +1,146 @@
 'use client'
-import { useActionState, useEffect, useRef, useState } from 'react'
-import { useFormStatus } from 'react-dom'
-import { submitRecruitApplication } from '@/app/actions/recruit'
+import { useEffect, useRef, useState } from 'react'
+import { createClient } from '@/lib/supabase/browser'
+import {
+  createRecruitUploadTickets,
+  submitRecruitApplication,
+} from '@/app/actions/recruit'
 import {
   RECRUIT_INITIAL_STATE,
   type RecruitFormState,
 } from '@/app/actions/recruit-state'
+import { RECRUIT } from '@/lib/content/recruit'
 
 const INPUT_CLASS =
   'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
 const LABEL_CLASS =
   'flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs'
-const MAX_FILE_BYTES = 4 * 1024 * 1024
+const FILE_INPUT_CLASS =
+  'block w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary file:mr-4 file:border-0 file:bg-transparent file:font-mono file:text-[10px] file:uppercase file:tracking-[0.32em] file:text-fg-primary focus:border-fg-primary focus:outline-none'
 
+const MB = 1024 * 1024
+const PLAN_EXTS = ['pdf', 'doc', 'docx', 'hwp', 'hwpx', 'ppt', 'pptx']
+
+/**
+ * 파일 3종은 서명 업로드 티켓으로 브라우저에서 스토리지에 직접 올린다
+ * (서버 경유 시 Vercel 4.5MB 제한). 제출 흐름: 검증 → 티켓 발급 →
+ * 직접 업로드 → 접수 확정. 실패해도 입력값은 그대로 남는다.
+ */
 export function RecruitApplicationForm() {
-  const [state, action] = useActionState<RecruitFormState, FormData>(
-    submitRecruitApplication,
-    RECRUIT_INITIAL_STATE,
+  const [phase, setPhase] = useState<'idle' | 'uploading' | 'submitting'>(
+    'idle',
   )
+  const [result, setResult] = useState<RecruitFormState>(RECRUIT_INITIAL_STATE)
   const [fileError, setFileError] = useState<string | null>(null)
 
-  if (state.status === 'success') return <Success />
+  if (result.status === 'success') return <Success />
 
-  // React 19는 서버 액션이 끝나면 폼을 리셋한다. 에러 응답이 돌려준 값을
-  // defaultValue로 다시 깔아 입력이 날아가지 않게 한다. (key로 리마운트)
-  const values =
-    state.status === 'error'
-      ? state.values
-      : { name: '', phone: '', email: '', remoteReason: '' }
-  const formKey = state.status === 'error' ? 'retry' : 'initial'
+  const ext = (f: File) => (f.name.split('.').pop() ?? '').toLowerCase()
+
+  const validateFiles = (
+    form: HTMLFormElement,
+  ):
+    | { error: string }
+    | { app: File; plan: File | undefined; zip: File | undefined } => {
+    const app = (form.elements.namedItem('application_file') as HTMLInputElement)
+      ?.files?.[0]
+    const plan = (
+      form.elements.namedItem('business_plan_file') as HTMLInputElement
+    )?.files?.[0]
+    const zip = (form.elements.namedItem('portfolio_file') as HTMLInputElement)
+      ?.files?.[0]
+
+    if (!app) return { error: '지원서 PDF를 첨부해주세요.' }
+    if (ext(app) !== 'pdf' || app.type !== 'application/pdf')
+      return { error: '지원서는 PDF 파일만 가능합니다.' }
+    if (app.size > 10 * MB)
+      return { error: '지원서가 10MB를 넘습니다. 용량을 줄여주세요.' }
+    if (plan) {
+      if (!PLAN_EXTS.includes(ext(plan)))
+        return {
+          error: '사업계획서는 pdf/doc/docx/hwp/hwpx/ppt/pptx만 가능합니다.',
+        }
+      if (plan.size > 10 * MB) return { error: '사업계획서가 10MB를 넘습니다.' }
+    }
+    if (zip) {
+      if (ext(zip) !== 'zip')
+        return { error: '작업물은 ZIP 파일 하나로 압축해주세요.' }
+      if (zip.size > 30 * MB) return { error: '작업물이 30MB를 넘습니다.' }
+    }
+    return { app, plan, zip }
+  }
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (phase !== 'idle') return
+    const form = e.currentTarget
+    setFileError(null)
+
+    const checked = validateFiles(form)
+    if ('error' in checked) {
+      setFileError(checked.error)
+      return
+    }
+    const { app, plan, zip } = checked
+
+    try {
+      setPhase('uploading')
+      const req: { kind: string; ext: string }[] = [
+        { kind: 'application', ext: ext(app) },
+      ]
+      if (plan) req.push({ kind: 'business_plan', ext: ext(plan) })
+      if (zip) req.push({ kind: 'portfolio', ext: ext(zip) })
+
+      const ticketRes = await createRecruitUploadTickets(req)
+      if (!ticketRes.ok) throw new Error(ticketRes.error)
+
+      const supabase = createClient()
+      const fileByKind: Record<string, File | undefined> = {
+        application: app,
+        business_plan: plan,
+        portfolio: zip,
+      }
+      for (const ticket of ticketRes.tickets) {
+        const file = fileByKind[ticket.kind]
+        if (!file)
+          throw new Error('업로드 준비가 어긋났습니다. 다시 시도해주세요.')
+        const { error: upErr } = await supabase.storage
+          .from('recruit-applications')
+          .uploadToSignedUrl(ticket.path, ticket.token, file)
+        if (upErr)
+          throw new Error('파일 업로드에 실패했습니다. 다시 시도해주세요.')
+      }
+
+      setPhase('submitting')
+      const fd = new FormData(form)
+      fd.set('submission_id', ticketRes.submissionId)
+      for (const ticket of ticketRes.tickets) {
+        fd.set(`${ticket.kind}_path`, ticket.path)
+        fd.set(`${ticket.kind}_name`, fileByKind[ticket.kind]?.name ?? '')
+      }
+      // 원본 File은 서버로 보내지 않는다 (4.5MB 제한 회피가 목적)
+      fd.delete('application_file')
+      fd.delete('business_plan_file')
+      fd.delete('portfolio_file')
+
+      const res = await submitRecruitApplication(RECRUIT_INITIAL_STATE, fd)
+      setResult(res)
+    } catch (err) {
+      setResult({
+        status: 'error',
+        message: err instanceof Error ? err.message : '접수에 실패했습니다.',
+        values: { name: '', phone: '', email: '', remoteReason: '' },
+      })
+    } finally {
+      setPhase('idle')
+    }
+  }
+
+  const errorMessage = result.status === 'error' ? result.message : fileError
 
   return (
-    <form
-      key={formKey}
-      action={action}
-      onSubmit={(e) => {
-        // 5MB 초과·비PDF는 서버도 거부하지만, 프레임워크 바디 한도에 걸려
-        // 불친절한 에러가 나기 전에 클라이언트에서 먼저 막는다.
-        if (fileError) e.preventDefault()
-      }}
-      className="grid grid-cols-1 gap-8"
-    >
-      {/* honeypot · 실제 사용자에게는 보이지 않음. autofill이 건드리지 않도록
-          의미 없는 이름을 쓴다. */}
+    <form onSubmit={onSubmit} className="grid grid-cols-1 gap-8">
+      {/* honeypot: 실제 사용자에게는 보이지 않는다 */}
       <input
         type="text"
         name="extra_field_hp"
@@ -53,13 +151,7 @@ export function RecruitApplicationForm() {
       />
 
       <Fieldset legend="지원자 정보">
-        <Field
-          name="name"
-          label="성함"
-          required
-          maxLength={80}
-          defaultValue={values.name}
-        />
+        <Field name="name" label="성함" required maxLength={80} />
         <Field
           name="phone"
           label="연락처 (예: 010-0000-0000)"
@@ -67,43 +159,30 @@ export function RecruitApplicationForm() {
           type="tel"
           pattern="[0-9+\-\s()]{7,20}"
           title="숫자와 하이픈(-)으로 입력해주세요"
-          defaultValue={values.phone}
         />
-        <Field
-          name="email"
-          label="이메일"
-          required
-          type="email"
-          defaultValue={values.email}
-        />
+        <Field name="email" label="이메일" required type="email" />
       </Fieldset>
 
-      <Fieldset legend="지원서 제출">
-        <label className="flex flex-col gap-2">
-          <span className={LABEL_CLASS}>
-            지원서 PDF (4MB 이하)
-            <span aria-hidden className="ml-1 text-accent">
-              *
-            </span>
-          </span>
-          <input
-            type="file"
-            name="application_file"
-            accept="application/pdf"
-            required
-            onChange={(e) => {
-              const f = e.target.files?.[0]
-              if (!f) return setFileError(null)
-              if (f.type !== 'application/pdf')
-                return setFileError('PDF 파일만 업로드할 수 있습니다.')
-              if (f.size > MAX_FILE_BYTES)
-                return setFileError('파일이 4MB를 넘습니다. 용량을 줄여주세요.')
-              setFileError(null)
-            }}
-            className="block w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary file:mr-4 file:border-0 file:bg-transparent file:font-mono file:text-[10px] file:uppercase file:tracking-[0.32em] file:text-fg-primary focus:border-fg-primary focus:outline-none"
-          />
-          {fileError && <span className="text-sm text-red-600">{fileError}</span>}
-        </label>
+      <Fieldset legend="파일 제출">
+        <FileField
+          name="application_file"
+          label="지원서 PDF (필수)"
+          hint={RECRUIT.howTo.fileRules.application}
+          accept="application/pdf"
+          required
+        />
+        <FileField
+          name="business_plan_file"
+          label="사업계획서 (선택)"
+          hint={RECRUIT.howTo.fileRules.businessPlan}
+          accept=".pdf,.doc,.docx,.hwp,.hwpx,.ppt,.pptx"
+        />
+        <FileField
+          name="portfolio_file"
+          label="작업물 ZIP (선택)"
+          hint={RECRUIT.howTo.fileRules.portfolio}
+          accept=".zip,application/zip,application/x-zip-compressed"
+        />
       </Fieldset>
 
       <Fieldset legend="비대면 면접 (선택)">
@@ -116,7 +195,6 @@ export function RecruitApplicationForm() {
             rows={4}
             maxLength={1000}
             placeholder="특별한 사유가 있는 경우 비대면 면접을 허용합니다."
-            defaultValue={values.remoteReason}
             className={INPUT_CLASS}
           />
         </label>
@@ -143,39 +221,28 @@ export function RecruitApplicationForm() {
             className="mt-1 h-4 w-4 border-border accent-fg-primary"
           />
           <span className="font-display text-sm text-fg-subtle leading-relaxed">
-            모집 운영 목적으로 위 정보와 지원서의 수집·이용에 동의합니다.
+            모집 운영 목적으로 위 정보와 제출 파일의 수집·이용에 동의합니다.
             모집 종료 후 1년이 지나면 학회가 자료를 파기합니다.
           </span>
         </label>
       </div>
 
-      {state.status === 'error' && (
-        <p className="text-sm text-red-600">
-          {state.message}
-          <br />
-          <span className="text-fg-muted">
-            보안상 지원서 PDF는 다시 첨부해주셔야 합니다. 나머지 입력은
-            유지됩니다.
-          </span>
-        </p>
-      )}
-      <SubmitButton />
-    </form>
-  )
-}
+      {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      translate="no"
-      className="inline-flex w-fit items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base disabled:cursor-not-allowed disabled:opacity-60 md:text-xs"
-    >
-      {pending ? '제출 중…' : '지원서 제출하기'}
-      <span aria-hidden>→</span>
-    </button>
+      <button
+        type="submit"
+        disabled={phase !== 'idle'}
+        translate="no"
+        className="inline-flex w-fit items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base disabled:cursor-not-allowed disabled:opacity-60 md:text-xs"
+      >
+        {phase === 'uploading'
+          ? '파일 업로드 중…'
+          : phase === 'submitting'
+            ? '접수 중…'
+            : '지원서 제출하기'}
+        <span aria-hidden>→</span>
+      </button>
+    </form>
   )
 }
 
@@ -223,6 +290,43 @@ function Fieldset({
   )
 }
 
+function FileField({
+  name,
+  label,
+  hint,
+  accept,
+  required,
+}: {
+  name: string
+  label: string
+  hint: string
+  accept: string
+  required?: boolean
+}) {
+  return (
+    <label className="flex flex-col gap-2">
+      <span className={LABEL_CLASS}>
+        {label}
+        {required && (
+          <span aria-hidden className="ml-1 text-accent">
+            *
+          </span>
+        )}
+      </span>
+      <input
+        type="file"
+        name={name}
+        accept={accept}
+        required={required}
+        className={FILE_INPUT_CLASS}
+      />
+      <span className="font-display text-xs leading-relaxed text-fg-muted">
+        {hint}
+      </span>
+    </label>
+  )
+}
+
 function Field({
   name,
   label,
@@ -231,7 +335,6 @@ function Field({
   maxLength,
   pattern,
   title,
-  defaultValue,
 }: {
   name: string
   label: string
@@ -240,7 +343,6 @@ function Field({
   maxLength?: number
   pattern?: string
   title?: string
-  defaultValue?: string
 }) {
   return (
     <label className="flex flex-col gap-2">
@@ -259,7 +361,6 @@ function Field({
         maxLength={maxLength}
         pattern={pattern}
         title={title}
-        defaultValue={defaultValue}
         className={INPUT_CLASS}
       />
     </label>

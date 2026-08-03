@@ -82,6 +82,10 @@ export type Application = {
   email: string
   file_path: string
   file_name: string
+  business_plan_path: string | null
+  business_plan_name: string | null
+  portfolio_path: string | null
+  portfolio_name: string | null
   remote_interview_reason: string | null
   notice_ack: boolean
   privacy_consent: boolean
@@ -101,6 +105,10 @@ function toApplication(row: Record<string, unknown>): Application {
     email: String(row.email),
     file_path: String(row.file_path),
     file_name: String(row.file_name),
+    business_plan_path: (row.business_plan_path as string | null) ?? null,
+    business_plan_name: (row.business_plan_name as string | null) ?? null,
+    portfolio_path: (row.portfolio_path as string | null) ?? null,
+    portfolio_name: (row.portfolio_name as string | null) ?? null,
     remote_interview_reason:
       (row.remote_interview_reason as string | null) ?? null,
     notice_ack: Boolean(row.notice_ack),

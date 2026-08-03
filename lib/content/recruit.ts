@@ -37,6 +37,13 @@ export const RECRUIT = {
     formTemplateUrl: '/downloads/very44-application.docx',
     formTemplateDownloadName: 'VERY44기_이름_지원서.docx',
     formTemplateLabel: '지원서 양식 내려받기 (.docx)',
+    fileRules: {
+      application: '파일명: VERY44기_이름_지원서.pdf · PDF · 10MB 이하',
+      businessPlan:
+        '파일명: VERY44기_이름_사업계획서 · 형식 자유(pdf/docx/hwp/pptx 등) · 10MB 이하',
+      portfolio:
+        'ZIP 1개 · 30MB 이하 · 링크 자료(GitHub, 영상 등)는 링크를 정리한 텍스트 파일로 압축에 포함',
+    },
   },
   notice: {
     label: 'NOTICE',
@@ -49,6 +56,10 @@ export const RECRUIT = {
       '데모데이: 2027.1.23(토)',
       '정규 세션, OT, MT, 데모데이는 필참이며, 3회 이상 결석 시 제명 및 정회원 인정 불가',
     ],
+  },
+  deadlineNotice: {
+    title: '44기 서류 접수가 마감되었습니다.',
+    body: '서류 결과는 8.25(화)에 개별 안내드립니다. 지원해주신 모든 분께 감사드립니다.',
   },
   closedNotice: {
     title: '지금은 접수 기간이 아닙니다.',
