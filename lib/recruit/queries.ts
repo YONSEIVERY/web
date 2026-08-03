@@ -56,6 +56,12 @@ export async function getRecruitRoundById(
   return toRound(data as Record<string, unknown>)
 }
 
+/** 마감 시각 경과 여부. 렌더 순수성 린트를 피해 lib에서 판정한다. */
+export function isDeadlinePassed(round: RecruitRound | null): boolean {
+  if (!round?.apply_deadline) return false
+  return Date.now() > new Date(round.apply_deadline).getTime()
+}
+
 export const APPLICATION_STATUSES = [
   'submitted',
   'docs_pass',

@@ -1,7 +1,7 @@
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getCurrentRecruitRound } from '@/lib/recruit/queries'
+import { getCurrentRecruitRound, isDeadlinePassed } from '@/lib/recruit/queries'
 import { RECRUIT } from '@/lib/content/recruit'
 import { RecruitApplicationForm } from '@/components/forms/recruit-application-form'
 
@@ -18,10 +18,7 @@ export default async function RecruitPage() {
     getCurrentRecruitRound(),
     getSiteConfig(),
   ])
-  const deadlinePassed = Boolean(
-    round?.apply_deadline &&
-      Date.now() > new Date(round.apply_deadline).getTime(),
-  )
+  const deadlinePassed = isDeadlinePassed(round)
   const open = Boolean(round?.apply_open) && !deadlinePassed
   const heroEyebrow = `Recruit · ${volLabel(siteConfig)}`
   const notice = deadlinePassed ? RECRUIT.deadlineNotice : RECRUIT.closedNotice
