@@ -23,10 +23,12 @@ const HEADERS = [
 ]
 
 function csvCell(value: string) {
-  if (/[",\n]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`
+  // 수식 주입 방어: 엑셀은 =, +, -, @ 로 시작하는 셀을 수식으로 해석한다.
+  const guarded = /^[=+\-@]/.test(value) ? `'${value}` : value
+  if (/[",\n]/.test(guarded)) {
+    return `"${guarded.replace(/"/g, '""')}"`
   }
-  return value
+  return guarded
 }
 
 export async function GET(

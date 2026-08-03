@@ -22,12 +22,30 @@ export function RecruitApplicationForm() {
 
   if (state.status === 'success') return <Success />
 
+  // React 19는 서버 액션이 끝나면 폼을 리셋한다. 에러 응답이 돌려준 값을
+  // defaultValue로 다시 깔아 입력이 날아가지 않게 한다. (key로 리마운트)
+  const values =
+    state.status === 'error'
+      ? state.values
+      : { name: '', phone: '', email: '', remoteReason: '' }
+  const formKey = state.status === 'error' ? 'retry' : 'initial'
+
   return (
-    <form action={action} className="grid grid-cols-1 gap-8">
-      {/* honeypot — 실제 사용자에게는 보이지 않음 */}
+    <form
+      key={formKey}
+      action={action}
+      onSubmit={(e) => {
+        // 5MB 초과·비PDF는 서버도 거부하지만, 프레임워크 바디 한도에 걸려
+        // 불친절한 에러가 나기 전에 클라이언트에서 먼저 막는다.
+        if (fileError) e.preventDefault()
+      }}
+      className="grid grid-cols-1 gap-8"
+    >
+      {/* honeypot — 실제 사용자에게는 보이지 않음. autofill이 건드리지 않도록
+          의미 없는 이름을 쓴다. */}
       <input
         type="text"
-        name="website_hp"
+        name="extra_field_hp"
         tabIndex={-1}
         autoComplete="off"
         className="hidden"
@@ -35,14 +53,29 @@ export function RecruitApplicationForm() {
       />
 
       <Fieldset legend="지원자 정보">
-        <Field name="name" label="성함" required maxLength={80} />
+        <Field
+          name="name"
+          label="성함"
+          required
+          maxLength={80}
+          defaultValue={values.name}
+        />
         <Field
           name="phone"
           label="연락처 (예: 010-0000-0000)"
           required
           type="tel"
+          pattern="[0-9+\-\s()]{7,20}"
+          title="숫자와 하이픈(-)으로 입력해주세요"
+          defaultValue={values.phone}
         />
-        <Field name="email" label="이메일" required type="email" />
+        <Field
+          name="email"
+          label="이메일"
+          required
+          type="email"
+          defaultValue={values.email}
+        />
       </Fieldset>
 
       <Fieldset legend="지원서 제출">
@@ -83,6 +116,7 @@ export function RecruitApplicationForm() {
             rows={4}
             maxLength={1000}
             placeholder="특별한 사유가 있는 경우 비대면 면접을 허용합니다."
+            defaultValue={values.remoteReason}
             className={INPUT_CLASS}
           />
         </label>
@@ -116,7 +150,14 @@ export function RecruitApplicationForm() {
       </div>
 
       {state.status === 'error' && (
-        <p className="text-sm text-red-600">{state.message}</p>
+        <p className="text-sm text-red-600">
+          {state.message}
+          <br />
+          <span className="text-fg-muted">
+            보안상 지원서 PDF는 다시 첨부해주셔야 합니다. 나머지 입력은
+            유지됩니다.
+          </span>
+        </p>
       )}
       <SubmitButton />
     </form>
@@ -188,12 +229,18 @@ function Field({
   type = 'text',
   required,
   maxLength,
+  pattern,
+  title,
+  defaultValue,
 }: {
   name: string
   label: string
   type?: 'text' | 'email' | 'tel'
   required?: boolean
   maxLength?: number
+  pattern?: string
+  title?: string
+  defaultValue?: string
 }) {
   return (
     <label className="flex flex-col gap-2">
@@ -210,6 +257,9 @@ function Field({
         name={name}
         required={required}
         maxLength={maxLength}
+        pattern={pattern}
+        title={title}
+        defaultValue={defaultValue}
         className={INPUT_CLASS}
       />
     </label>

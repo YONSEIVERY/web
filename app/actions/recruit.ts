@@ -4,13 +4,16 @@ import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { sendRecruitApplicationNotification } from '@/lib/email/notifications'
 import { getCurrentRecruitRound } from '@/lib/recruit/queries'
-import type { RecruitFormState } from './recruit-state'
+import type { RecruitFormState, RecruitFormValues } from './recruit-state'
 
 /**
  * 학회원 지원서 접수. 현재(`is_current=true`) + 접수 중(`apply_open`)
  * 라운드로 자동 라우팅된다. 지원서 PDF는 비공개 버킷에 service_role로
  * 업로드하고, 지원자는 사후 자신의 제출을 다시 볼 수 없다 (RLS 전면 차단).
  * 라운드당 이메일 1회 접수는 DB 유니크 인덱스(23505)가 보장한다.
+ *
+ * 에러 상태는 입력값(values)을 함께 돌려준다 — React 19가 서버 액션 완료 시
+ * 폼을 리셋하므로, 클라이언트가 defaultValue로 복원할 재료가 필요하다.
  */
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -31,20 +34,19 @@ export async function submitRecruitApplication(
   _prev: RecruitFormState,
   formData: FormData,
 ): Promise<RecruitFormState> {
-  // honeypot — bot이 채우면 조용히 success 시늉
-  const hp = String(formData.get('website_hp') ?? '').trim()
-  if (hp) return { status: 'success' }
-
-  const round = await getCurrentRecruitRound()
-  if (!round || !round.apply_open) {
-    return {
-      status: 'error',
-      message:
-        '지금은 접수 기간이 아닙니다. 인스타그램으로 모집 일정을 확인해주세요.',
-    }
+  // honeypot — bot이 채우면 조용히 success 시늉. 실수로 autofill이 채운
+  // 사례를 사후 진단할 수 있게 로그는 남긴다.
+  const hp = String(formData.get('extra_field_hp') ?? '').trim()
+  if (hp) {
+    console.warn('submitRecruitApplication honeypot triggered', {
+      length: hp.length,
+    })
+    return { status: 'success' }
   }
 
-  const name = String(formData.get('name') ?? '').trim()
+  const name = String(formData.get('name') ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
   const phone = String(formData.get('phone') ?? '').trim()
   const email = String(formData.get('email') ?? '').trim()
   const remoteReason = String(
@@ -54,38 +56,60 @@ export async function submitRecruitApplication(
   const privacyConsent = formData.get('privacy_consent') === 'on'
   const file = formData.get('application_file') as File | null
 
-  if (!name || name.length > 80)
-    return { status: 'error', message: '성함을 확인해주세요.' }
-  if (!PHONE_RE.test(phone))
-    return { status: 'error', message: '연락처 형식을 확인해주세요.' }
-  if (!EMAIL_RE.test(email))
-    return { status: 'error', message: '이메일 형식을 확인해주세요.' }
-  if (remoteReason.length > MAX_REASON_LENGTH)
-    return {
-      status: 'error',
-      message: `비대면 면접 사유는 ${MAX_REASON_LENGTH}자 이하로 작성해주세요.`,
-    }
-  if (!noticeAck)
-    return { status: 'error', message: '지원 전 유의사항을 확인해주세요.' }
-  if (!privacyConsent)
-    return { status: 'error', message: '개인정보 수집·이용에 동의해주세요.' }
-
-  if (!file || file.size === 0)
-    return { status: 'error', message: '지원서 PDF를 첨부해주세요.' }
-  if (file.size > MAX_FILE_BYTES)
-    return { status: 'error', message: '지원서는 5MB 이하 PDF만 가능합니다.' }
-  if (file.type !== 'application/pdf')
-    return { status: 'error', message: '지원서는 PDF 파일만 허용됩니다.' }
-
-  const rl = checkRateLimit(`recruit:${await clientKey()}`, {
-    limit: 3,
-    windowMs: 60 * 60 * 1000,
+  const values: RecruitFormValues = {
+    name,
+    phone,
+    email,
+    remoteReason,
+  }
+  const fail = (message: string): RecruitFormState => ({
+    status: 'error',
+    message,
+    values,
   })
+
+  const round = await getCurrentRecruitRound()
+  if (!round || !round.apply_open) {
+    return fail(
+      '지금은 접수 기간이 아닙니다. 인스타그램으로 모집 일정을 확인해주세요.',
+    )
+  }
+  if (
+    round.apply_deadline &&
+    Date.now() > new Date(round.apply_deadline).getTime()
+  ) {
+    return fail('접수가 마감되었습니다. 다음 시즌에 다시 만나요.')
+  }
+
+  if (!name || name.length > 80) return fail('성함을 확인해주세요.')
+  if (!PHONE_RE.test(phone)) return fail('연락처 형식을 확인해주세요.')
+  if (!EMAIL_RE.test(email)) return fail('이메일 형식을 확인해주세요.')
+  if (remoteReason.length > MAX_REASON_LENGTH)
+    return fail(
+      `비대면 면접 사유는 ${MAX_REASON_LENGTH}자 이하로 작성해주세요.`,
+    )
+  if (!noticeAck) return fail('지원 전 유의사항을 확인해주세요.')
+  if (!privacyConsent) return fail('개인정보 수집·이용에 동의해주세요.')
+
+  if (!file || file.size === 0) return fail('지원서 PDF를 첨부해주세요.')
+  if (file.size > MAX_FILE_BYTES)
+    return fail('지원서는 5MB 이하 PDF만 가능합니다.')
+  if (file.type !== 'application/pdf')
+    return fail('지원서는 PDF 파일만 허용됩니다.')
+  // MIME은 클라이언트가 보내는 값이라 위조 가능. 파일 시그니처로 재확인한다.
+  const head = new Uint8Array(await file.slice(0, 5).arrayBuffer())
+  const isPdf = head.length === 5 && String.fromCharCode(...head) === '%PDF-'
+  if (!isPdf) return fail('올바른 PDF 파일이 아닙니다.')
+
+  // 캠퍼스 와이파이는 수백 명이 공인 IP 몇 개를 공유하므로 IP 단독 키는
+  // 마감 직전에 정상 지원자를 차단한다. IP+이메일로 키를 좁혀 남용 방지선만
+  // 남긴다. 실제 중복 제출은 라운드×이메일 유니크 인덱스가 막는다.
+  const rl = checkRateLimit(
+    `recruit:${await clientKey()}:${email.toLowerCase()}`,
+    { limit: 5, windowMs: 60 * 60 * 1000 },
+  )
   if (!rl.ok)
-    return {
-      status: 'error',
-      message: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)`,
-    }
+    return fail(`잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)`)
 
   const applicationId = crypto.randomUUID()
   const filePath = `${round.cohort}/${applicationId}.pdf`
@@ -99,10 +123,7 @@ export async function submitRecruitApplication(
     })
   if (upErr) {
     console.error('submitRecruitApplication upload failed', upErr)
-    return {
-      status: 'error',
-      message: '지원서 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.',
-    }
+    return fail('지원서 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
   const { error: insErr } = await supabaseService.from('applications').insert({
@@ -129,14 +150,12 @@ export async function submitRecruitApplication(
       console.error('submitRecruitApplication orphan cleanup threw', rmErr)
     }
     if (insErr.code === '23505') {
-      return {
-        status: 'error',
-        message:
-          '이미 접수된 이메일입니다. 제출 내용 수정이 필요하면 yonseivery1997@gmail.com으로 연락해주세요.',
-      }
+      return fail(
+        '이미 접수된 이메일입니다. 제출 내용 수정이 필요하면 yonseivery1997@gmail.com으로 연락해주세요.',
+      )
     }
     console.error('submitRecruitApplication insert failed', insErr)
-    return { status: 'error', message: '저장에 실패했습니다.' }
+    return fail('저장에 실패했습니다.')
   }
 
   await sendRecruitApplicationNotification({

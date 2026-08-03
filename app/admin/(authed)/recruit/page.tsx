@@ -32,14 +32,27 @@ export default async function AdminRecruitPage() {
   }
 
   const applications = await getApplications(round.id)
+  // 서명 URL은 배치 한 번으로 발급한다. per-file download 파일명은 배치
+  // API가 지원하지 않고, 한글 파일명은 인코딩이 깨지므로 쓰지 않는다.
   const fileUrls = new Map<string, string>()
-  for (const a of applications) {
+  if (applications.length > 0) {
     const { data } = await supabaseService.storage
       .from('recruit-applications')
-      .createSignedUrl(a.file_path, SIGNED_URL_TTL_SEC, {
-        download: a.file_name,
-      })
-    if (data?.signedUrl) fileUrls.set(a.id, data.signedUrl)
+      .createSignedUrls(
+        applications.map((a) => a.file_path),
+        SIGNED_URL_TTL_SEC,
+      )
+    if (data) {
+      const byPath = new Map(
+        data
+          .filter((d) => d.signedUrl)
+          .map((d) => [d.path ?? '', d.signedUrl]),
+      )
+      for (const a of applications) {
+        const url = byPath.get(a.file_path)
+        if (url) fileUrls.set(a.id, url)
+      }
+    }
   }
 
   return (
