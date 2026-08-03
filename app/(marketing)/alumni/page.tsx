@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 /**
- * /alumni — accumulated network page.
+ * /alumni - accumulated network page.
  *
  * Spotlight uses TBA placeholders until the society's Notion roster is
  * wired. Status pill ("TBA") is styled like /demoday's status column so
@@ -71,11 +71,10 @@ function AlumniHero() {
 }
 
 function IntroSection() {
-  const { label, title, body } = ALUMNI.intro
+  const { title, body } = ALUMNI.intro
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -88,11 +87,10 @@ function IntroSection() {
 }
 
 function StatsSection() {
-  const { label, title, items } = ALUMNI.stats
+  const { title, items } = ALUMNI.stats
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -123,11 +121,10 @@ function StatsSection() {
 }
 
 function SpotlightSection({ companies }: { companies: AlumniCompany[] }) {
-  const { label, title, note } = ALUMNI.spotlight
+  const { title, note } = ALUMNI.spotlight
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -173,11 +170,10 @@ function SpotlightSection({ companies }: { companies: AlumniCompany[] }) {
 }
 
 function PathwaysSection() {
-  const { label, title, items } = ALUMNI.pathways
+  const { title, items } = ALUMNI.pathways
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -214,10 +210,9 @@ function HallOfHonorSection({ sponsors }: { sponsors: Sponsor[] }) {
   const operations = sponsors.filter((s) => s.category === 'operations')
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label="HALL OF HONOR" className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
-          명예의 전당.
+          명예의 전당
         </h2>
         <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
           VERY의 데모데이 상금과 학회 운영을 뒷받침해 주신 분들. 이 자리를
@@ -225,18 +220,10 @@ function HallOfHonorSection({ sponsors }: { sponsors: Sponsor[] }) {
         </p>
         <div className="about-anim-meta mt-12 flex flex-col gap-14 md:gap-16">
           {prize.length > 0 && (
-            <SponsorSubsection
-              mono="DEMODAY · PRIZE"
-              title="데모데이 상금 후원"
-              items={prize}
-            />
+            <SponsorSubsection title="데모데이 상금 후원" items={prize} />
           )}
           {operations.length > 0 && (
-            <SponsorSubsection
-              mono="OPERATIONS"
-              title="운영자금 후원"
-              items={operations}
-            />
+            <SponsorSubsection title="운영자금 후원" items={operations} />
           )}
         </div>
       </div>
@@ -250,26 +237,15 @@ const SPONSOR_KIND_LABEL: Record<Sponsor['kind'], string> = {
 }
 
 function SponsorSubsection({
-  mono,
   title,
   items,
 }: {
-  mono: string
   title: string
   items: Sponsor[]
 }) {
   return (
     <div>
-      <div className="flex items-center gap-3">
-        <span aria-hidden className="inline-block h-px w-8 bg-fg-primary" />
-        <span
-          translate="no"
-          className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
-        >
-          {mono}
-        </span>
-      </div>
-      <p className="mt-3 font-display text-lg font-bold tracking-tight text-fg-primary md:text-xl">
+      <p className="font-display text-lg font-bold tracking-tight text-fg-primary md:text-xl">
         {title}
       </p>
       <ul className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 md:grid-cols-3">
@@ -314,8 +290,7 @@ function SponsorSubsection({
 function RegisterCTASection() {
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label="REGISTER" className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           알럼나이 등록
         </h2>
@@ -339,11 +314,10 @@ function RegisterCTASection() {
 }
 
 function ClosingSection() {
-  const { label, title, body, primary, secondary } = ALUMNI.closing
+  const { title, body, primary, secondary } = ALUMNI.closing
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -372,23 +346,5 @@ function ClosingSection() {
         </div>
       </div>
     </section>
-  )
-}
-
-function SectionLabel({
-  label,
-  className,
-}: {
-  label: string
-  className?: string
-}) {
-  return (
-    <p
-      translate="no"
-      className={`about-anim-eyebrow flex items-start font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs ${className ?? ''}`}
-    >
-      <span aria-hidden className="mr-3 mt-2 inline-block h-px w-6 bg-fg-muted md:w-8" />
-      {label}
-    </p>
   )
 }

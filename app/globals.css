@@ -23,8 +23,8 @@
 
 /*
  * z-index scale:
- *   0–9   content
- *   10–40 sticky / overlays-within-content
+ *   0-9   content
+ *   10-40 sticky / overlays-within-content
  *   50    Nav
  *   60    NoiseLayer (above nav for global film-grain)
  *   70+   Modals, drawers, toasts (must beat NoiseLayer)
@@ -42,7 +42,7 @@
     min-height: 100dvh;
   }
   /*
-   * Global film grain — fixed overlay (z-60), pointer-events: none. Matches
+   * Global film grain - fixed overlay (z-60), pointer-events: none. Matches
    * the paper/photographic grain texture of the @yonseivery session-card
    * visual system. SVG fractalNoise is inline so no asset request, and the
    * blend mode lets the same texture sit over any background (black hero,
@@ -82,7 +82,7 @@
 }
 
 /*
- * Site Nav — backdrop fade.
+ * Site Nav - backdrop fade.
  *
  * Hero is full-bleed black, so the nav can sit transparent without a frame
  * over the wordmark. As the user leaves hero the backdrop fades in to a
@@ -126,7 +126,7 @@
 }
 
 /*
- * Home Hero — Editorial Cinematic reveal.
+ * Home Hero - Editorial Cinematic reveal.
  * Stagger order: corners (0/100/200/300) → vertical frame (400) →
  * glow (500) → mark (600) → horizontal tick + slogan (1200) → scroll hint (1500).
  * The 600→1200 gap lets the mark breathe alone before typographic detail lands.
@@ -246,7 +246,7 @@
   }
 
   /*
-   * Manifesto — Asymmetric Editorial Grid reveal.
+   * Manifesto - Asymmetric Editorial Grid reveal.
    * Namespaced separately from hero-* to avoid coupling.
    * Stagger: eyebrow (0) → headline (100) → vertical scaleY (400) →
    * WHO label (600) → who body (700) → VISION label (900) → vision body (1000).
@@ -351,7 +351,7 @@
   }
 
   /*
-   * Stats — By The Numbers reveal.
+   * Stats - By The Numbers reveal.
    * Namespaced separately from manifesto so the two sections can scroll
    * past independently. Eyebrow (0) → hairline (200) → 4 cells (300/420/
    * 540/660). Inline animation-delay on each cell is set in the JSX so the
@@ -405,7 +405,7 @@
   }
 
   /*
-   * /about — per-section reveal.
+   * /about - per-section reveal.
    * Same fade-up keyframe pattern as manifesto/stats, namespaced separately
    * so each section has its own view-timeline and stagger.
    */
@@ -467,7 +467,7 @@
 }
 
 /*
- * VERY marquee — pre-footer brand pattern.
+ * VERY marquee - pre-footer brand pattern.
  * Track contains two duplicated copies of the token row, so translating
  * by -50% loops seamlessly. Animation only runs for users who haven't
  * opted into reduced motion; otherwise the row sits static and the

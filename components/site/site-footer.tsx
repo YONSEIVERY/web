@@ -7,7 +7,7 @@ import { SITE } from '@/lib/content/site'
 import { getSiteConfig } from '@/lib/data/site-config'
 
 /**
- * Site Footer — magazine colophon.
+ * Site Footer - magazine colophon.
  *
  * Three labeled columns under a wordmark + slogan masthead, separated from
  * the body by the same 1px hairline motif that runs through hero and

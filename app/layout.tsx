@@ -7,13 +7,13 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-display' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 export const metadata: Metadata = {
-  title: { default: 'VERY ─ 연세대학교 창업학회', template: '%s · VERY' },
+  title: { default: 'VERY · 연세대학교 창업학회', template: '%s · VERY' },
   description: '1997년부터 시작된 연세대학교의 가장 뿌리깊은 창업학회.',
   // OG/Twitter 절대 URL의 기준. 과거 SITE_URL env 값이 localhost로 남아 있어
   // 메신저 미리보기가 깨졌었기에, production 도메인을 하드코딩한다.
   metadataBase: new URL('https://yonseivery.com'),
   openGraph: {
-    title: 'VERY ─ 연세대학교 창업학회',
+    title: 'VERY · 연세대학교 창업학회',
     description: '1997년부터 시작된 연세대학교의 가장 뿌리깊은 창업학회.',
     siteName: 'VERY',
     locale: 'ko_KR',
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
         url: '/opengraph-image.png',
         width: 1080,
         height: 1080,
-        alt: 'VERY ─ 연세대학교 창업학회',
+        alt: 'VERY · 연세대학교 창업학회',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'VERY ─ 연세대학교 창업학회',
+    title: 'VERY · 연세대학교 창업학회',
     description: '1997년부터 시작된 연세대학교의 가장 뿌리깊은 창업학회.',
     images: ['/opengraph-image.png'],
   },

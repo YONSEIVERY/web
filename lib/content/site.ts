@@ -1,6 +1,6 @@
 export const SITE = {
   name: 'VERY',
-  fullName: 'VERY ─ 연세대학교 창업학회',
+  fullName: 'VERY · 연세대학교 창업학회',
   since: 1997,
   currentCohort: 44,
   email: 'yonseivery1997@gmail.com',

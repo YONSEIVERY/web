@@ -1,5 +1,5 @@
 /**
- * Partner marquee — pre-footer band.
+ * Partner marquee - pre-footer band.
  *
  * partners 테이블에서 approved+published+marquee_logo_url 있는 파트너만
  * sort_order 순으로 조회해 하단 스트립에 노출. 어드민에서 파트너 추가/
@@ -17,9 +17,13 @@
  * - 파트너 이름은 sr-only 리스트로 한 번만 노출
  */
 import { getMarqueePartners } from '@/lib/partners/queries'
+import { getSiteConfig } from '@/lib/data/site-config'
 
 export async function PartnerMarquee() {
-  const logos = await getMarqueePartners()
+  const [logos, siteConfig] = await Promise.all([
+    getMarqueePartners(),
+    getSiteConfig(),
+  ])
   if (logos.length === 0) return null
   return (
     <section
@@ -28,7 +32,7 @@ export async function PartnerMarquee() {
     >
       <div className="mb-4 flex items-center justify-between px-6 md:mb-6 md:px-10">
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-fg-muted md:text-xs">
-          Partners · Vol.43
+          Partners · Vol.{siteConfig.cohort}
         </p>
         <p className="text-xs text-fg-muted md:text-sm">
           이번 학기를 함께 받치는 협력사

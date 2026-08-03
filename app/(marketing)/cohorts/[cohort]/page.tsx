@@ -55,7 +55,7 @@ export default async function CohortDetailPage({
         </p>
         <h1 className="about-anim-headline mt-8 font-display font-bold tracking-tight text-fg-primary md:mt-10">
           <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
-            {n}기 학회원.
+            {n}기 학회원
           </span>
         </h1>
         <p
@@ -67,30 +67,15 @@ export default async function CohortDetailPage({
       </section>
 
       {leadership.length > 0 && (
-        <MemberGroup
-          eyebrow="LEADERSHIP"
-          title="회장단"
-          members={leadership}
-          size="lg"
-        />
+        <MemberGroup title="회장단" members={leadership} size="lg" />
       )}
 
       {officers.length > 0 && (
-        <MemberGroup
-          eyebrow="OFFICERS"
-          title="임원진"
-          members={officers}
-          size="md"
-        />
+        <MemberGroup title="임원진" members={officers} size="md" />
       )}
 
       {regulars.length > 0 && (
-        <MemberGroup
-          eyebrow="MEMBERS"
-          title="학회원"
-          members={regulars}
-          size="sm"
-        />
+        <MemberGroup title="학회원" members={regulars} size="sm" />
       )}
 
       <section className="px-6 pb-32 md:px-10 md:pb-40">
@@ -110,12 +95,10 @@ export default async function CohortDetailPage({
 }
 
 function MemberGroup({
-  eyebrow,
   title,
   members,
   size,
 }: {
-  eyebrow: string
   title: string
   members: PublicMember[]
   size: 'lg' | 'md' | 'sm'
@@ -128,8 +111,7 @@ function MemberGroup({
         : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-16 md:gap-x-12 md:px-10 md:py-24">
-      <SectionLabel label={eyebrow} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-9 md:mt-0">
+      <div className="col-span-12 md:col-span-9 md:col-start-4">
         <h2 className="about-anim-title font-display text-[clamp(1.5rem,_3vw,_2.25rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -231,26 +213,5 @@ function PhotoFrame({
         {initial}
       </span>
     </div>
-  )
-}
-
-function SectionLabel({
-  label,
-  className,
-}: {
-  label: string
-  className?: string
-}) {
-  return (
-    <p
-      translate="no"
-      className={`about-anim-eyebrow flex items-start font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs ${className ?? ''}`}
-    >
-      <span
-        aria-hidden
-        className="mr-3 mt-2 inline-block h-px w-6 bg-fg-muted md:w-8"
-      />
-      {label}
-    </p>
   )
 }

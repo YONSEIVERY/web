@@ -61,7 +61,7 @@ export async function deleteApplication(
     return { ok: false, error: '삭제에 실패했습니다.' }
   }
 
-  // 지원서 PDF도 함께 제거 (best-effort — 실패해도 행 삭제는 유지)
+  // 지원서 PDF도 함께 제거 (best-effort - 실패해도 행 삭제는 유지)
   if (row.file_path) {
     try {
       const { error: rmErr } = await supabaseService.storage

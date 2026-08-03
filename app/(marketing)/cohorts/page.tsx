@@ -25,7 +25,7 @@ export default async function CohortsIndexPage() {
         </p>
         <h1 className="about-anim-headline mt-8 font-display font-bold tracking-tight text-fg-primary md:mt-10">
           <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
-            기수 아카이브.
+            기수 아카이브
           </span>
         </h1>
         <p

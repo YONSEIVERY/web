@@ -2,7 +2,7 @@ import 'server-only'
 import { supabaseService } from '@/lib/supabase/service'
 
 /**
- * 후원자 명예의 전당 — /alumni 하단 노출 + /admin/sponsors 관리.
+ * 후원자 명예의 전당 - /alumni 하단 노출 + /admin/sponsors 관리.
  * 데모데이 상금 / 운영자금 두 카테고리로 나뉜다. 금액은 저장·노출
  * 하지 않는다(명예 목적).
  */

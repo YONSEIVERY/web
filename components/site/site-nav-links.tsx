@@ -8,7 +8,7 @@ import { NAV_ITEMS } from '@/lib/content/nav'
 /**
  * Client island for nav links that need pathname awareness.
  *
- * Kept thin on purpose — the nav shell stays RSC, only the link list is
+ * Kept thin on purpose - the nav shell stays RSC, only the link list is
  * a client component so we can mark the current route. Active state uses
  * `aria-current="page"` plus a color flip so screen readers and sighted
  * users get the same signal.

@@ -5,14 +5,14 @@ import { getSiteConfig } from '@/lib/data/site-config'
 import { PhotoBand } from '@/components/site/photo-band'
 
 /**
- * Home Hero — Editorial Cinematic.
+ * Home Hero - Editorial Cinematic.
  *
  * Full-bleed 100dvh page-as-poster. Four monospace corner labels frame an
  * asymmetric typographic field. A pair of cobalt 1px verticals (cropped to
  * the middle half of the viewport, with short horizontal end-ticks) act as
  * a film-print perforation. The VERY mark sits over a vertical cobalt glow.
  * Above the mark, a short 1px horizontal rule introduces an italic slogan
- * (Geist italic, lowercase, wide tracking) — masthead-style.
+ * (Geist italic, lowercase, wide tracking) - masthead-style.
  *
  * All motion is CSS-only (see globals.css), so this stays a server component.
  */
@@ -178,12 +178,12 @@ function HeroCenterStack() {
 }
 
 /**
- * Manifesto — Asymmetric Editorial Grid.
+ * Manifesto - Asymmetric Editorial Grid.
  *
  * Magazine first-spread to Hero's cover. 12-col grid: a hangul mega headline
  * sits top-left; two labelled body blocks (WHO WE ARE / OUR VISION) drop into
  * the bottom-right, separated from the headline by a 1px cobalt vertical at
- * the col-7 boundary — reusing Hero's verticals motif. Mobile collapses to a
+ * the col-7 boundary - reusing Hero's verticals motif. Mobile collapses to a
  * single stack with a horizontal rule standing in for the vertical.
  *
  * Stagger reveal is CSS-only (manifesto-* keyframes in globals.css). The
@@ -242,8 +242,8 @@ function ManifestoSection() {
       />
 
       <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-8 md:col-span-5 md:row-start-1 md:mt-0 md:gap-14 md:self-end">
-        <ManifestoBlock label="우리는." body={whoWeAre} variant="who" />
-        <ManifestoBlock label="우리가 보는 곳." body={vision} variant="vision" />
+        <ManifestoBlock body={whoWeAre} variant="who" />
+        <ManifestoBlock body={vision} variant="vision" />
       </div>
     </section>
   )
@@ -268,36 +268,26 @@ function ManifestoVertical() {
 }
 
 function ManifestoBlock({
-  label,
   body,
   variant,
 }: {
-  label: string
   body: string
   variant: 'who' | 'vision'
 }) {
-  const labelAnim =
-    variant === 'who' ? 'manifesto-anim-label-1' : 'manifesto-anim-label-2'
+  // 라벨 없이 본문만. 문단 첫머리가 곧 소제목 역할을 한다.
   const bodyAnim =
     variant === 'who' ? 'manifesto-anim-body-1' : 'manifesto-anim-body-2'
   return (
-    <div>
-      <p
-        className={`${labelAnim} font-display text-lg font-bold tracking-tight text-fg-primary md:text-xl`}
-      >
-        {label}
-      </p>
-      <p
-        className={`${bodyAnim} mt-4 max-w-[42ch] text-base leading-[1.8] text-fg-subtle md:text-lg`}
-      >
-        {body}
-      </p>
-    </div>
+    <p
+      className={`${bodyAnim} max-w-[42ch] border-l border-border-strong pl-5 text-base leading-[1.8] text-fg-subtle md:pl-6 md:text-lg`}
+    >
+      {body}
+    </p>
   )
 }
 
 /**
- * Stats — status screen.
+ * Stats - status screen.
  *
  * Four-cell band styled as a terminal status readout (per VERY BI):
  * mono prompt prefix `$ stats --vol=N` for the eyebrow, `[OK]` markers
@@ -310,7 +300,7 @@ function ManifestoBlock({
  * manifesto → stats stays continuous.
  *
  * Numbers source from `lib/content/site.ts`. ALUMNI and STARTUPS counts
- * are placeholders (society has not finalized the exact figures yet) —
+ * are placeholders (society has not finalized the exact figures yet) -
  * the `+` sign signals "at least this many" so the copy reads honestly
  * until the authoritative numbers land.
  */
@@ -354,7 +344,7 @@ async function StatsSection() {
         id="stats-heading"
         className="stats-anim-eyebrow font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl"
       >
-        {siteConfig.sinceYear}년부터, 멈춘 적 없이.
+        {siteConfig.sinceYear}년부터 멈춘 적 없이 이어져 왔습니다
       </h2>
 
       <hr

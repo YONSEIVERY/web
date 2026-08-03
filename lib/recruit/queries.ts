@@ -7,7 +7,7 @@ import { supabaseService } from '@/lib/supabase/service'
  * `is_current=true`는 부분 유니크 인덱스로 1개만 허용 (demoday와 동일).
  *
  * 모집 요강 카피(일정·유의사항)는 DB가 아니라 `lib/content/recruit.ts`에
- * 둔다 — 시즌마다 코드에서 갱신하는 편이 어드민 폼보다 검수가 쉽다.
+ * 둔다 - 시즌마다 코드에서 갱신하는 편이 어드민 폼보다 검수가 쉽다.
  */
 
 export type RecruitRound = {

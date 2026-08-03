@@ -2,13 +2,13 @@
  * /partners page content.
  *
  * Brand metaphor (per VERY BI doc): the partner program is the bedrock
- * under the field — companies, capital, and the university are what
+ * under the field - companies, capital, and the university are what
  * make the ground load-bearing. Body copy uses 지반 / 필드 / 함께 일군;
  * magazine vocabulary (책장 / 한 권 / 표지) is no longer used.
  *
  * Roster lists this volume's confirmed partners. Three categories
  * (corporate / capital / academic) describe what kind of company each
- * partner is — they do NOT describe the partnership terms. The society
+ * partner is - they do NOT describe the partnership terms. The society
  * has decided not to expose deal specifics (sponsorship, AC commitment,
  * etc.) publicly; every partner is framed identically as "파트너십을
  * 통한 상호 교류" on the site. Per-row `note` is a one-line company
@@ -18,7 +18,7 @@ export const PARTNERS = {
   hero: {
     eyebrow: 'Partners · Vol.43 / 2026-1',
     headlineLine1: '땅 밑을 받치는',
-    headlineLine2: '단단한 지반.',
+    headlineLine2: '단단한 지반',
     subline:
       '이 땅은 결코 우리 혼자 다질 수 없습니다. 기업과 자본, 대학이 그 아래에서 묵묵히 함께 받쳐 줍니다.',
   },
@@ -29,7 +29,7 @@ export const PARTNERS = {
   },
   categories: {
     label: 'CATEGORIES',
-    title: '세 갈래로 묶습니다.',
+    title: '세 갈래의 파트너',
     items: [
       {
         num: '01',
@@ -53,12 +53,12 @@ export const PARTNERS = {
   },
   roster: {
     label: 'CURRENT VOLUME',
-    title: '이번 학기, 함께 지반을 다진 파트너들.',
+    title: '이번 학기를 함께한 파트너들',
     note: '모든 파트너와는 학기 안에서 서로의 자리를 오가며 함께 호흡합니다. 학기 중 새로 합류하는 파트너 소식은 인스타그램을 통해 가장 먼저 전해 드립니다.',
   },
   engage: {
     label: 'ENGAGE',
-    title: '파트너십, 이렇게 시작합니다.',
+    title: '파트너십은 이렇게 시작합니다',
     items: [
       {
         mono: 'BRIEF',

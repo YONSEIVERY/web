@@ -4,8 +4,8 @@ import { createServerClient } from '@supabase/ssr'
 /**
  * 역할 셋:
  *  1. members.* 호스트를 /members 라우트로 리라이트 (서브도메인 포털)
- *  2. /members 게이트 — 로그인 + portal_role(exec/member) 확인
- *  3. /admin 게이트 — 로그인 + is_admin 화이트리스트 (기존 동작)
+ *  2. /members 게이트 - 로그인 + portal_role(exec/member) 확인
+ *  3. /admin 게이트 - 로그인 + is_admin 화이트리스트 (기존 동작)
  */
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') ?? ''

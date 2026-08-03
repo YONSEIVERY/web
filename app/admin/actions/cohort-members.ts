@@ -14,7 +14,7 @@ import type { CohortMemberActionState } from './cohort-members-state'
  *
  * mutation 후에는 관련 페이지 재검증:
  *  - /admin/members (목록 · 상세)
- *  - / (marketing layout — 아직 진입 링크는 없지만 향후 대비)
+ *  - / (marketing layout - 아직 진입 링크는 없지만 향후 대비)
  *  - /about  · /cohorts/[cohort]  (public 소비처)
  */
 

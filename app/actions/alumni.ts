@@ -9,7 +9,7 @@ import type { AlumniFormState } from './alumni-state'
 // anon `supabase` exercises Storage RLS (anon upload allowed by bucket
 // policy). DB insert uses `supabaseService` with client-pre-generated UUIDs:
 // alumni/alumni_companies SELECT policies filter to approved+published, so
-// we don't rely on RETURNING. Rollback paths still call `supabaseService` —
+// we don't rely on RETURNING. Rollback paths still call `supabaseService` -
 // best-effort under anon; failures are logged, not surfaced.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

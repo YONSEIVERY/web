@@ -8,7 +8,7 @@ const LABEL_CLASS =
 
 /**
  * 세션 생성/편집 공용 폼 (RSC). action은 server action을 그대로 받는다.
- * 본문은 마크다운 — 노션에서 옮겨 붙여도 표(GFM)까지 렌더링된다.
+ * 본문은 마크다운 - 노션에서 옮겨 붙여도 표(GFM)까지 렌더링된다.
  */
 export function SessionForm({
   action,

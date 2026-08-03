@@ -79,13 +79,7 @@ export default async function RecruitPage() {
 
       {/* Schedule */}
       <section className="px-6 pb-16 md:px-10 md:pb-20">
-        <p
-          translate="no"
-          className="font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-        >
-          {RECRUIT.schedule.label}
-        </p>
-        <h2 className="mt-4 font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
           {RECRUIT.schedule.title}
         </h2>
         <dl className="mt-8 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
@@ -110,13 +104,7 @@ export default async function RecruitPage() {
 
       {/* How to apply */}
       <section className="px-6 pb-16 md:px-10 md:pb-20">
-        <p
-          translate="no"
-          className="font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-        >
-          {RECRUIT.howTo.label}
-        </p>
-        <h2 className="mt-4 font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
           {RECRUIT.howTo.title}
         </h2>
         <ol className="mt-8 grid max-w-2xl grid-cols-1 gap-4">
@@ -148,13 +136,7 @@ export default async function RecruitPage() {
 
       {/* Notice */}
       <section className="px-6 pb-16 md:px-10 md:pb-20">
-        <p
-          translate="no"
-          className="font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-        >
-          {RECRUIT.notice.label}
-        </p>
-        <h2 className="mt-4 font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
           {RECRUIT.notice.title}
         </h2>
         <ul className="mt-8 max-w-2xl border border-border p-6 md:p-8">
@@ -173,14 +155,8 @@ export default async function RecruitPage() {
       {/* Form */}
       <section className="px-6 pb-32 md:px-10 md:pb-40">
         <div className="mx-auto max-w-2xl">
-          <p
-            translate="no"
-            className="font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-          >
-            APPLY
-          </p>
-          <h2 className="mb-10 mt-4 font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
-            지원서 접수.
+          <h2 className="mb-10 font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+            지원서 접수
           </h2>
           <RecruitApplicationForm />
           <p className="mt-10 font-display text-xs text-fg-muted md:text-sm">

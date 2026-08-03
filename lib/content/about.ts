@@ -6,25 +6,25 @@
  *
  * Brand metaphor anchor (per VERY BI doc): "We are the very first ground
  * where ideas meet reality." All body copy uses GROUND / FIELD / 착지 /
- * 지반 vocabulary — NOT the magazine vocabulary (책장 / 표지 / 한 권)
+ * 지반 vocabulary - NOT the magazine vocabulary (책장 / 표지 / 한 권)
  * that the site once used. Volume markers (VOL.43 / EST.1997) stay only
  * as masthead-style metadata.
  *
  * Core Value(KNOWLEDGE/EXPERIENCE/NETWORK) and Mindset(인재상) are lifted
- * verbatim from VERY_43기_OT.pdf p.5–6 — do not paraphrase. The OT deck
+ * verbatim from VERY_43기_OT.pdf p.5-6 - do not paraphrase. The OT deck
  * is what every recruit reads first, so the on-site copy must match.
  */
 export const ABOUT = {
   hero: {
     eyebrow: 'About · Vol.43 / 2026-1',
     headlineLine1: '아이디어가 현실을',
-    headlineLine2: '처음 마주하는 땅.',
+    headlineLine2: '처음 마주하는 땅',
     subline:
       '매 학기, 더 단단해진 지반 위에서 다음 기수가 착지합니다.',
   },
   origin: {
     label: 'ORIGIN',
-    title: 'Since 1997.',
+    title: 'Since 1997',
     body: '1997년 벤처창업연구회로 발족한 이래, 연세대학교에서 가장 오랜 명맥을 이어 온 창업학회로서 매 학기 더 단단해진 지반을 다음 기수에게 물려주어 왔습니다. 학기마다 새로 일군 땅, 그 누적이 곧 학회의 정체성입니다.',
     milestones: [
       { year: '1997', label: 'FOUNDED', note: '벤처창업연구회로 발족' },
@@ -33,7 +33,7 @@ export const ABOUT = {
   },
   manifesto: {
     label: 'MANIFESTO',
-    title: 'Do. Fail. Repeat.',
+    title: '실패를 다루는 방식',
     body: '실패는 피할 게 아니라 반복하고 활용하는 방법입니다. 실행 → 실패 → 다시 실행. VERY가 일하는 단 하나의 사이클이며, 학기마다 우리가 다지는 지반의 단위입니다.',
     lines: [
       'Fail Forward · 실패는 피하지 않고, 성장의 방법으로 재사용한다.',
@@ -43,7 +43,7 @@ export const ABOUT = {
   },
   coreValue: {
     label: 'CORE VALUE',
-    title: 'VERY의 핵심가치.',
+    title: 'VERY의 핵심가치',
     body: 'VERY를 떠받치는 세 기둥. 지식과 경험, 그리고 사람으로 학회가 움직입니다.',
     items: [
       {
@@ -65,7 +65,7 @@ export const ABOUT = {
   },
   mindset: {
     label: 'MINDSET',
-    title: 'VERY가 추구하는 인재.',
+    title: 'VERY가 찾는 사람',
     body: '두 갈래의 자질. 창업에 대한 진심과, 그것을 행동으로 옮기는 실행력.',
     items: [
       {

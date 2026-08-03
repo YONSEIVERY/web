@@ -12,7 +12,7 @@ import type { RecruitFormState, RecruitFormValues } from './recruit-state'
  * 업로드하고, 지원자는 사후 자신의 제출을 다시 볼 수 없다 (RLS 전면 차단).
  * 라운드당 이메일 1회 접수는 DB 유니크 인덱스(23505)가 보장한다.
  *
- * 에러 상태는 입력값(values)을 함께 돌려준다 — React 19가 서버 액션 완료 시
+ * 에러 상태는 입력값(values)을 함께 돌려준다 - React 19가 서버 액션 완료 시
  * 폼을 리셋하므로, 클라이언트가 defaultValue로 복원할 재료가 필요하다.
  */
 
@@ -34,7 +34,7 @@ export async function submitRecruitApplication(
   _prev: RecruitFormState,
   formData: FormData,
 ): Promise<RecruitFormState> {
-  // honeypot — bot이 채우면 조용히 success 시늉. 실수로 autofill이 채운
+  // honeypot - bot이 채우면 조용히 success 시늉. 실수로 autofill이 채운
   // 사례를 사후 진단할 수 있게 로그는 남긴다.
   const hp = String(formData.get('extra_field_hp') ?? '').trim()
   if (hp) {

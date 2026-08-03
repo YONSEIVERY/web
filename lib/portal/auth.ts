@@ -6,8 +6,8 @@ import { supabaseService } from '@/lib/supabase/service'
  * 포털 인가. 미들웨어가 1차 게이트지만, 서버 액션과 페이지는 이 헬퍼로
  * 방어를 한 겹 더 둔다 (admin의 requireAdmin 관행과 동일).
  *
- *  exec   : admins 화이트리스트 (임원진) — 세션/공지/출결 관리 가능
- *  member : cohort_members 등록 이메일 (학회원) — 열람 + 본인 출결 조회
+ *  exec   : admins 화이트리스트 (임원진) - 세션/공지/출결 관리 가능
+ *  member : cohort_members 등록 이메일 (학회원) - 열람 + 본인 출결 조회
  */
 
 export type PortalRole = 'exec' | 'member'

@@ -1,5 +1,5 @@
 /**
- * /recruit page content — 44기 모집 시즌 카피.
+ * /recruit page content - 44기 모집 시즌 카피.
  *
  * 시즌마다 이 파일만 갱신한다. 접수 open/close는 코드가 아니라
  * 어드민(/admin/recruit)의 recruit_rounds.apply_open 토글이 결정한다.
@@ -17,7 +17,7 @@ export const RECRUIT = {
   },
   schedule: {
     label: 'SCHEDULE',
-    title: '모집 일정.',
+    title: '모집 일정',
     items: [
       { mono: 'APPLY', label: '서류 접수', value: '8.4(화) ~ 8.23(일) 23:59' },
       { mono: 'DOCS', label: '서류 결과 발표', value: '8.25(화)' },
@@ -28,7 +28,7 @@ export const RECRUIT = {
   },
   howTo: {
     label: 'HOW TO APPLY',
-    title: '지원 방법.',
+    title: '지원 방법',
     steps: [
       '아래 버튼에서 지원서 양식을 내려받아 작성합니다.',
       '작성한 지원서를 PDF로 저장합니다. (4MB 이하)',
@@ -41,7 +41,7 @@ export const RECRUIT = {
   },
   notice: {
     label: 'NOTICE',
-    title: '지원 전 유의사항.',
+    title: '지원 전 유의사항',
     items: [
       '활동 기간: 2026.9.3(목) ~ 2027.1.23(토)',
       '정규 세션: 매주 목요일 19:00 ~ 21:00',

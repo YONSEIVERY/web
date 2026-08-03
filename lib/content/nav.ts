@@ -1,14 +1,14 @@
 /**
  * Site navigation items. Order is the order rendered in the top nav.
  *
- * Home(`/`) is intentionally omitted from the list — the wordmark itself
+ * Home(`/`) is intentionally omitted from the list - the wordmark itself
  * links to root. Recruit is seasonal and gated on RECRUIT_OPEN; it lives
  * outside this constant so it can be appended at render time.
  */
 export type NavItem = {
   href: string
   label: string
-  /** translate="no" — rendered as a stable English mono accent regardless of locale. */
+  /** translate="no" - rendered as a stable English mono accent regardless of locale. */
   monoLabel: string
 }
 

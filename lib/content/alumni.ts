@@ -2,7 +2,7 @@
  * /alumni page content.
  *
  * Brand metaphor (per VERY BI doc): the alumni network is a layered
- * ground — each cohort hands the next a more compacted layer to land on.
+ * ground - each cohort hands the next a more compacted layer to land on.
  * Magazine vocabulary (책장 / 표지 / 한 권) is reserved for masthead-style
  * markers (VOL.43 etc.); body copy uses 지반 / 기수 / 누적.
  *
@@ -18,18 +18,18 @@ export const ALUMNI = {
   hero: {
     eyebrow: 'Alumni · Vol.43 / 2026-1',
     headlineLine1: '졸업은 끝이 아니라,',
-    headlineLine2: '다음 지반의 시작.',
+    headlineLine2: '다음 지반의 시작',
     subline:
       '학회를 거친 사람은 학기와 함께 사라지지 않습니다. 매 기수가 더 단단해진 지반으로 누적됩니다.',
   },
   intro: {
     label: 'NETWORK',
-    title: '학기로 끝나지 않는 네트워크.',
+    title: '학기로 끝나지 않는 네트워크',
     body: '학기가 끝나도 네트워크의 문은 닫히지 않습니다. 선배 기수가 후배 팀의 멘토와 투자자, 동료로 다시 돌아와 30년 가까운 시간 동안 그 두께를 더해 왔습니다.',
   },
   stats: {
     label: 'BY THE NUMBERS',
-    title: '다져진 지반, 숫자로.',
+    title: '숫자로 보는 네트워크',
     items: [
       {
         value: String(STATS.yearsActive),
@@ -55,7 +55,7 @@ export const ALUMNI = {
   },
   spotlight: {
     label: 'SPOTLIGHT',
-    title: '지반 위에 선 회사들.',
+    title: '알럼나이가 세운 회사들',
     note: '정식 알럼나이 명단은 운영진 검토를 거쳐 순차적으로 공개됩니다. 아래는 그 자리를 미리 마련해 둔 카드입니다.',
     items: [
       {
@@ -90,7 +90,7 @@ export const ALUMNI = {
   },
   pathways: {
     label: 'PATHWAYS',
-    title: '졸업 이후, 학회와의 거리.',
+    title: '졸업 후에도 이어지는 관계',
     items: [
       {
         mono: 'MENTORSHIP',

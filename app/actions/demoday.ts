@@ -35,7 +35,7 @@ export async function submitDemodayAttendee(
   _prev: DemodayFormState,
   formData: FormData,
 ): Promise<DemodayFormState> {
-  // honeypot — bot이 채우면 조용히 통과시키지 않고 success 시늉
+  // honeypot - bot이 채우면 조용히 통과시키지 않고 success 시늉
   const hp = String(formData.get('website_hp') ?? '').trim()
   if (hp) return { status: 'success' }
 

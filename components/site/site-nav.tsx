@@ -4,13 +4,13 @@ import veryMark from '@/public/brand/very-mark.png'
 import { SiteNavLinks } from './site-nav-links'
 
 /**
- * Site Nav — fixed top, RSC, CSS-only.
+ * Site Nav - fixed top, RSC, CSS-only.
  *
  * Editorial cinematic tone: VERY mono wordmark on the left, mono caps links
  * on the right. Mobile collapses the link list into a <details>/<summary>
  * disclosure so we keep this a pure server component (no client JS).
  *
- * z-index: nav sits at 50 (under NoiseLayer at 60, above content at 0–40).
+ * z-index: nav sits at 50 (under NoiseLayer at 60, above content at 0-40).
  * Background fades in via scroll-driven animation past hero (see globals.css);
  * fallback browsers see a steady, lightly translucent backdrop the whole way.
  */

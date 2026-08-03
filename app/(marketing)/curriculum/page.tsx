@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 /**
- * /curriculum — semester program page.
+ * /curriculum - semester program page.
  *
  * Content mirrors VERY 43기 OT (Tracks / Sessions / Industry) so the
  * page reads like an extension of the OT deck. Light "code-tone" cues
@@ -63,11 +63,10 @@ function CurriculumHero() {
 }
 
 function TracksSection() {
-  const { label, title, body, items } = CURRICULUM.tracks
+  const { title, body, items } = CURRICULUM.tracks
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -151,11 +150,10 @@ function TracksSection() {
 }
 
 function SessionsSection() {
-  const { label, title, body, items } = CURRICULUM.sessions
+  const { title, body, items } = CURRICULUM.sessions
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -215,11 +213,10 @@ function SessionsSection() {
 }
 
 function IndustrySection() {
-  const { label, title, body, note } = CURRICULUM.industry
+  const { title, body, note } = CURRICULUM.industry
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -240,8 +237,7 @@ function IndustrySection() {
 function IndustryInquirySection() {
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label="INQUIRY" className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           산학협력 문의
         </h2>
@@ -257,11 +253,10 @@ function IndustryInquirySection() {
 }
 
 function ClosingSection() {
-  const { label, title, body, primary, secondary } = CURRICULUM.closing
+  const { title, body, primary, secondary } = CURRICULUM.closing
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -290,23 +285,5 @@ function ClosingSection() {
         </div>
       </div>
     </section>
-  )
-}
-
-function SectionLabel({
-  label,
-  className,
-}: {
-  label: string
-  className?: string
-}) {
-  return (
-    <p
-      translate="no"
-      className={`about-anim-eyebrow flex items-start font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs ${className ?? ''}`}
-    >
-      <span aria-hidden className="mr-3 mt-2 inline-block h-px w-6 bg-fg-muted md:w-8" />
-      {label}
-    </p>
   )
 }

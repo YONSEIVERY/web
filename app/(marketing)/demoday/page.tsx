@@ -220,11 +220,10 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
 }
 
 function AboutSection() {
-  const { label, title, body } = DEMODAY.about
+  const { title, body } = DEMODAY.about
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -237,11 +236,10 @@ function AboutSection() {
 }
 
 function FormatSection() {
-  const { label, title, body, stats } = DEMODAY.format
+  const { title, body, stats } = DEMODAY.format
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -275,11 +273,10 @@ function FormatSection() {
 }
 
 function ScheduleSection({ schedule }: { schedule: DemodayScheduleItem[] }) {
-  const { label, title } = DEMODAY.schedule
+  const { title } = DEMODAY.schedule
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -307,12 +304,11 @@ function ScheduleSection({ schedule }: { schedule: DemodayScheduleItem[] }) {
 }
 
 function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
-  const { label, title } = DEMODAY.volumes
+  const { title } = DEMODAY.volumes
   if (volumes.length === 0) return null
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -387,11 +383,10 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
 }
 
 function AudienceSection() {
-  const { label, title, items } = DEMODAY.audience
+  const { title, items } = DEMODAY.audience
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -423,12 +418,11 @@ function AudienceSection() {
 }
 
 function ClosingSection({ current }: { current: DemodayEvent | null }) {
-  const { label, title, body, primary, secondary } = DEMODAY.closing
+  const { title, body, primary, secondary } = DEMODAY.closing
   const registerOpen = current?.register_open ?? false
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
-      <SectionLabel label={label} className="col-span-12 md:col-span-3" />
-      <div className="col-span-12 mt-6 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -467,23 +461,5 @@ function ClosingSection({ current }: { current: DemodayEvent | null }) {
         </div>
       </div>
     </section>
-  )
-}
-
-function SectionLabel({
-  label,
-  className,
-}: {
-  label: string
-  className?: string
-}) {
-  return (
-    <p
-      translate="no"
-      className={`about-anim-eyebrow flex items-start font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs ${className ?? ''}`}
-    >
-      <span aria-hidden className="mr-3 mt-2 inline-block h-px w-6 bg-fg-muted md:w-8" />
-      {label}
-    </p>
   )
 }

@@ -10,19 +10,19 @@ import { SITE } from './site'
 export const CONTACT = {
   hero: {
     eyebrow: 'Contact · Vol.44 / 2026-2',
-    headlineLine1: 'Get in touch.',
+    headlineLine1: 'Get in touch',
     headlineLine2: '사람이 직접 답장합니다.',
     subline:
       '모집·파트너십·언론 문의는 이메일과 인스타그램으로 받고 있습니다.',
   },
   intro: {
     label: 'STATUS',
-    title: '모집 접수는 RECRUIT 페이지에서.',
+    title: '모집 접수는 RECRUIT 페이지에서 받습니다',
     body: '학회원 지원은 시즌 중 yonseivery.com/recruit에서 직접 접수합니다. 접수 기간이 아닐 때에도 파트너십·언론 등 일반 문의는 아래 채널로 보내주시면 담당자가 확인해 회신드립니다.',
   },
   channels: {
     label: 'CHANNELS',
-    title: 'Three channels.',
+    title: '연락 채널',
     items: [
       {
         mono: 'EMAIL',
@@ -49,7 +49,7 @@ export const CONTACT = {
   },
   faq: {
     label: 'FAQ',
-    title: '자주 묻는 것들.',
+    title: '자주 묻는 질문',
     items: [
       {
         q: '학회는 언제 모집하나요?',
