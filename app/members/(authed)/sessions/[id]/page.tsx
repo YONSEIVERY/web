@@ -5,6 +5,7 @@ import { getPortalIdentity } from '@/lib/portal/auth'
 import { getSessionById, SESSION_KIND_LABELS } from '@/lib/portal/queries'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import { Markdown } from '@/components/portal/markdown'
+import { SessionPosts } from '@/components/portal/session-posts'
 
 export const dynamic = 'force-dynamic'
 
@@ -59,6 +60,14 @@ export default async function MemberSessionPage({
         <p className="mt-8 font-display text-sm text-fg-muted">
           자료가 아직 등록되지 않았습니다.
         </p>
+      )}
+
+      {session.allow_posts && identity && (
+        <SessionPosts
+          sessionId={session.id}
+          viewerEmail={identity.email}
+          viewerIsExec={isExec}
+        />
       )}
 
       <div className="mt-12 flex flex-wrap gap-6">

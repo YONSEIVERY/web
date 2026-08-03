@@ -153,6 +153,18 @@ export function SessionForm({
         </span>
       </label>
 
+      <label className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="allow_posts"
+          defaultChecked={session?.allow_posts ?? false}
+          className="h-4 w-4 border-border accent-fg-primary"
+        />
+        <span className="font-display text-sm text-fg-subtle">
+          학회원 기록 허용 (사진·소감문 작성, 비정규 세션 권장)
+        </span>
+      </label>
+
       <button
         type="submit"
         className="inline-flex w-fit items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base"

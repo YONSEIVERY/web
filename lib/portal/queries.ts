@@ -25,6 +25,7 @@ export type ClubSession = {
   location_note: string | null
   content_md: string
   is_published: boolean
+  allow_posts: boolean
   sort_order: number
   created_at: string
   updated_at: string
@@ -43,6 +44,7 @@ function toSession(row: Record<string, unknown>): ClubSession {
     location_note: (row.location_note as string | null) ?? null,
     content_md: String(row.content_md ?? ''),
     is_published: Boolean(row.is_published),
+    allow_posts: Boolean(row.allow_posts),
     sort_order: Number(row.sort_order ?? 100),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
@@ -168,6 +170,46 @@ export async function getAttendanceForMember(
     .eq('member_id', memberId)
   if (!data) return []
   return (data as Record<string, unknown>[]).map(toAttendance)
+}
+
+export type SessionPost = {
+  id: string
+  session_id: string
+  member_id: string | null
+  author_email: string
+  author_name: string
+  content_md: string
+  image_paths: string[]
+  created_at: string
+}
+
+function toPost(row: Record<string, unknown>): SessionPost {
+  return {
+    id: String(row.id),
+    session_id: String(row.session_id),
+    member_id: row.member_id == null ? null : String(row.member_id),
+    author_email: String(row.author_email),
+    author_name: String(row.author_name),
+    content_md: String(row.content_md ?? ''),
+    image_paths: Array.isArray(row.image_paths)
+      ? (row.image_paths as unknown[]).filter(
+          (v): v is string => typeof v === 'string',
+        )
+      : [],
+    created_at: String(row.created_at),
+  }
+}
+
+export async function getPostsForSession(
+  sessionId: string,
+): Promise<SessionPost[]> {
+  const { data } = await supabaseService
+    .from('session_posts')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('created_at', { ascending: false })
+  if (!data) return []
+  return (data as Record<string, unknown>[]).map(toPost)
 }
 
 export type RosterMember = {

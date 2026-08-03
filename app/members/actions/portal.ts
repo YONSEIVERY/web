@@ -36,6 +36,7 @@ function parseSessionForm(formData: FormData) {
     String(formData.get('location_note') ?? '').trim() || null
   const content_md = String(formData.get('content_md') ?? '')
   const is_published = formData.get('is_published') === 'on'
+  const allow_posts = formData.get('allow_posts') === 'on'
   const sortRaw = String(formData.get('sort_order') ?? '').trim()
   const sort_order = sortRaw === '' ? 100 : Number(sortRaw)
 
@@ -59,6 +60,7 @@ function parseSessionForm(formData: FormData) {
     location_note,
     content_md,
     is_published,
+    allow_posts,
     sort_order,
   }
 }

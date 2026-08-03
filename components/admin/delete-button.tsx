@@ -3,12 +3,13 @@ import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { deleteAlumni, deletePartner } from '@/app/admin/actions/delete'
 import { deleteApplication } from '@/app/admin/actions/recruit'
+import { deleteSessionPost } from '@/app/members/actions/posts'
 import {
   DELETE_INITIAL,
   type DeleteState,
 } from '@/app/admin/actions/delete-state'
 
-type Kind = 'alumni' | 'partner' | 'application'
+type Kind = 'alumni' | 'partner' | 'application' | 'session_post'
 
 const ACTIONS: Record<
   Kind,
@@ -17,6 +18,7 @@ const ACTIONS: Record<
   alumni: deleteAlumni,
   partner: deletePartner,
   application: deleteApplication,
+  session_post: deleteSessionPost,
 }
 
 export function DeleteButton({
