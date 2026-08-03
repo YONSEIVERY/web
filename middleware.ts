@@ -98,6 +98,15 @@ async function membersGate(
     return loginRedirect(request, isMembersHost, 'not_member')
   }
 
+  // 관리 화면은 임원진 전용. 학회원이 URL로 직접 접근하면 홈으로.
+  // (페이지·액션의 requireExec가 2차 방어선)
+  if (effectivePath.startsWith('/members/manage') && role !== 'exec') {
+    const url = request.nextUrl.clone()
+    url.pathname = isMembersHost ? '/' : '/members'
+    url.search = ''
+    return NextResponse.redirect(url)
+  }
+
   return response
 }
 
