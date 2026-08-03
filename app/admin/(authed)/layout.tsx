@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { AdminNav } from '@/components/admin/admin-nav'
 
 export const metadata: Metadata = {
-  title: 'VERY · Admin',
+  title: '어드민',
   robots: 'noindex',
 }
 

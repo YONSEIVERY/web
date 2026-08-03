@@ -4,7 +4,7 @@ import { getPortalIdentity } from '@/lib/portal/auth'
 import { PortalNav } from '@/components/portal/portal-nav'
 
 export const metadata: Metadata = {
-  title: 'VERY · Members',
+  title: '학회원 포털',
   robots: 'noindex',
 }
 

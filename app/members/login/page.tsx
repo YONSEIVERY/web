@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { SignInButton } from './signin-button'
 
 export const metadata: Metadata = {
-  title: 'VERY · Members Login',
+  title: '학회원 로그인',
   robots: 'noindex',
 }
 
