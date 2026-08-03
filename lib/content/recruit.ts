@@ -33,10 +33,10 @@ export const RECRUIT = {
       '작성한 지원서를 PDF로 저장합니다. (4MB 이하)',
       '이 페이지 하단 폼에 인적사항과 함께 PDF를 업로드하면 접수가 완료됩니다.',
     ],
-    // TODO(44기): 44기 양식 페이지가 준비되면 교체. 현재는 43기 공식 페이지.
-    formTemplateUrl:
-      'https://www.notion.so/VERY-2ecac92f678780a6a8c8c3ecc0ad1df0',
-    formTemplateLabel: '지원서 양식 (VERY 공식 페이지)',
+    // 44기부터 양식을 도메인에서 직접 배포한다 (노션 의존 종료).
+    formTemplateUrl: '/downloads/very44-application.docx',
+    formTemplateDownloadName: 'VERY44기_이름_지원서.docx',
+    formTemplateLabel: '지원서 양식 내려받기 (.docx)',
   },
   notice: {
     label: 'NOTICE',

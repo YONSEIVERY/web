@@ -129,13 +129,12 @@ export default async function RecruitPage() {
         </ol>
         <a
           href={RECRUIT.howTo.formTemplateUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          download={RECRUIT.howTo.formTemplateDownloadName}
           translate="no"
           className="mt-8 inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
         >
           {RECRUIT.howTo.formTemplateLabel}
-          <span aria-hidden>↗</span>
+          <span aria-hidden>↓</span>
         </a>
       </section>
 
