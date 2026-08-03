@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { MANIFESTO } from '@/lib/content/manifesto'
 import { STATS } from '@/lib/content/site'
 import { getSiteConfig } from '@/lib/data/site-config'
+import { PhotoBand } from '@/components/site/photo-band'
 
 /**
  * Home Hero — Editorial Cinematic.
@@ -18,6 +19,8 @@ import { getSiteConfig } from '@/lib/data/site-config'
 async function HomeHero() {
   const siteConfig = await getSiteConfig()
   const semesterDigit = siteConfig.semester === '1학기' ? '1' : '2'
+  // 마스트헤드는 볼륨 표기 하나만 남긴다. 사방 코너 라벨과 스크롤 큐는
+  // 장식 과잉이라 제거 (리디자인 2026-08).
   const cornerLabels: ReadonlyArray<{
     slot: CornerSlot
     text: string
@@ -25,12 +28,9 @@ async function HomeHero() {
     delayMs: number
   }> = [
     { slot: 'tl', text: `VOL.${siteConfig.cohort} / ${siteConfig.year}-${semesterDigit}`, accent: true, delayMs: 0 },
-    { slot: 'tr', text: `EST. ${siteConfig.sinceYear}`, accent: false, delayMs: 100 },
-    { slot: 'bl', text: 'YONSEI UNIVERSITY', accent: false, delayMs: 200 },
-    { slot: 'br', text: 'SEOUL, KR', accent: false, delayMs: 300 },
   ]
   return (
-    <section className="relative h-[100dvh] w-full overflow-hidden">
+    <section className="relative min-h-[100dvh] w-full overflow-hidden">
       <h1 className="sr-only" translate="no">
         VERY <span translate="yes">· 연세대학교 창업학회</span>
       </h1>
@@ -39,7 +39,6 @@ async function HomeHero() {
       <HeroFrame />
       <HeroCorners labels={cornerLabels} />
       <HeroCenterStack />
-      <HeroScrollHint />
     </section>
   )
 }
@@ -164,12 +163,6 @@ function HeroCenterStack() {
         >
           be ready to fail forward.
         </p>
-        <p
-          translate="no"
-          className="hero-anim-slogan font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
-        >
-          VERY early · VERY raw · VERY real
-        </p>
       </div>
       <Image
         src="/brand/very-mark.png"
@@ -180,21 +173,6 @@ function HeroCenterStack() {
         sizes="(max-width: 768px) 90vw, 70vw"
         className="hero-anim-mark h-auto w-[clamp(20rem,_70vw,_56rem)]"
       />
-    </div>
-  )
-}
-
-/**
- * Wrapper pins the element to the bottom-center via translateX(-50%); the
- * inner span owns the animations so the wrapper's transform is never
- * clobbered by the keyframes' transform property.
- */
-function HeroScrollHint() {
-  return (
-    <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 md:bottom-10">
-      <span className="hero-anim-scroll block font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs">
-        ↓ Scroll
-      </span>
     </div>
   )
 }
@@ -215,7 +193,6 @@ function HeroScrollHint() {
  */
 function ManifestoSection() {
   const {
-    heroEyebrow,
     heroHeadline,
     heroHeadline2,
     heroSubline,
@@ -234,13 +211,7 @@ function ManifestoSection() {
       <ManifestoVertical />
 
       <header className="manifesto-anim-headline-block col-span-12 row-start-1 md:col-span-7">
-        <p
-          translate="no"
-          className="manifesto-anim-eyebrow font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-        >
-          {heroEyebrow}
-        </p>
-        <h2 className="manifesto-anim-headline mt-6 font-display font-bold tracking-tight text-fg-primary md:mt-8">
+        <h2 className="manifesto-anim-headline font-display font-bold tracking-tight text-fg-primary">
           <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
             {heroHeadline}
           </span>
@@ -259,9 +230,9 @@ function ManifestoSection() {
         </p>
         <p
           translate="no"
-          className="manifesto-anim-subline mt-6 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-muted md:mt-8 md:text-xs"
+          className="manifesto-anim-subline mt-6 font-display text-sm italic text-fg-muted md:mt-8"
         >
-          &gt; {heroSupport}
+          {heroSupport}
         </p>
       </header>
 
@@ -271,8 +242,8 @@ function ManifestoSection() {
       />
 
       <div className="col-span-12 row-start-3 mt-10 flex flex-col gap-12 md:col-start-8 md:col-span-5 md:row-start-1 md:mt-0 md:gap-14 md:self-end">
-        <ManifestoBlock label="WHO WE ARE" body={whoWeAre} variant="who" />
-        <ManifestoBlock label="OUR VISION" body={vision} variant="vision" />
+        <ManifestoBlock label="우리는." body={whoWeAre} variant="who" />
+        <ManifestoBlock label="우리가 보는 곳." body={vision} variant="vision" />
       </div>
     </section>
   )
@@ -312,14 +283,12 @@ function ManifestoBlock({
   return (
     <div>
       <p
-        translate="no"
-        className={`${labelAnim} flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs`}
+        className={`${labelAnim} font-display text-lg font-bold tracking-tight text-fg-primary md:text-xl`}
       >
-        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-primary" />
         {label}
       </p>
       <p
-        className={`${bodyAnim} mt-5 max-w-[42ch] text-base leading-[1.8] text-fg-subtle md:text-lg`}
+        className={`${bodyAnim} mt-4 max-w-[42ch] text-base leading-[1.8] text-fg-subtle md:text-lg`}
       >
         {body}
       </p>
@@ -355,44 +324,42 @@ async function StatsSection() {
   }> = [
     {
       value: String(yearsActive),
-      label: 'YEARS',
-      caption: `${siteConfig.sinceYear}년부터 멈춘 적 없는 활동`,
+      label: '년의 활동',
+      caption: '벤처창업연구회로 시작한 시간',
     },
     {
       value: String(siteConfig.cohort),
-      label: 'COHORTS',
+      label: '번째 기수',
       caption: '학기마다 다진 한 묶음의 지반',
     },
     {
       value: `${STATS.alumniCount}+`,
-      label: 'ALUMNI',
+      label: '명의 알럼나이',
       caption: '누적 회원 네트워크',
     },
     {
       value: `${STATS.startupsCount}+`,
-      label: 'STARTUPS',
-      caption: '학회를 거쳐간 창업팀',
+      label: '개의 창업팀',
+      caption: '학회를 거쳐간 팀들',
     },
   ]
 
   return (
     <section
       id="stats"
-      aria-labelledby="stats-eyebrow"
+      aria-labelledby="stats-heading"
       className="stats-section relative px-6 py-32 md:px-10 md:py-40"
     >
-      <p
-        id="stats-eyebrow"
-        translate="no"
-        className="stats-anim-eyebrow flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
+      <h2
+        id="stats-heading"
+        className="stats-anim-eyebrow font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl"
       >
-        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-        $ stats --vol={siteConfig.cohort}
-      </p>
+        {siteConfig.sinceYear}년부터, 멈춘 적 없이.
+      </h2>
 
       <hr
         aria-hidden
-        className="stats-anim-hrule mt-10 h-px border-0 bg-border-strong md:mt-14"
+        className="stats-anim-hrule mt-10 h-px border-0 bg-border-strong md:mt-12"
       />
 
       <ul className="stats-grid mt-12 grid grid-cols-2 gap-x-8 gap-y-14 md:mt-16 md:grid-cols-4 md:gap-x-12">
@@ -423,34 +390,17 @@ function StatCell({
 }) {
   return (
     <li
-      className="stats-anim-cell relative flex flex-col gap-2"
+      className="stats-anim-cell relative flex flex-col gap-3"
       style={{ animationDelay: `${300 + index * 120}ms` }}
     >
-      <span
-        translate="no"
-        aria-hidden
-        className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
-      >
-        [OK]
-      </span>
       <span
         translate="no"
         className="font-display text-[clamp(3.5rem,_10vw,_8rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
       >
         {value}
       </span>
-      <span
-        translate="no"
-        className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs"
-      >
+      <span className="font-display text-base font-bold text-fg-primary">
         {label}
-      </span>
-      <span
-        aria-hidden
-        translate="no"
-        className="font-mono text-[10px] tracking-[0.32em] text-fg-muted"
-      >
-        ──
       </span>
       <span className="font-display text-sm leading-[1.6] text-fg-subtle md:text-base">
         {caption}
@@ -464,6 +414,7 @@ export default async function HomePage() {
     <main>
       <HomeHero />
       <ManifestoSection />
+      <PhotoBand />
       <StatsSection />
     </main>
   )
