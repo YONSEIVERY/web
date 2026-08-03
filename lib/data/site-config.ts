@@ -35,3 +35,10 @@ export const getSiteConfig = cache(async (): Promise<SiteConfig> => {
     return FALLBACK
   }
 })
+
+
+/** "Vol.44 / 2026-2" 형태의 볼륨 라벨. 히어로 아이브로우 등에서 사용. */
+export function volLabel(config: SiteConfig): string {
+  const digit = config.semester === '1학기' ? '1' : '2'
+  return `Vol.${config.cohort} / ${config.year}-${digit}`
+}

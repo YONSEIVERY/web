@@ -1,3 +1,4 @@
+import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
@@ -6,7 +7,7 @@ import { CURRICULUM } from '@/lib/content/curriculum'
 export const metadata: Metadata = {
   title: '세션',
   description:
-    'VERY 43기의 주간 세션 구조. 10만원 프로젝트 → 프리토타이핑 → 아이디어톤 → 데모데이의 정규 4단계와 스터디·인사이트·컨벤션 보조 3세션.',
+    'VERY의 주간 세션 구조. 10만원 프로젝트 → 프리토타이핑 → 아이디어톤 → 데모데이의 정규 4단계와 스터디·인사이트·컨벤션 보조 3세션.',
 }
 
 /**
@@ -29,15 +30,15 @@ export default function SessionsPage() {
 }
 
 const SESSIONS_HERO = {
-  eyebrow: 'Sessions · Vol.43 / 2026-1',
   headlineLine1: '한 학기,',
   headlineLine2: '주간 세션 구조',
   subline:
     '정규 4단계 트랙과 보조 3세션이 매주 함께 굴러갑니다. 시장에서 시작해, 시장에서 검증하고, 시장에서 발표합니다.',
 }
 
-function SessionsHero() {
-  const { eyebrow, headlineLine1, headlineLine2, subline } = SESSIONS_HERO
+async function SessionsHero() {
+  const eyebrow = `Sessions · ${volLabel(await getSiteConfig())}`
+  const { headlineLine1, headlineLine2, subline } = SESSIONS_HERO
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
       <p

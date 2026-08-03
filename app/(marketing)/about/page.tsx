@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { ABOUT } from '@/lib/content/about'
+import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { getPublicLeadership } from '@/lib/cohort-members/queries'
 
 export const metadata: Metadata = {
@@ -60,8 +61,9 @@ type LeadershipMember = {
   email: string | null
 }
 
-function AboutHero() {
-  const { eyebrow, headlineLine1, headlineLine2, subline } = ABOUT.hero
+async function AboutHero() {
+  const eyebrow = `About · ${volLabel(await getSiteConfig())}`
+  const { headlineLine1, headlineLine2, subline } = ABOUT.hero
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
       <p
@@ -89,8 +91,18 @@ function AboutHero() {
   )
 }
 
-function OriginSection() {
-  const { title, body, milestones } = ABOUT.origin
+async function OriginSection() {
+  const sc = await getSiteConfig()
+  const { title, body } = ABOUT.origin
+  // 두 번째 마일스톤(현재 기수)은 site_config에서 동적으로 채운다
+  const milestones = [
+    ABOUT.origin.milestones[0],
+    {
+      year: String(sc.year),
+      label: `VOL.${sc.cohort}`,
+      note: `${sc.cohort}기, 현재 진행 중`,
+    },
+  ]
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <div className="col-span-12 md:col-span-8 md:col-start-5">

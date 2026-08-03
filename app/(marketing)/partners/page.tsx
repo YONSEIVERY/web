@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { PARTNERS } from '@/lib/content/partners'
+import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { getPartners } from '@/lib/data/partners'
 import type { Partner } from '@/lib/data/partners'
 import { PartnerApplicationForm } from '@/components/forms/partner-application-form'
@@ -34,8 +35,9 @@ export default async function PartnersPage() {
   )
 }
 
-function PartnersHero() {
-  const { eyebrow, headlineLine1, headlineLine2, subline } = PARTNERS.hero
+async function PartnersHero() {
+  const eyebrow = `Partners · ${volLabel(await getSiteConfig())}`
+  const { headlineLine1, headlineLine2, subline } = PARTNERS.hero
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
       <p

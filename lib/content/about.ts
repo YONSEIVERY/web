@@ -16,7 +16,6 @@
  */
 export const ABOUT = {
   hero: {
-    eyebrow: 'About · Vol.43 / 2026-1',
     headlineLine1: '아이디어가 현실을',
     headlineLine2: '처음 마주하는 땅',
     subline:
@@ -28,7 +27,6 @@ export const ABOUT = {
     body: '1997년 벤처창업연구회로 발족한 이래, 연세대학교에서 가장 오랜 명맥을 이어 온 창업학회로서 매 학기 더 단단해진 지반을 다음 기수에게 물려주어 왔습니다. 학기마다 새로 일군 땅, 그 누적이 곧 학회의 정체성입니다.',
     milestones: [
       { year: '1997', label: 'FOUNDED', note: '벤처창업연구회로 발족' },
-      { year: '2026', label: 'VOL.43', note: '43기, 현재 진행 중' },
     ],
   },
   manifesto: {

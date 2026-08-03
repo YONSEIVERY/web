@@ -16,7 +16,6 @@ import { STATS } from './site'
 
 export const ALUMNI = {
   hero: {
-    eyebrow: 'Alumni · Vol.43 / 2026-1',
     headlineLine1: '졸업은 끝이 아니라,',
     headlineLine2: '다음 지반의 시작',
     subline:

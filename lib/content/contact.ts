@@ -9,7 +9,6 @@ import { SITE } from './site'
 
 export const CONTACT = {
   hero: {
-    eyebrow: 'Contact · Vol.44 / 2026-2',
     headlineLine1: 'Get in touch',
     headlineLine2: '사람이 직접 답장합니다.',
     subline:

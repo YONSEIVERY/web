@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { ALUMNI } from '@/lib/content/alumni'
+import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { getAlumniCompanies } from '@/lib/data/alumni'
 import type { AlumniCompany } from '@/lib/data/alumni'
 import { getSponsors } from '@/lib/sponsors/queries'
@@ -41,8 +42,9 @@ export default async function AlumniPage() {
   )
 }
 
-function AlumniHero() {
-  const { eyebrow, headlineLine1, headlineLine2, subline } = ALUMNI.hero
+async function AlumniHero() {
+  const eyebrow = `Alumni · ${volLabel(await getSiteConfig())}`
+  const { headlineLine1, headlineLine2, subline } = ALUMNI.hero
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
       <p

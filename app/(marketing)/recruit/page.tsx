@@ -1,3 +1,4 @@
+import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getCurrentRecruitRound } from '@/lib/recruit/queries'
@@ -13,8 +14,12 @@ export const metadata: Metadata = {
 }
 
 export default async function RecruitPage() {
-  const round = await getCurrentRecruitRound()
+  const [round, siteConfig] = await Promise.all([
+    getCurrentRecruitRound(),
+    getSiteConfig(),
+  ])
   const open = Boolean(round?.apply_open)
+  const heroEyebrow = `Recruit · ${volLabel(siteConfig)}`
 
   if (!open) {
     return (
@@ -25,7 +30,7 @@ export default async function RecruitPage() {
             className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
           >
             <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-            {RECRUIT.hero.eyebrow}
+            {heroEyebrow}
           </p>
           <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
             {RECRUIT.closedNotice.title}
@@ -67,7 +72,7 @@ export default async function RecruitPage() {
           className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
         >
           <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-          {RECRUIT.hero.eyebrow}
+          {heroEyebrow}
         </p>
         <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.75rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
           {RECRUIT.hero.headlineLine1}

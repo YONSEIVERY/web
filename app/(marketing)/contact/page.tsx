@@ -1,3 +1,4 @@
+import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import type { Metadata } from 'next'
 import { CONTACT } from '@/lib/content/contact'
 
@@ -27,8 +28,9 @@ export default function ContactPage() {
   )
 }
 
-function ContactHero() {
-  const { eyebrow, headlineLine1, headlineLine2, subline } = CONTACT.hero
+async function ContactHero() {
+  const eyebrow = `Contact · ${volLabel(await getSiteConfig())}`
+  const { headlineLine1, headlineLine2, subline } = CONTACT.hero
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
       <p

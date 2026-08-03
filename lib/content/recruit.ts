@@ -10,7 +10,6 @@
 
 export const RECRUIT = {
   hero: {
-    eyebrow: 'Recruit · Vol.44 / 2026-2',
     headlineLine1: '다음 권의 저자를 찾습니다.',
     subline:
       '연세대학교 창업학회 VERY가 44기 학회원을 모집합니다. 한 학기 동안 아이디어를 실물로 만들고, 데모데이 무대에서 결산합니다.',

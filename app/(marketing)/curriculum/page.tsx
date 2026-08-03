@@ -2,12 +2,13 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { CURRICULUM } from '@/lib/content/curriculum'
+import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { IndustryInquiryForm } from '@/components/forms/industry-inquiry-form'
 
 export const metadata: Metadata = {
   title: '커리큘럼',
   description:
-    'VERY 43기 정규 커리큘럼. 10만원 프로젝트 → 프리토타이핑 → 아이디어톤 → 데모데이의 네 단계와 스터디·인사이트·컨벤션 세 갈래의 보조 세션, 그리고 산학 협력.',
+    'VERY 정규 커리큘럼. 10만원 프로젝트 → 프리토타이핑 → 아이디어톤 → 데모데이의 네 단계와 스터디·인사이트·컨벤션 세 갈래의 보조 세션, 그리고 산학 협력.',
 }
 
 /**
@@ -33,8 +34,9 @@ export default function CurriculumPage() {
   )
 }
 
-function CurriculumHero() {
-  const { eyebrow, headlineLine1, headlineLine2, subline } = CURRICULUM.hero
+async function CurriculumHero() {
+  const eyebrow = `Curriculum · ${volLabel(await getSiteConfig())}`
+  const { headlineLine1, headlineLine2, subline } = CURRICULUM.hero
   return (
     <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
       <p

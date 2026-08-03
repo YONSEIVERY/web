@@ -16,7 +16,6 @@
  */
 export const PARTNERS = {
   hero: {
-    eyebrow: 'Partners · Vol.43 / 2026-1',
     headlineLine1: '땅 밑을 받치는',
     headlineLine2: '단단한 지반',
     subline:
