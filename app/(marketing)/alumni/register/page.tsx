@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { AlumniRegistrationForm } from '@/components/forms/alumni-registration-form'
 
 export const metadata: Metadata = {
-  title: '알럼나이 등록 — VERY',
+  title: '알럼나이 등록 · VERY',
 }
 
 export default function RegisterPage() {
@@ -19,7 +19,7 @@ export default function RegisterPage() {
           알럼나이 등록
         </h1>
         <p className="mt-4 font-display text-base text-fg-subtle">
-          VERY를 거쳐간 사람이라면 누구든 — 본인 정보와 (있다면) 회사도 함께
+          VERY를 거쳐간 사람이라면 누구든, 본인 정보와 (있다면) 회사도 함께
           알려주세요. 회장단 승인 후 공개됩니다.
         </p>
         <div className="mt-12">

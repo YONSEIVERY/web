@@ -42,7 +42,7 @@ export async function SiteFooter() {
             translate="no"
             className="mt-6 font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
           >
-            VOL.{siteConfig.cohort} / {endYear}—{semesterDigit} · EST. {siteConfig.sinceYear}
+            VOL.{siteConfig.cohort} / {endYear}-{semesterDigit} · EST. {siteConfig.sinceYear}
           </p>
         </div>
 
@@ -111,7 +111,7 @@ export async function SiteFooter() {
           translate="no"
           className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
         >
-          © {startYear}—{endYear} VERY · All rights reserved
+          © {startYear}-{endYear} VERY · All rights reserved
         </p>
         <p
           translate="no"

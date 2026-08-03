@@ -26,8 +26,8 @@ function formatVolumeMono(event: DemodayEvent) {
   const year = formatVolumeYear(event)
   const sem = SEMESTER_LABEL[event.semester] ?? '1'
   return year
-    ? `Demoday — Vol.${event.volume} / ${year}—${sem}`
-    : `Demoday — Vol.${event.volume} / ${event.semester}`
+    ? `Demoday · Vol.${event.volume} / ${year}-${sem}`
+    : `Demoday · Vol.${event.volume} / ${event.semester}`
 }
 
 // 표시는 항상 한국 시간 기준. 서버 런타임(Vercel)의 TZ는 UTC이므로
@@ -74,7 +74,7 @@ function formatVolumeDate(event: DemodayEvent) {
   const startTime = formatHM(start)
   if (event.event_end_date) {
     const end = new Date(event.event_end_date)
-    return `${year}.${month}.${day} (${weekday}) ${startTime}–${formatHM(end)}`
+    return `${year}.${month}.${day} (${weekday}) ${startTime}~${formatHM(end)}`
   }
   return `${year}.${month}.${day} (${weekday}) ${startTime}`
 }
@@ -339,7 +339,7 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
                   translate="no"
                   className="col-span-3 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:col-span-1 md:text-xs"
                 >
-                  {year ?? '—'}
+                  {year ?? '-'}
                 </span>
                 <span
                   translate="no"

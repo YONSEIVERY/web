@@ -35,7 +35,7 @@ export function DemodayAttendeeForm({
 
   return (
     <form action={action} className="grid grid-cols-1 gap-8">
-      {/* honeypot — 실제 사용자에게는 보이지 않음 */}
+      {/* honeypot · 실제 사용자에게는 보이지 않음 */}
       <input
         type="text"
         name="website_hp"

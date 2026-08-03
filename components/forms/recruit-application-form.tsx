@@ -41,7 +41,7 @@ export function RecruitApplicationForm() {
       }}
       className="grid grid-cols-1 gap-8"
     >
-      {/* honeypot — 실제 사용자에게는 보이지 않음. autofill이 건드리지 않도록
+      {/* honeypot · 실제 사용자에게는 보이지 않음. autofill이 건드리지 않도록
           의미 없는 이름을 쓴다. */}
       <input
         type="text"

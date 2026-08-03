@@ -71,7 +71,7 @@ export default async function ManageSessionsPage({
           {sessions.map((s) => (
             <tr key={s.id} className="border-b border-border">
               <Td>{SESSION_KIND_LABELS[s.kind]}</Td>
-              <Td>{s.week ?? '—'}</Td>
+              <Td>{s.week ?? '-'}</Td>
               <Td>{s.title}</Td>
               <Td>{s.is_published ? '공개' : '초안'}</Td>
               <Td>

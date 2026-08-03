@@ -156,7 +156,7 @@ function FormCells({
           form={formId}
           defaultValue={note}
           maxLength={200}
-          placeholder="—"
+          placeholder="-"
           className="w-full max-w-[16rem] border border-border bg-bg-base px-2 py-1.5 text-xs text-fg-primary focus:border-fg-primary focus:outline-none"
         />
       </Td>

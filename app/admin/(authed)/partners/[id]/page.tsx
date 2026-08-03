@@ -85,7 +85,7 @@ export default async function AdminPartnerDetailPage({
             <dt className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted">
               신청자
             </dt>
-            <dd className="text-fg-subtle">{partner.applicant_name ?? '—'}</dd>
+            <dd className="text-fg-subtle">{partner.applicant_name ?? '-'}</dd>
             <dt className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted">
               신청 이메일
             </dt>
@@ -98,7 +98,7 @@ export default async function AdminPartnerDetailPage({
                   {partner.applicant_email}
                 </a>
               ) : (
-                '—'
+                '-'
               )}
             </dd>
             {partner.applicant_note && (

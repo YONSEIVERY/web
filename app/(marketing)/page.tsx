@@ -24,7 +24,7 @@ async function HomeHero() {
     accent: boolean
     delayMs: number
   }> = [
-    { slot: 'tl', text: `VOL.${siteConfig.cohort} / ${siteConfig.year}—${semesterDigit}`, accent: true, delayMs: 0 },
+    { slot: 'tl', text: `VOL.${siteConfig.cohort} / ${siteConfig.year}-${semesterDigit}`, accent: true, delayMs: 0 },
     { slot: 'tr', text: `EST. ${siteConfig.sinceYear}`, accent: false, delayMs: 100 },
     { slot: 'bl', text: 'YONSEI UNIVERSITY', accent: false, delayMs: 200 },
     { slot: 'br', text: 'SEOUL, KR', accent: false, delayMs: 300 },
@@ -32,7 +32,7 @@ async function HomeHero() {
   return (
     <section className="relative h-[100dvh] w-full overflow-hidden">
       <h1 className="sr-only" translate="no">
-        VERY <span translate="yes">— 연세대학교 창업학회</span>
+        VERY <span translate="yes">· 연세대학교 창업학회</span>
       </h1>
 
       <HeroGlow />

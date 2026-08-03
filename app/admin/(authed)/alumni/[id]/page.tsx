@@ -78,11 +78,11 @@ export default async function AdminAlumniDetailPage({
                 {data.email}
               </a>
             ) : (
-              <Muted>—</Muted>
+              <Muted>-</Muted>
             )}
           </Row>
           <Row label="현재">
-            {data.job_title || <Muted>—</Muted>}
+            {data.job_title || <Muted>-</Muted>}
           </Row>
           <Row label="LinkedIn">
             {data.linkedin_url ? (
@@ -95,14 +95,14 @@ export default async function AdminAlumniDetailPage({
                 {data.linkedin_url} ↗
               </a>
             ) : (
-              <Muted>—</Muted>
+              <Muted>-</Muted>
             )}
           </Row>
           <Row label="Bio">
             {data.bio ? (
               <p className="whitespace-pre-wrap text-fg-subtle">{data.bio}</p>
             ) : (
-              <Muted>—</Muted>
+              <Muted>-</Muted>
             )}
           </Row>
         </dl>

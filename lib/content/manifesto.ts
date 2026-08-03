@@ -9,7 +9,7 @@
  * invention.
  */
 export const MANIFESTO = {
-  heroEyebrow: 'Manifesto — Since 1997',
+  heroEyebrow: 'Manifesto · Since 1997',
   heroHeadline: '실패할 준비가',
   heroHeadline2: '되어 있을 것.',
   heroSubline: 'Be ready to fail forward.',

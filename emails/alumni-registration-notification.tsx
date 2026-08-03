@@ -25,7 +25,7 @@ export default function AlumniRegistrationNotification(p: Props) {
             <Row label="이름" value={p.name} />
             <Row label="기수" value={`${p.cohort}기`} />
             <Row label="현재" value={p.job_title} />
-            {p.hasCompany && <Row label="동반 회사" value={p.companyName ?? '—'} />}
+            {p.hasCompany && <Row label="동반 회사" value={p.companyName ?? '-'} />}
           </Section>
           <Hr style={{ margin: '16px 0', borderColor: '#e7e5e4' }} />
           <Text style={{ fontSize: '14px', lineHeight: 1.7 }}>{p.bio}</Text>

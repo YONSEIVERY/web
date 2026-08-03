@@ -10,7 +10,7 @@
 
 export const RECRUIT = {
   hero: {
-    eyebrow: 'Recruit — Vol.44 / 2026—2',
+    eyebrow: 'Recruit · Vol.44 / 2026-2',
     headlineLine1: '다음 권의 저자를 찾습니다.',
     subline:
       '연세대학교 창업학회 VERY가 44기 학회원을 모집합니다. 한 학기 동안 아이디어를 실물로 만들고, 데모데이 무대에서 결산합니다.',
@@ -19,11 +19,11 @@ export const RECRUIT = {
     label: 'SCHEDULE',
     title: '모집 일정.',
     items: [
-      { mono: 'APPLY', label: '서류 접수', value: '8.4(화) — 8.23(일) 23:59' },
+      { mono: 'APPLY', label: '서류 접수', value: '8.4(화) ~ 8.23(일) 23:59' },
       { mono: 'DOCS', label: '서류 결과 발표', value: '8.25(화)' },
-      { mono: 'INTERVIEW', label: '면접', value: '8.28(금) — 8.29(토)' },
+      { mono: 'INTERVIEW', label: '면접', value: '8.28(금) ~ 8.29(토)' },
       { mono: 'FINAL', label: '최종 합격자 발표', value: '9.1(화)' },
-      { mono: 'OT', label: 'OT · 1주차 세션', value: '9.3(목) — 합격자 전원 필참' },
+      { mono: 'OT', label: 'OT · 1주차 세션', value: '9.3(목), 합격자 전원 필참' },
     ],
   },
   howTo: {

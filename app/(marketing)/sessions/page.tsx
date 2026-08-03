@@ -29,7 +29,7 @@ export default function SessionsPage() {
 }
 
 const SESSIONS_HERO = {
-  eyebrow: 'Sessions — Vol.43 / 2026—1',
+  eyebrow: 'Sessions · Vol.43 / 2026-1',
   headlineLine1: '한 학기,',
   headlineLine2: '주간 세션 구조.',
   subline:

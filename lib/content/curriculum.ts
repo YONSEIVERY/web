@@ -16,7 +16,7 @@
  */
 export const CURRICULUM = {
   hero: {
-    eyebrow: '~/curriculum — Vol.43 / 2026—1',
+    eyebrow: '~/curriculum · Vol.43 / 2026-1',
     headlineLine1: '실패를 통해,',
     headlineLine2: '앞으로 나아가다.',
     subline:

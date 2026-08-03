@@ -16,7 +16,7 @@
  */
 export const ABOUT = {
   hero: {
-    eyebrow: 'About — Vol.43 / 2026—1',
+    eyebrow: 'About · Vol.43 / 2026-1',
     headlineLine1: '아이디어가 현실을',
     headlineLine2: '처음 마주하는 땅.',
     subline:
@@ -36,9 +36,9 @@ export const ABOUT = {
     title: 'Do. Fail. Repeat.',
     body: '실패는 피할 게 아니라 반복하고 활용하는 방법입니다. 실행 → 실패 → 다시 실행. VERY가 일하는 단 하나의 사이클이며, 학기마다 우리가 다지는 지반의 단위입니다.',
     lines: [
-      'Fail Forward — 실패는 피하지 않고, 성장의 방법으로 재사용한다.',
-      'Low Barrier, High Intensity — 누구에게나 열려 있되, 끝까지 가는 사람만 남는다.',
-      'Real-world Deployment — 아이디어는 책상 위가 아니라 현실 안에서 지금 검증한다.',
+      'Fail Forward · 실패는 피하지 않고, 성장의 방법으로 재사용한다.',
+      'Low Barrier, High Intensity · 누구에게나 열려 있되, 끝까지 가는 사람만 남는다.',
+      'Real-world Deployment · 아이디어는 책상 위가 아니라 현실 안에서 지금 검증한다.',
     ],
   },
   coreValue: {

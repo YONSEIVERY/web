@@ -61,7 +61,7 @@ export default async function AdminDemodayPage() {
                 {e.is_current ? (
                   <span className="text-accent">CURRENT</span>
                 ) : (
-                  <span className="text-fg-muted">—</span>
+                  <span className="text-fg-muted">-</span>
                 )}
               </Td>
               <Td>

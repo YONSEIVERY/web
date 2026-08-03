@@ -26,7 +26,7 @@ export default async function DemodayRegisterPage() {
             className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
           >
             <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-            Demoday — Vol.{current.volume}
+            Demoday · Vol.{current.volume}
           </p>
           <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
             아직 신청을 받고 있지 않습니다.
@@ -71,7 +71,7 @@ export default async function DemodayRegisterPage() {
           className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
         >
           <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-          Demoday — Vol.{current.volume} / 참관 신청
+          Demoday · Vol.{current.volume} / 참관 신청
         </p>
         <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.75rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
           한 학기 결산의 객석으로 모십니다.

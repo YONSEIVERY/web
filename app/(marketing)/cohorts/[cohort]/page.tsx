@@ -51,7 +51,7 @@ export default async function CohortDetailPage({
           className="about-anim-eyebrow flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
         >
           <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-          Members — Vol.{n}
+          Members · Vol.{n}
         </p>
         <h1 className="about-anim-headline mt-8 font-display font-bold tracking-tight text-fg-primary md:mt-10">
           <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">

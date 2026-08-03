@@ -104,7 +104,7 @@ export default async function AdminMembersPage({
                     />
                   ) : (
                     <div className="flex h-14 w-10 items-center justify-center border border-border text-[9px] text-fg-muted">
-                      —
+                      -
                     </div>
                   )}
                 </Td>
@@ -124,11 +124,11 @@ export default async function AdminMembersPage({
                     {ROLE_LABEL[r.role_tier] ?? r.role_tier}
                   </span>
                 </Td>
-                <Td>{r.role_label ?? '—'}</Td>
+                <Td>{r.role_label ?? '-'}</Td>
                 <Td>
                   <span className="text-xs">
                     {r.college ? `${r.college} · ` : ''}
-                    {r.major ?? '—'}
+                    {r.major ?? '-'}
                   </span>
                 </Td>
                 <Td>

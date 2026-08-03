@@ -28,7 +28,7 @@ export async function PartnerMarquee() {
     >
       <div className="mb-4 flex items-center justify-between px-6 md:mb-6 md:px-10">
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-fg-muted md:text-xs">
-          Partners — Vol.43
+          Partners · Vol.43
         </p>
         <p className="text-xs text-fg-muted md:text-sm">
           이번 학기를 함께 받치는 협력사

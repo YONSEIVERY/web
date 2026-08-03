@@ -162,10 +162,10 @@ function ApplicationRow({
             PDF 열기
           </a>
         ) : (
-          '—'
+          '-'
         )}
       </Td>
-      <Td>{app.remote_interview_reason ?? '—'}</Td>
+      <Td>{app.remote_interview_reason ?? '-'}</Td>
       <Td>
         <form action={setApplicationStatus} className="flex items-center gap-2">
           <input type="hidden" name="application_id" value={app.id} />

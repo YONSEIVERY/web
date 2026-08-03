@@ -45,7 +45,7 @@ export default async function InquiriesPage() {
       </table>
       </div>
 
-      {/* 메시지 펼침은 후속 — MVP에선 mailto로 답장 */}
+      {/* 메시지 펼침은 후속 · MVP에선 mailto로 답장 */}
     </div>
   )
 }

@@ -79,7 +79,7 @@ export default async function AdminDemodayAttendeesPage({
               </Td>
               <Td>
                 {a.attend_afterparty == null
-                  ? '—'
+                  ? '-'
                   : a.attend_afterparty
                     ? '참석'
                     : '불참'}

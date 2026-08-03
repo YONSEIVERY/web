@@ -34,7 +34,7 @@ export async function submitIndustryInquiry(
   if (!['멘토링', '세션 진행', '공동 프로젝트', '기타'].includes(subject))
     return { status: 'error', message: '문의 분류를 선택해주세요.' }
   if (message.length < 10 || message.length > 2000)
-    return { status: 'error', message: '메시지는 10–2000자 사이로 작성해주세요.' }
+    return { status: 'error', message: '메시지는 10~2000자 사이로 작성해주세요.' }
 
   const rl = checkRateLimit(`industry:${await clientKey()}`, { limit: 5, windowMs: 60 * 60 * 1000 })
   if (!rl.ok) return { status: 'error', message: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)` }

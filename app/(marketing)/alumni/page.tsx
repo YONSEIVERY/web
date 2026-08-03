@@ -320,7 +320,7 @@ function RegisterCTASection() {
           알럼나이 등록
         </h2>
         <p className="about-anim-body mt-6 max-w-[58ch] text-base leading-[1.8] text-fg-subtle md:text-lg">
-          VERY를 거쳐간 사람이라면 누구든 — 본인 정보와 (있다면) 회사도 함께
+          VERY를 거쳐간 사람이라면 누구든, 본인 정보와 (있다면) 회사도 함께
           알려주세요.
         </p>
         <div className="about-anim-meta mt-10 flex flex-wrap items-center gap-6 md:gap-8">

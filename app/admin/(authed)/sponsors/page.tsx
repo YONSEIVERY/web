@@ -66,7 +66,7 @@ export default async function AdminSponsorsPage() {
                 {CATEGORY_LABEL[s.category]}
               </span>
               <span className="col-span-3 text-xs text-fg-subtle">
-                {s.cohort_label ?? '—'}
+                {s.cohort_label ?? '-'}
               </span>
               <span className="col-span-1 font-mono text-xs text-fg-muted">
                 {s.order_index}

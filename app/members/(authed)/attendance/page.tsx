@@ -92,8 +92,8 @@ export default async function MyAttendancePage() {
                     : '(삭제된 세션)'}
                 </Td>
                 <Td>{ATTENDANCE_STATUS_LABELS[r.status]}</Td>
-                <Td>{r.assignment_missing ? '미제출' : '—'}</Td>
-                <Td>{r.note ?? '—'}</Td>
+                <Td>{r.assignment_missing ? '미제출' : '-'}</Td>
+                <Td>{r.note ?? '-'}</Td>
               </tr>
             )
           })}

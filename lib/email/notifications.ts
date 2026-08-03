@@ -19,7 +19,7 @@ export async function sendInquiryNotification(args: {
     await resend.emails.send({
       from: NOTIFY_FROM,
       to: NOTIFY_TO,
-      subject: `[VERY] 신규 ${args.type === 'INDUSTRY' ? '산학협력' : ''} 문의 — ${args.name}`,
+      subject: `[VERY] 신규 ${args.type === 'INDUSTRY' ? '산학협력' : ''} 문의 · ${args.name}`,
       react: InquiryNotification(args),
     })
   } catch (e) {
@@ -40,7 +40,7 @@ export async function sendPartnerApplicationNotification(args: {
     await resend.emails.send({
       from: NOTIFY_FROM,
       to: NOTIFY_TO,
-      subject: `[VERY] 신규 파트너십 신청 — ${args.name}`,
+      subject: `[VERY] 신규 파트너십 신청 · ${args.name}`,
       react: PartnerApplicationNotification(args),
     })
   } catch (e) {
@@ -68,7 +68,7 @@ export async function sendDemodayAttendeeNotification(args: {
     await resend.emails.send({
       from: NOTIFY_FROM,
       to: NOTIFY_TO,
-      subject: `[VERY] 데모데이 Vol.${args.volume} 참관 신청 — ${args.name}`,
+      subject: `[VERY] 데모데이 Vol.${args.volume} 참관 신청 · ${args.name}`,
       react: DemodayAttendeeNotification(args),
     })
   } catch (e) {
@@ -89,7 +89,7 @@ export async function sendRecruitApplicationNotification(args: {
     await resend.emails.send({
       from: NOTIFY_FROM,
       to: NOTIFY_TO,
-      subject: `[VERY] ${args.cohort}기 지원서 접수 — ${args.name}`,
+      subject: `[VERY] ${args.cohort}기 지원서 접수 · ${args.name}`,
       react: RecruitApplicationNotification(args),
     })
   } catch (e) {
@@ -110,7 +110,7 @@ export async function sendAlumniRegistrationNotification(args: {
     await resend.emails.send({
       from: NOTIFY_FROM,
       to: NOTIFY_TO,
-      subject: `[VERY] 신규 알럼나이 신청 — ${args.name} (${args.cohort}기)${args.hasCompany ? ' +회사' : ''}`,
+      subject: `[VERY] 신규 알럼나이 신청 · ${args.name} (${args.cohort}기)${args.hasCompany ? ' +회사' : ''}`,
       react: AlumniRegistrationNotification(args),
     })
   } catch (e) {
