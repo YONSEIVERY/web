@@ -18,7 +18,7 @@ export const RECRUIT = {
     label: 'SCHEDULE',
     title: '모집 일정',
     items: [
-      { mono: 'APPLY', label: '서류 접수', value: '8.4(화) ~ 8.23(일) 23:59' },
+      { mono: 'APPLY', label: '서류 접수', value: '~ 8.23(일) 23:59' },
       { mono: 'DOCS', label: '서류 결과 발표', value: '8.25(화)' },
       { mono: 'INTERVIEW', label: '면접', value: '8.28(금) ~ 8.29(토)' },
       { mono: 'FINAL', label: '최종 합격자 발표', value: '9.1(화)' },
