@@ -26,7 +26,7 @@ const ROLE_TIERS = new Set([
 ])
 
 const PHOTO_MIME = new Set(['image/png', 'image/jpeg', 'image/webp'])
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024
+const MAX_PHOTO_BYTES = 4 * 1024 * 1024 // Vercel 요청 본문 4.5MB 하드 제한 고려
 
 type Parsed = {
   cohort: number
@@ -212,7 +212,7 @@ export async function uploadMemberPhoto(
   if (!file || file.size === 0)
     return { status: 'error', message: '사진 파일을 선택해주세요.' }
   if (file.size > MAX_PHOTO_BYTES)
-    return { status: 'error', message: '5MB 이하로 올려주세요.' }
+    return { status: 'error', message: '4MB 이하로 올려주세요.' }
   if (!PHOTO_MIME.has(file.type))
     return { status: 'error', message: 'PNG/JPEG/WEBP만 허용됩니다.' }
 

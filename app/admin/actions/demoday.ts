@@ -17,7 +17,7 @@ import type { DemodayActionState } from './demoday-state'
  */
 
 const POSTER_MIME = new Set(['image/png', 'image/jpeg', 'image/webp'])
-const MAX_POSTER_BYTES = 5 * 1024 * 1024
+const MAX_POSTER_BYTES = 4 * 1024 * 1024 // Vercel 요청 본문 4.5MB 하드 제한 고려
 
 function kstLocalToISO(local: string): string {
   return new Date(`${local}:00+09:00`).toISOString()
@@ -165,7 +165,7 @@ export async function uploadDemodayPoster(
   if (!file || file.size === 0)
     return { status: 'error', message: '포스터 파일을 선택해주세요.' }
   if (file.size > MAX_POSTER_BYTES)
-    return { status: 'error', message: '5MB 이하로 올려주세요.' }
+    return { status: 'error', message: '4MB 이하로 올려주세요.' }
   if (!POSTER_MIME.has(file.type))
     return { status: 'error', message: 'PNG/JPEG/WEBP만 허용됩니다.' }
 
@@ -217,7 +217,7 @@ export async function uploadDemodayGroupPhoto(
   if (!file || file.size === 0)
     return { status: 'error', message: '단체사진 파일을 선택해주세요.' }
   if (file.size > MAX_POSTER_BYTES)
-    return { status: 'error', message: '5MB 이하로 올려주세요.' }
+    return { status: 'error', message: '4MB 이하로 올려주세요.' }
   if (!POSTER_MIME.has(file.type))
     return { status: 'error', message: 'PNG/JPEG/WEBP만 허용됩니다.' }
 

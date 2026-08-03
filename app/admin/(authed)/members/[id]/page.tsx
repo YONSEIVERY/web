@@ -65,7 +65,7 @@ export default async function AdminMemberDetailPage({
           </p>
         )}
         <p className="mt-4 text-[10px] text-fg-muted">
-          PNG · JPEG · WEBP · 최대 5MB. 세로 프로필(2:3 비율) 권장.
+          PNG · JPEG · WEBP · 최대 4MB. 세로 프로필(2:3 비율) 권장.
         </p>
         <PhotoUploadForm id={member.id} />
       </section>

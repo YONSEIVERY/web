@@ -18,7 +18,7 @@ import type { RecruitFormState, RecruitFormValues } from './recruit-state'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^[0-9+\-\s()]{7,20}$/
-const MAX_FILE_BYTES = 5 * 1024 * 1024
+const MAX_FILE_BYTES = 4 * 1024 * 1024 // Vercel 요청 본문 4.5MB 하드 제한 고려
 const MAX_REASON_LENGTH = 1000
 
 async function clientKey() {
@@ -93,7 +93,7 @@ export async function submitRecruitApplication(
 
   if (!file || file.size === 0) return fail('지원서 PDF를 첨부해주세요.')
   if (file.size > MAX_FILE_BYTES)
-    return fail('지원서는 5MB 이하 PDF만 가능합니다.')
+    return fail('지원서는 4MB 이하 PDF만 가능합니다.')
   if (file.type !== 'application/pdf')
     return fail('지원서는 PDF 파일만 허용됩니다.')
   // MIME은 클라이언트가 보내는 값이라 위조 가능. 파일 시그니처로 재확인한다.

@@ -11,7 +11,7 @@ const INPUT_CLASS =
   'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
 const LABEL_CLASS =
   'flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs'
-const MAX_FILE_BYTES = 5 * 1024 * 1024
+const MAX_FILE_BYTES = 4 * 1024 * 1024
 
 export function RecruitApplicationForm() {
   const [state, action] = useActionState<RecruitFormState, FormData>(
@@ -81,7 +81,7 @@ export function RecruitApplicationForm() {
       <Fieldset legend="지원서 제출">
         <label className="flex flex-col gap-2">
           <span className={LABEL_CLASS}>
-            지원서 PDF (5MB 이하)
+            지원서 PDF (4MB 이하)
             <span aria-hidden className="ml-1 text-accent">
               *
             </span>
@@ -97,7 +97,7 @@ export function RecruitApplicationForm() {
               if (f.type !== 'application/pdf')
                 return setFileError('PDF 파일만 업로드할 수 있습니다.')
               if (f.size > MAX_FILE_BYTES)
-                return setFileError('파일이 5MB를 넘습니다. 용량을 줄여주세요.')
+                return setFileError('파일이 4MB를 넘습니다. 용량을 줄여주세요.')
               setFileError(null)
             }}
             className="block w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary file:mr-4 file:border-0 file:bg-transparent file:font-mono file:text-[10px] file:uppercase file:tracking-[0.32em] file:text-fg-primary focus:border-fg-primary focus:outline-none"
