@@ -241,7 +241,7 @@ function AboutSection() {
   const { title, body } = DEMODAY.about
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -257,7 +257,7 @@ function FormatSection() {
   const { title, body, stats } = DEMODAY.format
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -269,7 +269,7 @@ function FormatSection() {
             <li key={s.label} className="flex flex-col gap-2">
               <span
                 translate="no"
-                className="font-display text-[clamp(2.5rem,_5vw,_4rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
+                className="whitespace-nowrap font-display text-[clamp(2.5rem,_5vw,_4rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
               >
                 {s.value}
               </span>
@@ -294,7 +294,7 @@ function ScheduleSection({ schedule }: { schedule: DemodayScheduleItem[] }) {
   const { title } = DEMODAY.schedule
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -326,7 +326,7 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
   if (volumes.length === 0) return null
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -409,7 +409,7 @@ function AudienceSection({ ended }: { ended: boolean }) {
   const title = ended ? titleEnded : liveTitle
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -451,7 +451,7 @@ function ClosingSection({
   const registerOpen = (current?.register_open ?? false) && !ended
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>

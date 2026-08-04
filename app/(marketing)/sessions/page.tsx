@@ -70,7 +70,7 @@ function TracksSection() {
   const { title, body, items } = CURRICULUM.tracks
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -154,7 +154,7 @@ function SessionsListSection() {
   const { title, body, items } = CURRICULUM.sessions
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -217,7 +217,7 @@ function ClosingSection() {
   const { title, body, primary, secondary } = CURRICULUM.closing
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>

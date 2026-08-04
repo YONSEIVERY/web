@@ -105,7 +105,7 @@ async function OriginSection() {
   ]
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -118,7 +118,7 @@ async function OriginSection() {
             <li key={m.year} className="flex flex-col gap-2">
               <span
                 translate="no"
-                className="font-display text-[clamp(2.5rem,_5vw,_4rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
+                className="whitespace-nowrap font-display text-[clamp(2.5rem,_5vw,_4rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
               >
                 {m.year}
               </span>
@@ -143,7 +143,7 @@ function ManifestoSection() {
   const { title, body, lines } = ABOUT.manifesto
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2
           translate="no"
           className="about-anim-title font-display text-[clamp(2.5rem,_7vw,_5.5rem)] font-bold leading-[1.05] tracking-tight text-fg-primary"
@@ -179,7 +179,7 @@ function CoreValueSection() {
   const { title, body, items } = ABOUT.coreValue
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -223,7 +223,7 @@ function MindsetSection() {
   const { title, body, items } = ABOUT.mindset
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -280,7 +280,7 @@ function WhatWeDoSection() {
   const { title, items } = ABOUT.whatWeDo
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -333,7 +333,7 @@ function LeadershipSection({
   const { title } = ABOUT.leadership
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(1.75rem,_4vw,_2.75rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>
@@ -395,7 +395,7 @@ function ClosingSection() {
   const { title, body, primary, secondary } = ABOUT.closing
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
-      <div className="col-span-12 md:col-span-8 md:col-start-5">
+      <div className="col-span-12 md:col-span-8 md:col-start-3">
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>

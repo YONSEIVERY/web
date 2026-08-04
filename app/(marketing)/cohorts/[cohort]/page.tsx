@@ -111,7 +111,7 @@ function MemberGroup({
         : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-16 md:gap-x-12 md:px-10 md:py-24">
-      <div className="col-span-12 md:col-span-9 md:col-start-4">
+      <div className="col-span-12 md:col-span-10 md:col-start-2">
         <h2 className="about-anim-title font-display text-[clamp(1.5rem,_3vw,_2.25rem)] font-bold leading-[1.15] tracking-tight text-fg-primary">
           {title}
         </h2>

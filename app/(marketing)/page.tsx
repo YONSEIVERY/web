@@ -385,7 +385,7 @@ function StatCell({
     >
       <span
         translate="no"
-        className="font-display text-[clamp(3.5rem,_10vw,_8rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
+        className="whitespace-nowrap font-display text-[clamp(3.5rem,_10vw,_8rem)] font-bold leading-[0.95] tracking-tight text-fg-primary"
       >
         {value}
       </span>
