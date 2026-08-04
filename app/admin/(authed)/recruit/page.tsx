@@ -14,6 +14,7 @@ import {
 } from '@/app/admin/actions/recruit'
 import { DeleteButton } from '@/components/admin/delete-button'
 import { SendResultsButton } from '@/components/admin/send-results-button'
+import { CopyPhonesButton } from '@/components/admin/copy-phones-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -148,6 +149,35 @@ export default async function AdminRecruitPage() {
             )
           })}
         </dl>
+      )}
+
+      {/* 문자 발송 명단. 상태별 전화번호를 하이픈 없이 쉼표로 복사한다. */}
+      {applications.length > 0 && (
+        <div className="mt-8 border border-border p-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary">
+            문자 발송 명단
+          </p>
+          <p className="mt-2 max-w-[64ch] text-xs leading-relaxed text-fg-subtle">
+            버튼을 누르면 해당 상태의 전화번호가 쉼표 구분으로 복사됩니다.
+            단체 문자 서비스에 그대로 붙여넣으세요. 발송 전 인원수가
+            심사 결과와 일치하는지 2인이 확인하는 것을 권장합니다.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {APPLICATION_STATUSES.map((s) => (
+              <CopyPhonesButton
+                key={s}
+                label={APPLICATION_STATUS_LABELS[s]}
+                phones={applications
+                  .filter((a) => a.status === s)
+                  .map((a) => a.phone)}
+              />
+            ))}
+            <CopyPhonesButton
+              label="전체"
+              phones={applications.map((a) => a.phone)}
+            />
+          </div>
+        </div>
       )}
 
       {/* 결과 통보. 심사 상태를 저장한 뒤 단계별로 일괄 발송한다. */}
