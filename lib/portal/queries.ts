@@ -257,3 +257,113 @@ export function summarizeAttendance(rows: AttendanceRow[]) {
     Math.floor(counts.assignment_missing / 3)
   return { ...counts, convertedAbsences }
 }
+
+/**
+ * 자기소개 디렉토리. cohort_members의 공개 성격 필드만 고른다
+ * (email·phone·student_id·birth는 절대 select하지 않는다).
+ */
+export type DirectoryMember = {
+  id: string
+  name: string
+  role_tier: string
+  role_label: string | null
+  college: string | null
+  major: string | null
+  photo_url: string | null
+  hasIntro: boolean
+  excerpt: string | null
+}
+
+/** 마크다운 첫 문장을 카드용 발췌로. 기호를 벗기고 60자에서 끊는다. */
+function introExcerpt(bodyMd: string): string | null {
+  const line = bodyMd
+    .split('\n')
+    .map((l) => l.replace(/^[#>\-*\s]+/, '').trim())
+    .find((l) => l.length > 0)
+  if (!line) return null
+  return line.length > 60 ? `${line.slice(0, 60)}…` : line
+}
+
+export async function getDirectory(cohort: number): Promise<DirectoryMember[]> {
+  const { data: members } = await supabaseService
+    .from('cohort_members')
+    .select('id, name, role_tier, role_label, college, major, photo_url, sort_order')
+    .eq('cohort', cohort)
+    .order('sort_order', { ascending: true })
+    .order('name', { ascending: true })
+  if (!members || members.length === 0) return []
+
+  const ids = (members as Record<string, unknown>[]).map((m) => String(m.id))
+  const { data: intros } = await supabaseService
+    .from('member_intros')
+    .select('member_id, body_md')
+    .in('member_id', ids)
+  const introByMember = new Map(
+    ((intros ?? []) as Record<string, unknown>[]).map((r) => [
+      String(r.member_id),
+      String(r.body_md ?? ''),
+    ]),
+  )
+
+  return (members as Record<string, unknown>[]).map((m) => {
+    const body = introByMember.get(String(m.id)) ?? ''
+    return {
+      id: String(m.id),
+      name: String(m.name),
+      role_tier: String(m.role_tier ?? 'member'),
+      role_label: (m.role_label as string | null) ?? null,
+      college: (m.college as string | null) ?? null,
+      major: (m.major as string | null) ?? null,
+      photo_url: (m.photo_url as string | null) ?? null,
+      hasIntro: body.trim().length > 0,
+      excerpt: introExcerpt(body),
+    }
+  })
+}
+
+export type MemberProfile = {
+  id: string
+  cohort: number
+  name: string
+  role_tier: string
+  role_label: string | null
+  college: string | null
+  major: string | null
+  photo_url: string | null
+  intro_md: string
+  intro_updated_at: string | null
+}
+
+export async function getMemberProfile(
+  id: string,
+): Promise<MemberProfile | null> {
+  const { data: m } = await supabaseService
+    .from('cohort_members')
+    .select('id, cohort, name, role_tier, role_label, college, major, photo_url')
+    .eq('id', id)
+    .maybeSingle()
+  if (!m) return null
+  const { data: intro } = await supabaseService
+    .from('member_intros')
+    .select('body_md, updated_at')
+    .eq('member_id', id)
+    .maybeSingle()
+  const row = m as Record<string, unknown>
+  return {
+    id: String(row.id),
+    cohort: Number(row.cohort),
+    name: String(row.name),
+    role_tier: String(row.role_tier ?? 'member'),
+    role_label: (row.role_label as string | null) ?? null,
+    college: (row.college as string | null) ?? null,
+    major: (row.major as string | null) ?? null,
+    photo_url: (row.photo_url as string | null) ?? null,
+    intro_md: String(
+      (intro as Record<string, unknown> | null)?.body_md ?? '',
+    ),
+    intro_updated_at:
+      ((intro as Record<string, unknown> | null)?.updated_at as
+        | string
+        | null) ?? null,
+  }
+}

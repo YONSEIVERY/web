@@ -9,7 +9,9 @@ type NavItem = { href: Route; label: string }
 
 const MEMBER_ITEMS: NavItem[] = [
   { href: '/members' as Route, label: '홈' },
+  { href: '/members/people' as Route, label: '멤버' },
   { href: '/members/attendance' as Route, label: '내 출결' },
+  { href: '/members/profile' as Route, label: '내 소개' },
 ]
 
 const EXEC_ITEMS: NavItem[] = [
