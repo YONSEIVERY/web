@@ -1,10 +1,11 @@
 import 'server-only'
-import { resend, NOTIFY_TO, NOTIFY_FROM } from './client'
+import { resend, NOTIFY_TO, NOTIFY_FROM, APPLICANT_FROM } from './client'
 import InquiryNotification from '@/emails/inquiry-notification'
 import PartnerApplicationNotification from '@/emails/partner-application-notification'
 import AlumniRegistrationNotification from '@/emails/alumni-registration-notification'
 import DemodayAttendeeNotification from '@/emails/demoday-attendee-notification'
 import RecruitApplicationNotification from '@/emails/recruit-application-notification'
+import RecruitApplicantConfirmation from '@/emails/recruit-applicant-confirmation'
 
 export async function sendInquiryNotification(args: {
   id: string
@@ -94,6 +95,29 @@ export async function sendRecruitApplicationNotification(args: {
     })
   } catch (e) {
     console.error('sendRecruitApplicationNotification failed', e)
+  }
+}
+
+/**
+ * 지원자 본인 접수 확인 메일. yonseivery.com 도메인 인증 전에는 Resend가
+ * 발송을 거부하므로 에러 로그만 남고, 인증 완료 시점부터 자동 발송된다.
+ * 접수 자체는 이 메일의 성패와 무관하게 완료된다.
+ */
+export async function sendRecruitApplicantConfirmation(args: {
+  to: string
+  cohort: number
+  name: string
+  fileName: string
+}) {
+  try {
+    await resend.emails.send({
+      from: APPLICANT_FROM,
+      to: args.to,
+      subject: `[VERY] ${args.cohort}기 지원서 접수 완료`,
+      react: RecruitApplicantConfirmation(args),
+    })
+  } catch (e) {
+    console.error('sendRecruitApplicantConfirmation failed', e)
   }
 }
 

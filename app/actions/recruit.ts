@@ -2,7 +2,10 @@
 import { headers } from 'next/headers'
 import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
-import { sendRecruitApplicationNotification } from '@/lib/email/notifications'
+import {
+  sendRecruitApplicationNotification,
+  sendRecruitApplicantConfirmation,
+} from '@/lib/email/notifications'
 import { getCurrentRecruitRound, type RecruitRound } from '@/lib/recruit/queries'
 import type { RecruitFormState, RecruitFormValues } from './recruit-state'
 
@@ -294,6 +297,12 @@ export async function submitRecruitApplication(
     phone,
     email,
     remoteReason: remoteReason || null,
+    fileName: applicationName,
+  })
+  await sendRecruitApplicantConfirmation({
+    to: email,
+    cohort: round.cohort,
+    name,
     fileName: applicationName,
   })
 

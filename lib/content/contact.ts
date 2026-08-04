@@ -1,9 +1,9 @@
 /**
  * /contact page content.
  *
- * Channels-only. 신청 폼은 두지 않고 실제 담당자가 회신하는 채널만
- * 노출한다. 43기 진행 중(landing)에는 모집 접수를 열지 않으므로,
- * 상단 STATUS 섹션에서 그 상태를 먼저 알린다.
+ * Channels-only. 학회원 모집 접수는 /recruit에서 자체 진행하므로,
+ * 이 페이지는 파트너십·언론 등 일반 문의 채널과 산학 문의 폼만 다룬다.
+ * 상단 STATUS 섹션이 접수 경로(/recruit)를 먼저 안내한다.
  */
 import { SITE } from './site'
 

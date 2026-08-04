@@ -51,6 +51,8 @@ export async function submitAlumniRegistration(
     return { status: 'error', message: '현재 활동/소속을 확인해주세요.' }
   if (!bio || bio.length > 200)
     return { status: 'error', message: '한 줄 소개는 200자 이하로 작성해주세요.' }
+  if (formData.get('privacy_consent') !== 'on')
+    return { status: 'error', message: '개인정보 수집·이용에 동의해주세요.' }
 
   const hasCompany = formData.get('has_company') === 'on'
   let company:

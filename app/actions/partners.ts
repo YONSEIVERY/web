@@ -53,6 +53,8 @@ export async function submitPartnerApplication(
     return { status: 'error', message: '신청자 이메일 형식을 확인해주세요.' }
   if (applicant_note && applicant_note.length > 2000)
     return { status: 'error', message: '추가 메모는 2000자 이하로 작성해주세요.' }
+  if (formData.get('privacy_consent') !== 'on')
+    return { status: 'error', message: '개인정보 수집·이용에 동의해주세요.' }
 
   const rl = checkRateLimit(`partner:${await clientKey()}`, {
     limit: 5,

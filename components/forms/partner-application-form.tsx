@@ -6,6 +6,7 @@ import {
   PARTNER_INITIAL_STATE,
   type PartnerFormState,
 } from '@/app/actions/partners-state'
+import { PrivacyConsent } from '@/components/forms/privacy-consent'
 
 const INPUT_CLASS =
   'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
@@ -59,6 +60,8 @@ export function PartnerApplicationForm() {
         required
       />
       <Textarea name="applicant_note" label="추가 메모 (선택)" />
+
+      <PrivacyConsent text="파트너십 검토와 연락을 위해 신청자 이름과 이메일을 수집·이용하는 것에 동의합니다. 자료는 목적 달성 후 1년이 지나면 파기됩니다. 동의를 거부할 권리가 있으며, 거부 시 신청이 불가합니다." />
 
       {state.status === 'error' && (
         <p className="text-sm text-red-600">{state.message}</p>

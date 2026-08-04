@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { AlumniRegistrationForm } from '@/components/forms/alumni-registration-form'
 
 export const metadata: Metadata = {
-  title: '알럼나이 등록 · VERY',
+  title: '알럼나이 등록',
 }
 
 export default function RegisterPage() {

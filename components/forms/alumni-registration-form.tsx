@@ -6,6 +6,7 @@ import {
   ALUMNI_INITIAL_STATE,
   type AlumniFormState,
 } from '@/app/actions/alumni-state'
+import { PrivacyConsent } from '@/components/forms/privacy-consent'
 
 const INPUT_CLASS =
   'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
@@ -93,6 +94,8 @@ export function AlumniRegistrationForm() {
           <Field name="company_website" label="회사 웹사이트 (선택)" type="url" />
         </Fieldset>
       )}
+
+      <PrivacyConsent text="동문 네트워크 운영과 프로필 게시를 위해 위 정보의 수집·이용에 동의합니다. 등록 정보는 본인이 삭제를 요청할 때까지 보유합니다. 동의를 거부할 권리가 있으며, 거부 시 등록 신청이 불가합니다." />
 
       {state.status === 'error' && (
         <p className="text-sm text-red-600">{state.message}</p>

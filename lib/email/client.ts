@@ -11,3 +11,7 @@ export const NOTIFY_TO = 'yonseivery1997@gmail.com'
 export const NOTIFY_FROM = 'VERY 사이트 <onboarding@resend.dev>'
 // 샌드박스: NOTIFY_TO는 Resend 가입 이메일과 일치해야 발송됨.
 // 운영 전환: yonseivery.com 도메인 인증 후 noreply@yonseivery.com으로 교체.
+
+// 지원자 등 외부 수신자에게 보내는 발신 주소. 도메인 인증 전에는 Resend가
+// 발송을 거부하므로(로그만 남음), 인증이 완료되는 순간부터 자동 발송된다.
+export const APPLICANT_FROM = 'VERY <noreply@yonseivery.com>'

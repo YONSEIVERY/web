@@ -2,8 +2,8 @@
  * Site navigation items. Order is the order rendered in the top nav.
  *
  * Home(`/`) is intentionally omitted from the list - the wordmark itself
- * links to root. Recruit is seasonal and gated on RECRUIT_OPEN; it lives
- * outside this constant so it can be appended at render time.
+ * links to root. Recruit 항목은 상시 노출한다. 접수 중/마감 상태는
+ * /recruit 페이지가 DB(recruit_rounds)로 판정해 화면을 바꾼다.
  */
 export type NavItem = {
   href: string

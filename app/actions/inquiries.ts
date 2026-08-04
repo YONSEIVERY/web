@@ -35,6 +35,8 @@ export async function submitIndustryInquiry(
     return { status: 'error', message: '문의 분류를 선택해주세요.' }
   if (message.length < 10 || message.length > 2000)
     return { status: 'error', message: '메시지는 10~2000자 사이로 작성해주세요.' }
+  if (formData.get('privacy_consent') !== 'on')
+    return { status: 'error', message: '개인정보 수집·이용에 동의해주세요.' }
 
   const rl = checkRateLimit(`industry:${await clientKey()}`, { limit: 5, windowMs: 60 * 60 * 1000 })
   if (!rl.ok) return { status: 'error', message: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)` }
