@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { track } from '@vercel/analytics'
 import { createClient } from '@/lib/supabase/browser'
 import {
   createRecruitUploadTickets,
@@ -124,6 +125,7 @@ export function RecruitApplicationForm() {
       fd.delete('portfolio_file')
 
       const res = await submitRecruitApplication(RECRUIT_INITIAL_STATE, fd)
+      if (res.status === 'success') track('recruit_submitted')
       setResult(res)
     } catch (err) {
       setResult({

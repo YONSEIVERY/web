@@ -13,6 +13,7 @@ import {
   toggleRecruitOpen,
 } from '@/app/admin/actions/recruit'
 import { DeleteButton } from '@/components/admin/delete-button'
+import { SendResultsButton } from '@/components/admin/send-results-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,6 +56,23 @@ export default async function AdminRecruitPage() {
   for (const a of applications) {
     countByStatus.set(a.status, (countByStatus.get(a.status) ?? 0) + 1)
   }
+
+  // 결과 발송 대기 인원 (해당 단계 합불 상태이면서 미통보)
+  const pending = {
+    docsPass: applications.filter(
+      (a) => a.status === 'docs_pass' && !a.docs_result_sent_at,
+    ).length,
+    docsFail: applications.filter(
+      (a) => a.status === 'docs_fail' && !a.docs_result_sent_at,
+    ).length,
+    finalPass: applications.filter(
+      (a) => a.status === 'final_pass' && !a.final_result_sent_at,
+    ).length,
+    finalFail: applications.filter(
+      (a) => a.status === 'final_fail' && !a.final_result_sent_at,
+    ).length,
+  }
+  const submittedCount = countByStatus.get('submitted') ?? 0
 
   return (
     <div>
@@ -130,6 +148,34 @@ export default async function AdminRecruitPage() {
             )
           })}
         </dl>
+      )}
+
+      {/* 결과 통보. 심사 상태를 저장한 뒤 단계별로 일괄 발송한다. */}
+      {applications.length > 0 && (
+        <div className="mt-8 border border-border p-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary">
+            결과 통보
+          </p>
+          <p className="mt-2 max-w-[64ch] text-xs leading-relaxed text-fg-subtle">
+            해당 단계의 합불 상태가 저장된 지원자에게 결과 메일을 보냅니다.
+            이미 통보된 지원자에게는 다시 발송되지 않으며, 검토 전 상태는
+            제외됩니다.
+          </p>
+          <div className="mt-4 flex flex-col gap-3">
+            <SendResultsButton
+              stage="docs"
+              passCount={pending.docsPass}
+              failCount={pending.docsFail}
+              excludedCount={submittedCount}
+            />
+            <SendResultsButton
+              stage="final"
+              passCount={pending.finalPass}
+              failCount={pending.finalFail}
+              excludedCount={submittedCount}
+            />
+          </div>
+        </div>
       )}
 
       <div className="mt-10 overflow-x-auto">
@@ -269,6 +315,12 @@ function ApplicationRow({
             저장
           </button>
         </form>
+        {((app.status.startsWith('docs') && app.docs_result_sent_at) ||
+          (app.status.startsWith('final') && app.final_result_sent_at)) && (
+          <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-muted">
+            통보됨
+          </p>
+        )}
       </Td>
       <Td>
         <DeleteButton

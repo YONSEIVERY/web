@@ -6,6 +6,7 @@ import AlumniRegistrationNotification from '@/emails/alumni-registration-notific
 import DemodayAttendeeNotification from '@/emails/demoday-attendee-notification'
 import RecruitApplicationNotification from '@/emails/recruit-application-notification'
 import RecruitApplicantConfirmation from '@/emails/recruit-applicant-confirmation'
+import RecruitResultNotification from '@/emails/recruit-result-notification'
 
 export async function sendInquiryNotification(args: {
   id: string
@@ -119,6 +120,42 @@ export async function sendRecruitApplicantConfirmation(args: {
   } catch (e) {
     console.error('sendRecruitApplicantConfirmation failed', e)
   }
+}
+
+/**
+ * 지원 결과 통보 일괄 발송. Resend batch API로 100건 단위 청크 전송한다.
+ * 다른 알림과 달리 실패를 삼키지 않는다: 호출부(어드민 액션)가 성공 여부를
+ * 보고 발송 시각을 기록할지 결정해야 하기 때문.
+ */
+export async function sendRecruitResultBatch(args: {
+  recipients: { to: string; name: string }[]
+  cohort: number
+  stage: 'docs' | 'final'
+  pass: boolean
+}): Promise<{ ok: boolean; error?: string }> {
+  const stageLabel = args.stage === 'docs' ? '서류 전형' : '최종 전형'
+  const CHUNK = 100
+  for (let i = 0; i < args.recipients.length; i += CHUNK) {
+    const chunk = args.recipients.slice(i, i + CHUNK)
+    const { error } = await resend.batch.send(
+      chunk.map((r) => ({
+        from: APPLICANT_FROM,
+        to: r.to,
+        subject: `[VERY] ${args.cohort}기 ${stageLabel} 결과 안내`,
+        react: RecruitResultNotification({
+          name: r.name,
+          cohort: args.cohort,
+          stage: args.stage,
+          pass: args.pass,
+        }),
+      })),
+    )
+    if (error) {
+      console.error('sendRecruitResultBatch failed', error)
+      return { ok: false, error: error.message }
+    }
+  }
+  return { ok: true }
 }
 
 export async function sendAlumniRegistrationNotification(args: {

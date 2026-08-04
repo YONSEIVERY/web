@@ -97,6 +97,9 @@ export type Application = {
   privacy_consent: boolean
   status: ApplicationStatus
   created_at: string
+  /** 결과 통보 발송 시각. 0020 마이그레이션 전에는 null로 폴백. */
+  docs_result_sent_at: string | null
+  final_result_sent_at: string | null
 }
 
 function toApplication(row: Record<string, unknown>): Application {
@@ -121,6 +124,8 @@ function toApplication(row: Record<string, unknown>): Application {
     privacy_consent: Boolean(row.privacy_consent),
     status,
     created_at: String(row.created_at),
+    docs_result_sent_at: (row.docs_result_sent_at as string | null) ?? null,
+    final_result_sent_at: (row.final_result_sent_at as string | null) ?? null,
   }
 }
 

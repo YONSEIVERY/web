@@ -2,8 +2,13 @@
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
 import { requireAdmin } from '@/lib/admin/is-admin'
-import { APPLICATION_STATUSES } from '@/lib/recruit/queries'
+import { sendRecruitResultBatch } from '@/lib/email/notifications'
+import {
+  APPLICATION_STATUSES,
+  getCurrentRecruitRound,
+} from '@/lib/recruit/queries'
 import type { DeleteState } from './delete-state'
+import type { SendResultsState } from './send-results-state'
 
 /**
  * 리크루팅 어드민 액션. 접수 open/close 토글과 지원자 심사 상태 변경.
@@ -79,6 +84,95 @@ export async function deleteApplication(
 
   revalidatePath('/admin/recruit')
   return { ok: true, error: null }
+}
+
+/**
+ * 단계별(서류·최종) 결과 통보 일괄 발송.
+ * 해당 단계의 합불 상태이면서 아직 발송 기록이 없는 지원자에게만 보내고,
+ * 발송 성공 그룹에만 시각을 찍는다. 재클릭해도 중복 발송되지 않는다.
+ * "검토 전(submitted)" 지원자는 대상에서 제외된다.
+ */
+export async function sendStageResults(
+  _prev: SendResultsState,
+  formData: FormData,
+): Promise<SendResultsState> {
+  try {
+    await requireAdmin()
+  } catch {
+    return { ok: false, message: '권한이 없습니다.' }
+  }
+
+  const stage = String(formData.get('stage') ?? '')
+  if (stage !== 'docs' && stage !== 'final')
+    return { ok: false, message: '잘못된 요청입니다.' }
+
+  const round = await getCurrentRecruitRound()
+  if (!round) return { ok: false, message: '현재 라운드가 없습니다.' }
+
+  const sentColumn =
+    stage === 'docs' ? 'docs_result_sent_at' : 'final_result_sent_at'
+  const passStatus = stage === 'docs' ? 'docs_pass' : 'final_pass'
+  const failStatus = stage === 'docs' ? 'docs_fail' : 'final_fail'
+
+  const { data, error } = await supabaseService
+    .from('applications')
+    .select(`id, name, email, status`)
+    .eq('round_id', round.id)
+    .in('status', [passStatus, failStatus])
+    .is(sentColumn, null)
+  if (error) {
+    console.error('[sendStageResults] fetch failed', error)
+    return {
+      ok: false,
+      message:
+        '대상 조회에 실패했습니다. 0020 마이그레이션이 적용됐는지 확인해주세요.',
+    }
+  }
+  const rows = (data ?? []) as {
+    id: string
+    name: string
+    email: string
+    status: string
+  }[]
+  if (rows.length === 0)
+    return { ok: false, message: '발송할 미통보 지원자가 없습니다.' }
+
+  let sentCount = 0
+  const failures: string[] = []
+  for (const pass of [true, false]) {
+    const group = rows.filter(
+      (r) => r.status === (pass ? passStatus : failStatus),
+    )
+    if (group.length === 0) continue
+    const res = await sendRecruitResultBatch({
+      recipients: group.map((r) => ({ to: r.email, name: r.name })),
+      cohort: round.cohort,
+      stage,
+      pass,
+    })
+    if (!res.ok) {
+      failures.push(pass ? '합격 그룹' : '불합격 그룹')
+      continue
+    }
+    const { error: stampErr } = await supabaseService
+      .from('applications')
+      .update({ [sentColumn]: new Date().toISOString() })
+      .in(
+        'id',
+        group.map((r) => r.id),
+      )
+    if (stampErr)
+      console.error('[sendStageResults] stamp failed', stampErr)
+    sentCount += group.length
+  }
+
+  revalidatePath('/admin/recruit')
+  if (failures.length > 0)
+    return {
+      ok: sentCount > 0,
+      message: `${sentCount}건 발송, ${failures.join('·')} 발송 실패. 잠시 후 다시 시도하면 실패분만 재발송됩니다.`,
+    }
+  return { ok: true, message: `${sentCount}건 발송 완료.` }
 }
 
 export async function setApplicationStatus(formData: FormData) {
