@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Route } from 'next'
 import { notFound } from 'next/navigation'
+import { getSiteConfig } from '@/lib/data/site-config'
 import { getPortalIdentity } from '@/lib/portal/auth'
 import { getSessionById, SESSION_KIND_LABELS } from '@/lib/portal/queries'
 import { formatKstDateTime } from '@/lib/utils/format-date'
@@ -14,12 +15,18 @@ export default async function MemberSessionPage({
 }: {
   params: Promise<{ id: string }>
 }) {
-  const [{ id }, identity] = await Promise.all([params, getPortalIdentity()])
+  const [{ id }, identity, siteConfig] = await Promise.all([
+    params,
+    getPortalIdentity(),
+    getSiteConfig(),
+  ])
   const session = await getSessionById(id)
   if (!session) notFound()
   const isExec = identity?.role === 'exec'
   // 비공개 초안은 임원진만
   if (!session.is_published && !isExec) notFound()
+  // 지난 기수 아카이브 세션도 임원진만 (학회장 결정, 2026-08-04)
+  if (session.cohort !== siteConfig.cohort && !isExec) notFound()
 
   return (
     <div className="max-w-3xl">

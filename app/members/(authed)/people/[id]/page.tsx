@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Route } from 'next'
 import { notFound } from 'next/navigation'
+import { getSiteConfig } from '@/lib/data/site-config'
 import { getMemberByEmail, getPortalIdentity } from '@/lib/portal/auth'
 import { getMemberProfile } from '@/lib/portal/queries'
 import { Markdown } from '@/components/portal/markdown'
@@ -12,12 +13,24 @@ export default async function PersonPage({
 }: {
   params: Promise<{ id: string }>
 }) {
-  const [{ id }, identity] = await Promise.all([params, getPortalIdentity()])
+  const [{ id }, identity, siteConfig] = await Promise.all([
+    params,
+    getPortalIdentity(),
+    getSiteConfig(),
+  ])
   const profile = await getMemberProfile(id)
   if (!profile) notFound()
 
   const me = identity ? await getMemberByEmail(identity.email) : null
   const isSelf = me?.id === profile.id
+  // 지난 기수 멤버 페이지는 임원진만. 단 본인 페이지는 허용
+  // (학회장 결정, 2026-08-04)
+  if (
+    profile.cohort !== siteConfig.cohort &&
+    identity?.role !== 'exec' &&
+    !isSelf
+  )
+    notFound()
 
   return (
     <div>

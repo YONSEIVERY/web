@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Route } from 'next'
+import { redirect } from 'next/navigation'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getPortalIdentity } from '@/lib/portal/auth'
 import {
@@ -29,6 +30,8 @@ export default async function MembersHomePage({
   const cohort = cohortParam ? Number(cohortParam) : currentCohort
   const isArchive = cohort !== currentCohort
   const isExec = identity?.role === 'exec'
+  // 지난 기수 아카이브는 임원진 전용 (학회장 결정, 2026-08-04)
+  if (isArchive && !isExec) redirect('/members')
 
   const [notices, sessions] = await Promise.all([
     isArchive ? Promise.resolve([]) : getNotices(cohort),
@@ -58,12 +61,14 @@ export default async function MembersHomePage({
             ← {currentCohort}기로 돌아가기
           </Link>
         ) : (
-          <Link
-            href={`/members?cohort=${currentCohort - 1}` as Route}
-            className="font-mono text-[11px] uppercase tracking-[0.24em] text-fg-subtle underline hover:text-fg-primary"
-          >
-            {currentCohort - 1}기 아카이브 보기
-          </Link>
+          isExec && (
+            <Link
+              href={`/members?cohort=${currentCohort - 1}` as Route}
+              className="font-mono text-[11px] uppercase tracking-[0.24em] text-fg-subtle underline hover:text-fg-primary"
+            >
+              {currentCohort - 1}기 아카이브 보기
+            </Link>
+          )
         )}
       </div>
 
