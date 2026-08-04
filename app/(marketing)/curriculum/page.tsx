@@ -1,7 +1,9 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { CURRICULUM } from '@/lib/content/curriculum'
+import { CURRICULUM_PHOTOS } from '@/lib/content/photos'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { IndustryInquiryForm } from '@/components/forms/industry-inquiry-form'
 
@@ -26,6 +28,7 @@ export default function CurriculumPage() {
     <main className="pt-14 md:pt-16">
       <CurriculumHero />
       <TracksSection />
+      <TrackPhotosSection />
       <SessionsSection />
       <IndustrySection />
       <IndustryInquirySection />
@@ -146,6 +149,39 @@ function TracksSection() {
             </li>
           ))}
         </ol>
+      </div>
+    </section>
+  )
+}
+
+/** 트랙 4단계의 실제 현장. 43기 기록 사진 3장. */
+function TrackPhotosSection() {
+  const { caption, items } = CURRICULUM_PHOTOS
+  return (
+    <section
+      aria-label="트랙 현장 사진"
+      className="about-section relative grid grid-cols-12 gap-x-8 px-6 pb-24 md:gap-x-12 md:px-10 md:pb-32"
+    >
+      <div className="col-span-12 md:col-span-8 md:col-start-5">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4">
+          {items.map((p) => (
+            <figure key={p.src} className="flex flex-col gap-3">
+              <span className="relative block aspect-[4/3] overflow-hidden border border-border">
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                  className="object-cover"
+                />
+              </span>
+              <figcaption className="font-display text-xs leading-relaxed text-fg-muted md:text-sm">
+                {p.label}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+        <p className="mt-6 font-display text-sm text-fg-subtle">{caption}</p>
       </div>
     </section>
   )

@@ -14,6 +14,31 @@ export type PhotoSlot = {
   label: string
 }
 
+/** /curriculum 트랙 섹션 아래 현장 사진 스트립. */
+export const CURRICULUM_PHOTOS: {
+  caption: string
+  items: readonly { src: string; alt: string; label: string }[]
+} = {
+  caption: '기록은 슬라이드가 아니라 무대에 남습니다.',
+  items: [
+    {
+      src: '/photos/vol43-manple.jpg',
+      alt: '43기 10만원 프로젝트 1위 팀 기념 사진',
+      label: '10만원 프로젝트 · 1위 팀',
+    },
+    {
+      src: '/photos/vol43-pretotyping.jpg',
+      alt: '43기 프리토타이핑 최종 1등 팀 기념 사진',
+      label: '프리토타이핑 · 최종 1등 팀',
+    },
+    {
+      src: '/photos/vol43-pitch.jpg',
+      alt: '데모데이 무대에서 마이크를 잡은 발표자',
+      label: '데모데이 · IR 무대',
+    },
+  ],
+} as const
+
 export const HOME_PHOTOS: {
   caption: string
   slots: readonly [PhotoSlot, PhotoSlot, PhotoSlot]
@@ -21,7 +46,7 @@ export const HOME_PHOTOS: {
   caption: '43기 데모데이 VERIFY, 그리고 한 학기의 현장.',
   slots: [
     {
-      src: '/photos/vol43-demoday.jpg',
+      src: '/photos/vol43-demoday2.jpg',
       alt: '43기 데모데이 VERIFY를 마친 학회원 단체 사진',
       label: '데모데이 무대 (가로, 메인)',
     },
