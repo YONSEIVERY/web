@@ -47,7 +47,7 @@ export default async function AboutPage() {
       <CoreValueSection />
       <MindsetSection />
       <WhatWeDoSection />
-      <LeadershipSection members={members} cohort={CURRENT_COHORT} />
+      <LeadershipSection members={members} />
       <ClosingSection />
     </main>
   )
@@ -323,13 +323,7 @@ function WhatWeDoSection() {
   )
 }
 
-function LeadershipSection({
-  members,
-  cohort,
-}: {
-  members: LeadershipMember[]
-  cohort: number
-}) {
+function LeadershipSection({ members }: { members: LeadershipMember[] }) {
   const { title } = ABOUT.leadership
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
@@ -378,11 +372,11 @@ function LeadershipSection({
         </ul>
         <div className="mt-10 md:mt-14">
           <Link
-            href={`/cohorts/${cohort}` as Route}
+            href={'/cohorts' as Route}
             translate="no"
             className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
           >
-            {cohort}기 전체 멤버 보기
+            기수별 멤버 보기
             <span aria-hidden>→</span>
           </Link>
         </div>

@@ -35,7 +35,9 @@ export default async function CohortDetailPage({
   const n = Number.parseInt(cohort, 10)
   if (!Number.isInteger(n) || n < 1 || n > MAX_COHORT) notFound()
   const members = await getPublicMembersByCohort(n)
-  if (members.length === 0) notFound()
+  // 명단 미공개 기수는 404 대신 준비 중 화면. 데모데이 지난 회차나
+  // about에서 들어오는 링크가 깨진 문처럼 보이지 않게 한다.
+  if (members.length === 0) return <EmptyCohort cohort={n} />
 
   const leadership = members.filter(
     (m) => m.role_tier === 'president' || m.role_tier === 'vice_president',
@@ -84,6 +86,38 @@ export default async function CohortDetailPage({
             href={'/cohorts' as Route}
             translate="no"
             className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
+          >
+            <span aria-hidden>←</span>
+            기수 아카이브
+          </Link>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function EmptyCohort({ cohort }: { cohort: number }) {
+  return (
+    <main className="pt-14 md:pt-16">
+      <section className="relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
+        <p
+          translate="no"
+          className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
+        >
+          <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
+          Members · Vol.{cohort}
+        </p>
+        <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
+          {cohort}기 명단은 준비 중입니다
+        </h1>
+        <p className="mt-6 max-w-[58ch] font-display text-base leading-[1.8] text-fg-subtle md:text-lg">
+          기수 프로필이 공개되면 이 페이지에서 볼 수 있습니다.
+        </p>
+        <div className="mt-10">
+          <Link
+            href={'/cohorts' as Route}
+            translate="no"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
           >
             <span aria-hidden>←</span>
             기수 아카이브

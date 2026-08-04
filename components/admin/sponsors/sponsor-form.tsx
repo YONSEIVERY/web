@@ -30,7 +30,7 @@ export function SponsorForm({ initial }: { initial: Initial }) {
 
       <label className="grid gap-1">
         <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-fg-muted">
-          이름 (표시명 · 익명은 "익명")
+          이름 (표시명 · 익명이면 익명으로 입력)
         </span>
         <input
           type="text"

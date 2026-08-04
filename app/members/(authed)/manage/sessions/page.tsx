@@ -110,7 +110,8 @@ export default async function ManageSessionsPage({
               <tr>
                 <Td colSpan={5}>
                   <p className="py-12 text-center text-fg-muted">
-                    등록된 세션이 없습니다. "새 세션"으로 첫 세션을 만드세요.
+                    등록된 세션이 없습니다. 위의 새 세션 버튼으로 첫 세션을
+                    만드세요.
                   </p>
                 </Td>
               </tr>
