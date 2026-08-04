@@ -12,10 +12,14 @@
 export const DEMODAY = {
   hero: {
     eventTitle: 'VERIFY',
-    headlineLine1: 'VERY 43기 데모데이',
+    /** 현재 회차가 없을 때만 쓰는 폴백. 회차가 있으면 volume으로 렌더한다. */
+    headlineLine1: 'VERY 데모데이',
     headlineLine2: '',
     subline:
       '학기의 마지막 무대. 한 학기 동안 다진 프로젝트를 CEO·VC 심사역 앞에 올려, 평가와 투자로 이어 나가는 자리.',
+    /** 회차 종료 후 히어로에 붙는 안내. {next}는 다음 기수 숫자로 치환. */
+    endedNote:
+      '이 회차는 종료되었습니다. 다음 데모데이는 VERY {next}기의 학기 말에 열립니다.',
   },
   about: {
     label: 'WHAT IS IT',
@@ -39,6 +43,8 @@ export const DEMODAY = {
   audience: {
     label: 'AUDIENCE',
     title: '객석에 앉는 사람들',
+    /** 회차 종료 후에는 과거 회차 기록 톤으로 제목을 바꾼다. */
+    titleEnded: '객석을 채워 온 사람들',
     items: [
       {
         mono: 'ALUMNI',
@@ -64,8 +70,8 @@ export const DEMODAY = {
   closing: {
     label: 'JOIN',
     title: '다음 무대에 올라설 팀을 찾습니다.',
-    body: '메일이나 인스타그램으로 가볍게 연락 주세요. 시즌 일정은 인스타에 가장 먼저 올라갑니다.',
-    primary: { label: 'CONTACT', href: '/contact' as const },
+    body: '다음 기수 모집은 지원 페이지에서, 시즌 소식은 인스타그램에서 가장 먼저 확인할 수 있습니다.',
+    primary: { label: 'RECRUIT', href: '/recruit' as const },
     secondary: {
       label: '@VERY_YONSEI',
       href: 'https://instagram.com/very_yonsei',

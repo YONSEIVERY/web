@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getCurrentDemoday } from '@/lib/demoday/queries'
+import { getCurrentDemoday, isDemodayEnded } from '@/lib/demoday/queries'
 import { DemodayAttendeeForm } from '@/components/forms/demoday-attendee-form'
 
 export const dynamic = 'force-dynamic'
@@ -17,7 +17,7 @@ export default async function DemodayRegisterPage() {
   const current = await getCurrentDemoday()
   if (!current) notFound()
 
-  if (!current.register_open) {
+  if (!current.register_open || isDemodayEnded(current)) {
     return (
       <main className="pt-14 md:pt-16">
         <section className="relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">

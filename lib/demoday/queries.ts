@@ -42,6 +42,14 @@ export type DemodayEvent = {
   updated_at: string
 }
 
+/** 행사 종료 여부. 렌더 순수성 린트를 피해 lib에서 판정한다. */
+export function isDemodayEnded(event: DemodayEvent | null): boolean {
+  if (!event) return false
+  const end = event.event_end_date ?? event.event_date
+  if (!end) return false
+  return Date.now() > new Date(end).getTime()
+}
+
 const EMPTY_CHOICES: DemodayFormChoices = {
   purposes: [],
   roles: [],

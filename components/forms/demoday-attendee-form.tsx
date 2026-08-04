@@ -108,18 +108,30 @@ export function DemodayAttendeeForm({
         </Fieldset>
       )}
 
-      <label className="flex items-start gap-3 cursor-pointer">
-        <input
-          type="checkbox"
-          name="privacy_consent"
-          required
-          className="mt-1 h-4 w-4 border-border accent-fg-primary"
-        />
-        <span className="font-display text-sm text-fg-subtle leading-relaxed">
-          참관 운영 목적으로 위 정보의 수집·이용에 동의합니다. 행사 종료 후
-          1년이 지나면 학회가 명단을 파기합니다.
-        </span>
-      </label>
+      <div className="flex flex-col gap-2">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="privacy_consent"
+            required
+            className="mt-1 h-4 w-4 border-border accent-fg-primary"
+          />
+          <span className="font-display text-sm text-fg-subtle leading-relaxed">
+            행사 참관 운영을 위해 이름, 소속, 연락처, 이메일과 신청 내용을
+            수집·이용하는 것에 동의합니다. 명단은 행사 종료 후 1년이 지나면
+            파기됩니다. 동의를 거부할 권리가 있으며, 거부 시 참관 신청이
+            불가합니다.
+          </span>
+        </label>
+        <a
+          href="/privacy"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-7 w-fit font-display text-xs text-fg-muted underline underline-offset-4 transition-colors hover:text-fg-primary"
+        >
+          개인정보처리방침 보기
+        </a>
+      </div>
 
       {state.status === 'error' && (
         <p className="text-sm text-red-600">{state.message}</p>

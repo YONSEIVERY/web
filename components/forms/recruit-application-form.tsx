@@ -213,18 +213,30 @@ export function RecruitApplicationForm() {
             확인했습니다.
           </span>
         </label>
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            name="privacy_consent"
-            required
-            className="mt-1 h-4 w-4 border-border accent-fg-primary"
-          />
-          <span className="font-display text-sm text-fg-subtle leading-relaxed">
-            모집 운영 목적으로 위 정보와 제출 파일의 수집·이용에 동의합니다.
-            모집 종료 후 1년이 지나면 학회가 자료를 파기합니다.
-          </span>
-        </label>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              name="privacy_consent"
+              required
+              className="mt-1 h-4 w-4 border-border accent-fg-primary"
+            />
+            <span className="font-display text-sm text-fg-subtle leading-relaxed">
+              모집 전형 운영을 위해 이름, 연락처, 이메일, 제출 파일과 비대면
+              면접 사유(작성 시)를 수집·이용하는 것에 동의합니다. 자료는 모집
+              종료 후 1년이 지나면 파기됩니다. 동의를 거부할 권리가 있으며,
+              거부 시 지원서 접수가 불가합니다.
+            </span>
+          </label>
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-7 w-fit font-display text-xs text-fg-muted underline underline-offset-4 transition-colors hover:text-fg-primary"
+          >
+            개인정보처리방침 보기
+          </a>
+        </div>
       </div>
 
       {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}

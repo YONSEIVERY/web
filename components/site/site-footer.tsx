@@ -107,12 +107,20 @@ export async function SiteFooter() {
       <hr aria-hidden className="mt-16 h-px border-0 bg-border md:mt-20" />
 
       <div className="mt-6 flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
-        <p
-          translate="no"
-          className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
-        >
-          © {startYear}-{endYear} VERY · All rights reserved
-        </p>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <p
+            translate="no"
+            className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"
+          >
+            © {startYear}-{endYear} VERY · All rights reserved
+          </p>
+          <Link
+            href="/privacy"
+            className="font-mono text-[10px] tracking-[0.32em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
+          >
+            개인정보처리방침
+          </Link>
+        </div>
         <p
           translate="no"
           className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted md:text-xs"

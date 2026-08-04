@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { sendDemodayAttendeeNotification } from '@/lib/email/notifications'
-import { getCurrentDemoday } from '@/lib/demoday/queries'
+import { getCurrentDemoday, isDemodayEnded } from '@/lib/demoday/queries'
 import type { DemodayFormState } from './demoday-state'
 
 /**
@@ -43,10 +43,10 @@ export async function submitDemodayAttendee(
   if (!current) {
     return { status: 'error', message: '진행 중인 데모데이가 없습니다.' }
   }
-  if (!current.register_open) {
+  if (!current.register_open || isDemodayEnded(current)) {
     return {
       status: 'error',
-      message: '아직 신청을 받고 있지 않습니다. 인스타그램으로 일정을 확인해주세요.',
+      message: '지금은 신청을 받고 있지 않습니다. 인스타그램으로 일정을 확인해주세요.',
     }
   }
 

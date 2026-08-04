@@ -5,6 +5,7 @@ import { DEMODAY } from '@/lib/content/demoday'
 import {
   getCurrentDemoday,
   getDemodayVolumes,
+  isDemodayEnded,
   type DemodayEvent,
   type DemodayScheduleItem,
 } from '@/lib/demoday/queries'
@@ -84,31 +85,43 @@ export default async function DemodayPage() {
     getCurrentDemoday(),
     getDemodayVolumes(),
   ])
+  const ended = isDemodayEnded(current)
   return (
     <main className="pt-14 md:pt-16">
-      <DemodayHero current={current} />
+      <DemodayHero current={current} ended={ended} />
       <AboutSection />
       <FormatSection />
-      {current && current.schedule.length > 0 && (
+      {current && current.schedule.length > 0 && !ended && (
         <ScheduleSection schedule={current.schedule} />
       )}
       <VolumesSection volumes={volumes} />
-      <AudienceSection />
-      <ClosingSection current={current} />
+      <AudienceSection ended={ended} />
+      <ClosingSection current={current} ended={ended} />
     </main>
   )
 }
 
-function DemodayHero({ current }: { current: DemodayEvent | null }) {
+function DemodayHero({
+  current,
+  ended,
+}: {
+  current: DemodayEvent | null
+  ended: boolean
+}) {
   const { eventTitle, headlineLine1, headlineLine2, subline } = DEMODAY.hero
   const eyebrow = current
-    ? formatVolumeMono(current)
+    ? `${formatVolumeMono(current)}${ended ? ' · ENDED' : ''}`
     : 'Demoday'
+  const headline = current ? `VERY ${current.volume}기 데모데이` : headlineLine1
+  const endedNote =
+    ended && current
+      ? DEMODAY.hero.endedNote.replace('{next}', String(current.volume + 1))
+      : null
   const dateLine = current ? formatVolumeDate(current) : null
   const location = current?.location ?? null
   const locationNote = current?.location_note ?? null
   const introText = current?.intro_text ?? subline
-  const showRegister = current?.register_open ?? false
+  const showRegister = (current?.register_open ?? false) && !ended
   return (
     <section className="about-hero relative px-6 pb-24 pt-28 md:px-10 md:pb-32 md:pt-44">
       <div className="md:grid md:grid-cols-12 md:items-start md:gap-x-10 lg:gap-x-16">
@@ -130,7 +143,7 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
       </h1>
       <p className="about-anim-subline mt-6 font-display font-bold tracking-tight text-fg-primary md:mt-8">
         <span className="block text-[clamp(1.75rem,_4.5vw,_3rem)] leading-[1.15]">
-          {headlineLine1}
+          {headline}
         </span>
         {headlineLine2 && (
           <span className="block text-[clamp(1.75rem,_4.5vw,_3rem)] leading-[1.15] text-fg-subtle">
@@ -144,7 +157,7 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
       >
         {introText}
       </p>
-      {(dateLine || location || locationNote || showRegister) && (
+      {(dateLine || location || locationNote || showRegister || endedNote) && (
         <div className="about-anim-meta mt-10 flex flex-col gap-5 md:mt-12 md:gap-6">
           {(dateLine || location) && (
             <dl className="flex flex-col gap-2 md:gap-3">
@@ -188,6 +201,11 @@ function DemodayHero({ current }: { current: DemodayEvent | null }) {
                 </div>
               )}
             </dl>
+          )}
+          {endedNote && (
+            <p className="max-w-[52ch] border-l border-fg-muted pl-4 font-display text-sm leading-[1.8] text-fg-subtle md:text-base">
+              {endedNote}
+            </p>
           )}
           {showRegister && (
             <div>
@@ -315,9 +333,11 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
         <ul className="about-anim-meta mt-12 flex flex-col border-t border-border">
           {volumes.map((v) => {
             const status = v.is_current
-              ? v.register_open
-                ? 'OPEN'
-                : 'UPCOMING'
+              ? isDemodayEnded(v)
+                ? 'ENDED'
+                : v.register_open
+                  ? 'OPEN'
+                  : 'UPCOMING'
               : 'CLOSED'
             const year = formatVolumeYear(v)
             return (
@@ -340,7 +360,9 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
                 <span
                   translate="no"
                   className={`col-span-5 font-mono text-[10px] uppercase tracking-[0.32em] md:col-span-2 md:text-xs ${
-                    status === 'CLOSED' ? 'text-fg-muted' : 'text-accent'
+                    status === 'CLOSED' || status === 'ENDED'
+                      ? 'text-fg-muted'
+                      : 'text-accent'
                   }`}
                 >
                   {status}
@@ -382,8 +404,9 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
   )
 }
 
-function AudienceSection() {
-  const { title, items } = DEMODAY.audience
+function AudienceSection({ ended }: { ended: boolean }) {
+  const { title: liveTitle, titleEnded, items } = DEMODAY.audience
+  const title = ended ? titleEnded : liveTitle
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <div className="col-span-12 md:col-span-8 md:col-start-5">
@@ -417,9 +440,15 @@ function AudienceSection() {
   )
 }
 
-function ClosingSection({ current }: { current: DemodayEvent | null }) {
+function ClosingSection({
+  current,
+  ended,
+}: {
+  current: DemodayEvent | null
+  ended: boolean
+}) {
   const { title, body, primary, secondary } = DEMODAY.closing
-  const registerOpen = current?.register_open ?? false
+  const registerOpen = (current?.register_open ?? false) && !ended
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40">
       <div className="col-span-12 md:col-span-8 md:col-start-5">
