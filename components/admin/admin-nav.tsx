@@ -115,8 +115,10 @@ function NavLink({
       href={item.href}
       onClick={onNavigate}
       aria-current={active ? 'page' : undefined}
-      className={`flex min-h-11 items-center px-2 font-mono text-xs uppercase tracking-[0.28em] transition-colors ${
-        active ? 'text-fg-primary' : 'text-fg-subtle hover:text-fg-primary'
+      className={`flex min-h-11 items-center border-l-2 pl-3 pr-2 font-mono text-xs uppercase tracking-[0.28em] transition-colors ${
+        active
+          ? 'border-fg-primary bg-fg-primary/[0.04] text-fg-primary'
+          : 'border-transparent text-fg-subtle hover:text-fg-primary'
       }`}
     >
       {item.label}

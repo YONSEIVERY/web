@@ -61,7 +61,8 @@ export default async function ManageAttendanceSessionPage({
           메뉴)에서 명단을 먼저 등록하세요.
         </p>
       ) : (
-        <table className="mt-10 w-full text-sm">
+        <div className="mt-10 overflow-x-auto">
+        <table className="w-full min-w-[680px] text-sm">
           <thead className="border-b border-border">
             <tr className="text-left">
               <Th>이름</Th>
@@ -75,7 +76,10 @@ export default async function ManageAttendanceSessionPage({
             {roster.map((m) => {
               const row = byMember.get(m.id)
               return (
-                <tr key={m.id} className="border-b border-border">
+                <tr
+                  key={m.id}
+                  className="border-b border-border transition-colors hover:bg-fg-primary/[0.03]"
+                >
                   <Td>
                     <span className="font-display font-bold text-fg-primary">
                       {m.name}
@@ -99,6 +103,7 @@ export default async function ManageAttendanceSessionPage({
             })}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   )

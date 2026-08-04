@@ -72,7 +72,8 @@ export default async function MyAttendancePage() {
         환산 결석 3회 이상 시 제명 대상입니다.
       </p>
 
-      <table className="mt-10 w-full text-sm">
+      <div className="mt-10 overflow-x-auto">
+      <table className="w-full min-w-[520px] text-sm">
         <thead className="border-b border-border">
           <tr className="text-left">
             <Th>세션</Th>
@@ -108,6 +109,7 @@ export default async function MyAttendancePage() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

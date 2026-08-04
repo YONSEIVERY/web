@@ -46,7 +46,8 @@ export default async function AdminDemodayAttendeesPage({
         <ExportAttendeesButtons eventId={event.id} />
       </div>
 
-      <table className="mt-10 w-full text-sm">
+      <div className="mt-10 overflow-x-auto">
+      <table className="w-full min-w-[1080px] text-sm">
         <thead className="border-b border-border">
           <tr className="text-left">
             <Th>접수</Th>
@@ -99,6 +100,7 @@ export default async function AdminDemodayAttendeesPage({
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

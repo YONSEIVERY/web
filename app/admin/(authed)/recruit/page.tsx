@@ -6,6 +6,7 @@ import {
   APPLICATION_STATUSES,
   APPLICATION_STATUS_LABELS,
   type Application,
+  type ApplicationStatus,
 } from '@/lib/recruit/queries'
 import {
   setApplicationStatus,
@@ -50,6 +51,11 @@ export default async function AdminRecruitPage() {
     }
   }
 
+  const countByStatus = new Map<ApplicationStatus, number>()
+  for (const a of applications) {
+    countByStatus.set(a.status, (countByStatus.get(a.status) ?? 0) + 1)
+  }
+
   return (
     <div>
       <Header />
@@ -68,6 +74,11 @@ export default async function AdminRecruitPage() {
         >
           {round.apply_open ? 'OPEN' : 'CLOSED'}
         </span>
+        {round.apply_deadline && (
+          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-fg-muted">
+            마감 {formatKstDateTime(round.apply_deadline)}
+          </span>
+        )}
         <form action={toggleRecruitOpen}>
           <input type="hidden" name="round_id" value={round.id} />
           <input
@@ -90,36 +101,65 @@ export default async function AdminRecruitPage() {
         </a>
       </div>
 
-      <table className="mt-10 w-full text-sm">
-        <thead className="border-b border-border">
-          <tr className="text-left">
-            <Th>접수</Th>
-            <Th>이름</Th>
-            <Th>연락처</Th>
-            <Th>이메일</Th>
-            <Th>지원서</Th>
-            <Th>사업계획서</Th>
-            <Th>작업물</Th>
-            <Th>비대면 사유</Th>
-            <Th>상태</Th>
-            <Th>삭제</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {applications.map((a) => (
-            <ApplicationRow key={a.id} app={a} urls={urlByPath} />
-          ))}
-          {applications.length === 0 && (
-            <tr>
-              <Td colSpan={10}>
-                <p className="py-12 text-center text-fg-muted">
-                  아직 지원자가 없습니다.
-                </p>
-              </Td>
+      {/* 상태별 집계. 심사 진행 상황을 한 줄에서 파악한다. */}
+      {applications.length > 0 && (
+        <dl className="mt-5 flex flex-wrap gap-px border border-border bg-border">
+          {APPLICATION_STATUSES.map((s) => {
+            const n = countByStatus.get(s) ?? 0
+            return (
+              <div
+                key={s}
+                className="flex items-baseline gap-2 bg-bg-base px-4 py-2"
+              >
+                <dt
+                  className={`font-mono text-[10px] uppercase tracking-[0.2em] ${
+                    n > 0 ? 'text-fg-primary' : 'text-fg-muted'
+                  }`}
+                >
+                  {APPLICATION_STATUS_LABELS[s]}
+                </dt>
+                <dd
+                  translate="no"
+                  className={`font-display text-sm font-bold tabular-nums ${
+                    n > 0 ? 'text-fg-primary' : 'text-fg-muted'
+                  }`}
+                >
+                  {n}
+                </dd>
+              </div>
+            )
+          })}
+        </dl>
+      )}
+
+      <div className="mt-10 overflow-x-auto">
+        <table className="w-full min-w-[860px] text-sm">
+          <thead className="border-b border-border">
+            <tr className="text-left">
+              <Th>접수</Th>
+              <Th>지원자</Th>
+              <Th>첨부</Th>
+              <Th>비대면 사유</Th>
+              <Th>상태</Th>
+              <Th>삭제</Th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {applications.map((a) => (
+              <ApplicationRow key={a.id} app={a} urls={urlByPath} />
+            ))}
+            {applications.length === 0 && (
+              <tr>
+                <Td colSpan={6}>
+                  <p className="py-12 text-center text-fg-muted">
+                    아직 지원자가 없습니다.
+                  </p>
+                </Td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
@@ -135,7 +175,8 @@ function Header() {
   )
 }
 
-function FileLink({
+/** 첨부 슬롯. 제출됨=밑줄 링크, 미제출=흐린 라벨(선택 항목임을 드러낸다). */
+function FileSlot({
   path,
   urls,
   label,
@@ -144,15 +185,19 @@ function FileLink({
   urls: Map<string, string>
   label: string
 }) {
-  if (!path) return <>-</>
-  const url = urls.get(path)
-  if (!url) return <>-</>
+  const url = path ? urls.get(path) : null
+  if (!path || !url)
+    return (
+      <span className="text-fg-muted opacity-40" title="미제출">
+        {label}
+      </span>
+    )
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="underline hover:text-fg-primary"
+      className="underline underline-offset-4 hover:text-fg-primary"
     >
       {label}
     </a>
@@ -167,21 +212,42 @@ function ApplicationRow({
   urls: Map<string, string>
 }) {
   return (
-    <tr className="border-b border-border align-top">
-      <Td>{formatKstDateTime(app.created_at)}</Td>
-      <Td>{app.name}</Td>
-      <Td>{app.phone}</Td>
-      <Td>{app.email}</Td>
+    <tr className="border-b border-border align-top transition-colors hover:bg-fg-primary/[0.03]">
       <Td>
-        <FileLink path={app.file_path} urls={urls} label="PDF" />
+        <span className="whitespace-nowrap font-mono text-xs text-fg-muted">
+          {formatKstDateTime(app.created_at)}
+        </span>
       </Td>
       <Td>
-        <FileLink path={app.business_plan_path} urls={urls} label="열기" />
+        <p className="font-display font-bold text-fg-primary">{app.name}</p>
+        <p className="mt-1 font-mono text-xs text-fg-muted">{app.email}</p>
+        <p className="mt-0.5 whitespace-nowrap font-mono text-xs text-fg-muted">
+          {app.phone}
+        </p>
       </Td>
       <Td>
-        <FileLink path={app.portfolio_path} urls={urls} label="ZIP" />
+        <div className="flex items-baseline gap-4 whitespace-nowrap">
+          <FileSlot path={app.file_path} urls={urls} label="지원서" />
+          <FileSlot
+            path={app.business_plan_path}
+            urls={urls}
+            label="계획서"
+          />
+          <FileSlot path={app.portfolio_path} urls={urls} label="작업물" />
+        </div>
       </Td>
-      <Td>{app.remote_interview_reason ?? '-'}</Td>
+      <Td>
+        {app.remote_interview_reason ? (
+          <p
+            className="max-w-[26ch] line-clamp-3 leading-relaxed"
+            title={app.remote_interview_reason}
+          >
+            {app.remote_interview_reason}
+          </p>
+        ) : (
+          '-'
+        )}
+      </Td>
       <Td>
         <form action={setApplicationStatus} className="flex items-center gap-2">
           <input type="hidden" name="application_id" value={app.id} />

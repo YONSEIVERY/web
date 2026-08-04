@@ -27,20 +27,13 @@ function isActive(pathname: string, href: string) {
 export function PortalNav({ isExec }: { isExec: boolean }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  const items = isExec ? [...MEMBER_ITEMS, ...EXEC_ITEMS] : MEMBER_ITEMS
 
   return (
     <>
       {/* Desktop: fixed left sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-56 flex-col gap-1 border-r border-border p-6 md:flex">
         <Brand className="mb-6" />
-        {items.map((item) => (
-          <NavLink
-            key={item.href}
-            item={item}
-            active={isActive(pathname, item.href)}
-          />
-        ))}
+        <NavList isExec={isExec} pathname={pathname} />
       </aside>
 
       {/* Mobile: top bar with hamburger */}
@@ -80,16 +73,56 @@ export function PortalNav({ isExec }: { isExec: boolean }) {
                 </svg>
               </button>
             </div>
-            {items.map((item) => (
-              <NavLink
-                key={item.href}
-                item={item}
-                active={isActive(pathname, item.href)}
-                onNavigate={() => setOpen(false)}
-              />
-            ))}
+            <NavList
+              isExec={isExec}
+              pathname={pathname}
+              onNavigate={() => setOpen(false)}
+            />
           </nav>
         </div>
+      )}
+    </>
+  )
+}
+
+/** 학회원 공통 메뉴 + (임원진일 때) EXEC 섹션 구분 라벨과 관리 메뉴. */
+function NavList({
+  isExec,
+  pathname,
+  onNavigate,
+}: {
+  isExec: boolean
+  pathname: string
+  onNavigate?: () => void
+}) {
+  return (
+    <>
+      {MEMBER_ITEMS.map((item) => (
+        <NavLink
+          key={item.href}
+          item={item}
+          active={isActive(pathname, item.href)}
+          onNavigate={onNavigate}
+        />
+      ))}
+      {isExec && (
+        <>
+          <p
+            translate="no"
+            className="mb-1 mt-6 flex items-center pl-3 font-mono text-[9px] uppercase tracking-[0.32em] text-fg-muted"
+          >
+            <span aria-hidden className="mr-2 inline-block h-px w-4 bg-fg-muted" />
+            EXEC
+          </p>
+          {EXEC_ITEMS.map((item) => (
+            <NavLink
+              key={item.href}
+              item={item}
+              active={isActive(pathname, item.href)}
+              onNavigate={onNavigate}
+            />
+          ))}
+        </>
       )}
     </>
   )
@@ -120,8 +153,10 @@ function NavLink({
       href={item.href}
       onClick={onNavigate}
       aria-current={active ? 'page' : undefined}
-      className={`flex min-h-11 items-center px-2 font-mono text-xs uppercase tracking-[0.28em] transition-colors ${
-        active ? 'text-fg-primary' : 'text-fg-subtle hover:text-fg-primary'
+      className={`flex min-h-11 items-center border-l-2 pl-3 pr-2 font-mono text-xs uppercase tracking-[0.28em] transition-colors ${
+        active
+          ? 'border-fg-primary bg-fg-primary/[0.04] text-fg-primary'
+          : 'border-transparent text-fg-subtle hover:text-fg-primary'
       }`}
     >
       {item.label}
