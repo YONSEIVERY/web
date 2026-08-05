@@ -317,27 +317,50 @@ function FileField({
   accept: string
   required?: boolean
 }) {
+  // 네이티브 파일 입력은 한번 고르면 스스로 비울 수 없다. 잘못 고른 파일
+  // (용량 초과 등)을 빼려면 새로고침해야 했던 문제라, 제거 버튼을 단다.
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [selected, setSelected] = useState<string | null>(null)
+  const clear = () => {
+    if (inputRef.current) inputRef.current.value = ''
+    setSelected(null)
+  }
   return (
-    <label className="flex flex-col gap-2">
-      <span className={LABEL_CLASS}>
-        {label}
-        {required && (
-          <span aria-hidden className="ml-1 text-accent">
-            *
-          </span>
+    <div className="flex flex-col gap-2">
+      <label className="flex flex-col gap-2">
+        <span className={LABEL_CLASS}>
+          {label}
+          {required && (
+            <span aria-hidden className="ml-1 text-accent">
+              *
+            </span>
+          )}
+        </span>
+        <input
+          ref={inputRef}
+          type="file"
+          name={name}
+          accept={accept}
+          required={required}
+          onChange={(e) => setSelected(e.target.files?.[0]?.name ?? null)}
+          className={FILE_INPUT_CLASS}
+        />
+      </label>
+      <div className="flex items-baseline justify-between gap-4">
+        <span className="font-display text-xs leading-relaxed text-fg-muted">
+          {hint}
+        </span>
+        {selected && (
+          <button
+            type="button"
+            onClick={clear}
+            className="shrink-0 font-display text-xs text-fg-muted underline underline-offset-4 transition-colors hover:text-fg-primary"
+          >
+            파일 제거
+          </button>
         )}
-      </span>
-      <input
-        type="file"
-        name={name}
-        accept={accept}
-        required={required}
-        className={FILE_INPUT_CLASS}
-      />
-      <span className="font-display text-xs leading-relaxed text-fg-muted">
-        {hint}
-      </span>
-    </label>
+      </div>
+    </div>
   )
 }
 

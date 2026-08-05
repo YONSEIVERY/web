@@ -251,15 +251,21 @@ function Header() {
   )
 }
 
-/** 첨부 슬롯. 제출됨=밑줄 링크, 미제출=흐린 라벨(선택 항목임을 드러낸다). */
+/**
+ * 첨부 슬롯. 제출됨=밑줄 링크, 미제출=흐린 라벨(선택 항목임을 드러낸다).
+ * 스토리지 경로명(application.pdf 등) 대신 지원자가 낸 원본 파일명으로
+ * 받아지도록 서명 URL에 download 파라미터를 붙인다.
+ */
 function FileSlot({
   path,
   urls,
   label,
+  downloadName,
 }: {
   path: string | null
   urls: Map<string, string>
   label: string
+  downloadName: string
 }) {
   const url = path ? urls.get(path) : null
   if (!path || !url)
@@ -270,9 +276,10 @@ function FileSlot({
     )
   return (
     <a
-      href={url}
+      href={`${url}&download=${encodeURIComponent(downloadName)}`}
       target="_blank"
       rel="noopener noreferrer"
+      title={downloadName}
       className="underline underline-offset-4 hover:text-fg-primary"
     >
       {label}
@@ -303,13 +310,24 @@ function ApplicationRow({
       </Td>
       <Td>
         <div className="flex items-baseline gap-4 whitespace-nowrap">
-          <FileSlot path={app.file_path} urls={urls} label="지원서" />
+          <FileSlot
+            path={app.file_path}
+            urls={urls}
+            label="지원서"
+            downloadName={app.file_name}
+          />
           <FileSlot
             path={app.business_plan_path}
             urls={urls}
             label="계획서"
+            downloadName={app.business_plan_name ?? `${app.name}_사업계획서`}
           />
-          <FileSlot path={app.portfolio_path} urls={urls} label="작업물" />
+          <FileSlot
+            path={app.portfolio_path}
+            urls={urls}
+            label="작업물"
+            downloadName={app.portfolio_name ?? `${app.name}_작업물.zip`}
+          />
         </div>
       </Td>
       <Td>
