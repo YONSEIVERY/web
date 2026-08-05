@@ -27,20 +27,24 @@ export async function GET(req: Request) {
   if (!round) return new NextResponse('no current round', { status: 404 })
   const applications = await getApplications(round.id)
 
+  // saveAs에 종류 접두사를 넣어 슬롯 간 파일명 충돌을 막는다
+  // (같은 파일을 지원서와 계획서에 올린 사례에서 백업 누락이 발생했음).
   const slots = applications.flatMap((a) => {
     const safe = (s: string) => s.replace(/[\\/:*?"<>|]/g, '_')
     const items: { path: string; saveAs: string }[] = [
-      { path: a.file_path, saveAs: safe(`${a.name}_${a.file_name}`) },
+      { path: a.file_path, saveAs: safe(`${a.name}_지원서_${a.file_name}`) },
     ]
     if (a.business_plan_path)
       items.push({
         path: a.business_plan_path,
-        saveAs: safe(`${a.name}_${a.business_plan_name ?? '사업계획서'}`),
+        saveAs: safe(
+          `${a.name}_계획서_${a.business_plan_name ?? '사업계획서'}`,
+        ),
       })
     if (a.portfolio_path)
       items.push({
         path: a.portfolio_path,
-        saveAs: safe(`${a.name}_${a.portfolio_name ?? '작업물.zip'}`),
+        saveAs: safe(`${a.name}_작업물_${a.portfolio_name ?? '작업물.zip'}`),
       })
     return items
   })
