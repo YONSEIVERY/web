@@ -48,6 +48,15 @@
 - 운영진 알림(접수·문의·신청) → 학회 Gmail. 지원자 접수 확인·결과 통보 → 지원자에게 자동 발송
 - 알림이 끊기면: Resend Domains 인증 상태 → Vercel 환경변수 RESEND_API_KEY 순으로 확인
 
+## 4.5 백업 (pull 구조)
+
+- 학회 계정의 Apps Script(트리거 매일)가 `/api/backup-recruit`(명단 엑셀)와
+  `/api/backup-recruit/files`(첨부 서명 URL 목록)를 `CRON_SECRET` Bearer로
+  호출해 드라이브 "VERY 지원자 백업" 폴더에 증분 저장한다
+- 서버는 드라이브 자격증명을 갖지 않는다 (격리 원칙). 백업 실패 시 Apps
+  Script가 학회 Gmail로 경고 메일을 보낸다
+- 시크릿 교체 시 Vercel env와 Apps Script 상수를 함께 갱신할 것
+
 ## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0020)
 
 핵심만: 0011 학회원 명단 / 0013 리크루팅 / 0014 학회원 포털 / 0016 첨부 확장 /
