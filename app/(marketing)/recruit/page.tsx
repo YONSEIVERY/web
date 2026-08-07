@@ -26,39 +26,41 @@ export default async function RecruitPage() {
   if (!open) {
     return (
       <main className="pt-14 md:pt-16">
-        <section className="relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
-          <p
-            translate="no"
-            className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-          >
-            <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-            {heroEyebrow}
-          </p>
-          <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
-            {notice.title}
-          </h1>
-          <p className="mt-6 max-w-[58ch] font-display text-base leading-[1.8] text-fg-subtle md:text-lg">
-            {notice.body}
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-6">
-            <a
-              href="https://instagram.com/very_yonsei"
-              target="_blank"
-              rel="noopener noreferrer"
+        <section className="relative grid grid-cols-12 gap-x-8 px-6 pb-24 pt-24 md:gap-x-12 md:px-10 md:pb-32 md:pt-32">
+          <div className="col-span-12 md:col-span-8 md:col-start-3">
+            <p
               translate="no"
-              className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+              className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
             >
-              @VERY_YONSEI
-              <span aria-hidden>↗</span>
-            </a>
-            <Link
-              href="/contact"
-              translate="no"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
-            >
-              CONTACT
-              <span aria-hidden>→</span>
-            </Link>
+              <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
+              {heroEyebrow}
+            </p>
+            <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
+              {notice.title}
+            </h1>
+            <p className="mt-6 max-w-[58ch] font-display text-base leading-[1.8] text-fg-subtle md:text-lg">
+              {notice.body}
+            </p>
+            <div className="mt-10 flex flex-wrap items-center gap-6">
+              <a
+                href="https://instagram.com/very_yonsei"
+                target="_blank"
+                rel="noopener noreferrer"
+                translate="no"
+                className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+              >
+                @VERY_YONSEI
+                <span aria-hidden>↗</span>
+              </a>
+              <Link
+                href="/contact"
+                translate="no"
+                className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-muted transition-colors hover:text-fg-primary md:text-xs"
+              >
+                CONTACT
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
           </div>
         </section>
       </main>
@@ -68,94 +70,102 @@ export default async function RecruitPage() {
   return (
     <main className="pt-14 md:pt-16">
       {/* Hero */}
-      <section className="relative px-6 pb-12 pt-24 md:px-10 md:pb-16 md:pt-32">
-        <p
-          translate="no"
-          className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-        >
-          <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-          {heroEyebrow}
-        </p>
-        <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.75rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
-          {RECRUIT.hero.headlineLine1}
-        </h1>
-        <p className="mt-6 max-w-[58ch] font-display text-base leading-[1.8] text-fg-subtle md:text-lg">
-          {RECRUIT.hero.subline}
-        </p>
+      <section className="relative grid grid-cols-12 gap-x-8 px-6 pb-12 pt-24 md:gap-x-12 md:px-10 md:pb-16 md:pt-32">
+        <div className="col-span-12 md:col-span-8 md:col-start-3">
+          <p
+            translate="no"
+            className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
+          >
+            <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
+            {heroEyebrow}
+          </p>
+          <h1 className="mt-8 font-display text-[clamp(2rem,_5vw,_3.75rem)] font-bold leading-tight tracking-tight text-fg-primary md:mt-10">
+            {RECRUIT.hero.headlineLine1}
+          </h1>
+          <p className="mt-6 max-w-[58ch] font-display text-base leading-[1.8] text-fg-subtle md:text-lg">
+            {RECRUIT.hero.subline}
+          </p>
+        </div>
       </section>
 
-      {/* Schedule */}
-      <section className="px-6 pb-16 md:px-10 md:pb-20">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
-          {RECRUIT.schedule.title}
-        </h2>
-        <dl className="mt-8 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
-          {RECRUIT.schedule.items.map((item) => (
-            <div key={item.mono} className="bg-bg-base p-5">
-              <dt
-                translate="no"
-                className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted"
-              >
-                {item.mono}
-              </dt>
-              <dd className="mt-3 font-display text-sm font-bold text-fg-primary">
-                {item.label}
-              </dd>
-              <dd className="mt-1 font-display text-sm text-fg-subtle">
-                {item.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+      {/* Schedule - 5칸 일정 스트립은 본문(8칸)보다 넓은 10칸 밴드 (cohorts 상세 관행) */}
+      <section className="grid grid-cols-12 gap-x-8 px-6 pb-16 md:gap-x-12 md:px-10 md:pb-20">
+        <div className="col-span-12 md:col-span-10 md:col-start-2">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+            {RECRUIT.schedule.title}
+          </h2>
+          <dl className="mt-8 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
+            {RECRUIT.schedule.items.map((item) => (
+              <div key={item.mono} className="bg-bg-base p-5">
+                <dt
+                  translate="no"
+                  className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted"
+                >
+                  {item.mono}
+                </dt>
+                <dd className="mt-3 font-display text-sm font-bold text-fg-primary">
+                  {item.label}
+                </dd>
+                <dd className="mt-1 font-display text-sm text-fg-subtle">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </section>
 
       {/* How to apply */}
-      <section className="px-6 pb-16 md:px-10 md:pb-20">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
-          {RECRUIT.howTo.title}
-        </h2>
-        <ol className="mt-8 grid max-w-2xl grid-cols-1 gap-4">
-          {RECRUIT.howTo.steps.map((step, i) => (
-            <li key={step} className="flex items-start gap-4">
-              <span
-                translate="no"
-                className="mt-0.5 font-mono text-[11px] tracking-[0.2em] text-fg-muted"
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <span className="font-display text-sm leading-[1.8] text-fg-subtle md:text-base">
-                {step}
-              </span>
-            </li>
-          ))}
-        </ol>
-        <a
-          href={RECRUIT.howTo.formTemplateUrl}
-          download={RECRUIT.howTo.formTemplateDownloadName}
-          translate="no"
-          className="mt-8 inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
-        >
-          {RECRUIT.howTo.formTemplateLabel}
-          <span aria-hidden>↓</span>
-        </a>
+      <section className="grid grid-cols-12 gap-x-8 px-6 pb-16 md:gap-x-12 md:px-10 md:pb-20">
+        <div className="col-span-12 md:col-span-8 md:col-start-3">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+            {RECRUIT.howTo.title}
+          </h2>
+          <ol className="mt-8 grid max-w-2xl grid-cols-1 gap-4">
+            {RECRUIT.howTo.steps.map((step, i) => (
+              <li key={step} className="flex items-start gap-4">
+                <span
+                  translate="no"
+                  className="mt-0.5 font-mono text-[11px] tracking-[0.2em] text-fg-muted"
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="font-display text-sm leading-[1.8] text-fg-subtle md:text-base">
+                  {step}
+                </span>
+              </li>
+            ))}
+          </ol>
+          <a
+            href={RECRUIT.howTo.formTemplateUrl}
+            download={RECRUIT.howTo.formTemplateDownloadName}
+            translate="no"
+            className="mt-8 inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+          >
+            {RECRUIT.howTo.formTemplateLabel}
+            <span aria-hidden>↓</span>
+          </a>
+        </div>
       </section>
 
       {/* Notice */}
-      <section className="px-6 pb-16 md:px-10 md:pb-20">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
-          {RECRUIT.notice.title}
-        </h2>
-        <ul className="mt-8 max-w-2xl border border-border p-6 md:p-8">
-          {RECRUIT.notice.items.map((item) => (
-            <li
-              key={item}
-              className="flex items-start gap-3 py-1.5 font-display text-sm leading-[1.8] text-fg-subtle md:text-base"
-            >
-              <span aria-hidden className="mt-3 inline-block h-px w-3 shrink-0 bg-fg-muted" />
-              {item}
-            </li>
-          ))}
-        </ul>
+      <section className="grid grid-cols-12 gap-x-8 px-6 pb-16 md:gap-x-12 md:px-10 md:pb-20">
+        <div className="col-span-12 md:col-span-8 md:col-start-3">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+            {RECRUIT.notice.title}
+          </h2>
+          <ul className="mt-8 max-w-2xl border border-border p-6 md:p-8">
+            {RECRUIT.notice.items.map((item) => (
+              <li
+                key={item}
+                className="flex items-start gap-3 py-1.5 font-display text-sm leading-[1.8] text-fg-subtle md:text-base"
+              >
+                <span aria-hidden className="mt-3 inline-block h-px w-3 shrink-0 bg-fg-muted" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       {/* Form */}
