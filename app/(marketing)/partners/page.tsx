@@ -16,9 +16,10 @@ export const metadata: Metadata = {
 /**
  * /partners - external relationships page.
  *
- * Roster items are TBA placeholders until society confirms the current
- * volume's lineup. Category chip styling matches /demoday's status pill
- * pattern so all three pages read with a consistent "coming soon" voice.
+ * Roster reads the admin-managed partners table (getPartners). TBA
+ * placeholders render only while the roster is empty. Category chip
+ * styling matches /demoday's status pill pattern so all three pages
+ * read with a consistent "coming soon" voice.
  */
 export default async function PartnersPage() {
   const roster = await getPartners()

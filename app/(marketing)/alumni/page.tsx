@@ -19,9 +19,10 @@ export const metadata: Metadata = {
 /**
  * /alumni - accumulated network page.
  *
- * Spotlight uses TBA placeholders until the society's Notion roster is
- * wired. Status pill ("TBA") is styled like /demoday's status column so
- * users read it as "coming soon" rather than missing data.
+ * Spotlight reads the admin-managed roster (alumni_companies via
+ * getAlumniCompanies). TBA placeholders render only while the roster is
+ * empty, styled like /demoday's status column so users read it as
+ * "coming soon" rather than missing data.
  */
 export default async function AlumniPage() {
   const [companies, sponsors] = await Promise.all([
