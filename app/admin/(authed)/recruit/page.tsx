@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { supabaseService } from '@/lib/supabase/service'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import {
@@ -20,7 +21,11 @@ export const dynamic = 'force-dynamic'
 
 const SIGNED_URL_TTL_SEC = 60 * 60 // 1시간. 페이지를 새로고침하면 재발급된다.
 
-export default async function AdminRecruitPage() {
+export default async function AdminRecruitPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string | string[] }>
+}) {
   const round = await getCurrentRecruitRound()
 
   if (!round) {
@@ -35,6 +40,18 @@ export default async function AdminRecruitPage() {
   }
 
   const applications = await getApplications(round.id)
+
+  // 상태 필터는 표시용. 통보·문자 명단·집계·엑셀은 전체(applications) 기준.
+  const rawStatus = (await searchParams).status
+  const statusFilter = APPLICATION_STATUSES.includes(
+    rawStatus as ApplicationStatus,
+  )
+    ? (rawStatus as ApplicationStatus)
+    : null
+  const visible = statusFilter
+    ? applications.filter((a) => a.status === statusFilter)
+    : applications
+
   // 서명 URL은 3종 첨부 전체를 배치 한 번으로 발급한다.
   const urlByPath = new Map<string, string>()
   const allPaths = applications.flatMap((a) =>
@@ -120,35 +137,27 @@ export default async function AdminRecruitPage() {
         </a>
       </div>
 
-      {/* 상태별 집계. 심사 진행 상황을 한 줄에서 파악한다. */}
+      {/* 상태별 집계 겸 필터. 칩을 누르면 목록이 해당 상태만 표시한다. */}
       {applications.length > 0 && (
-        <dl className="mt-5 flex flex-wrap gap-px border border-border bg-border">
-          {APPLICATION_STATUSES.map((s) => {
-            const n = countByStatus.get(s) ?? 0
-            return (
-              <div
-                key={s}
-                className="flex items-baseline gap-2 bg-bg-base px-4 py-2"
-              >
-                <dt
-                  className={`font-mono text-[10px] uppercase tracking-[0.2em] ${
-                    n > 0 ? 'text-fg-primary' : 'text-fg-muted'
-                  }`}
-                >
-                  {APPLICATION_STATUS_LABELS[s]}
-                </dt>
-                <dd
-                  translate="no"
-                  className={`font-display text-sm font-bold tabular-nums ${
-                    n > 0 ? 'text-fg-primary' : 'text-fg-muted'
-                  }`}
-                >
-                  {n}
-                </dd>
-              </div>
-            )
-          })}
-        </dl>
+        <nav
+          aria-label="상태 필터"
+          className="mt-5 flex flex-wrap gap-px border border-border bg-border"
+        >
+          <FilterChip
+            label="전체"
+            count={applications.length}
+            active={statusFilter === null}
+          />
+          {APPLICATION_STATUSES.map((s) => (
+            <FilterChip
+              key={s}
+              label={APPLICATION_STATUS_LABELS[s]}
+              count={countByStatus.get(s) ?? 0}
+              active={statusFilter === s}
+              status={s}
+            />
+          ))}
+        </nav>
       )}
 
       {/* 문자 발송 명단. 상태별 전화번호를 하이픈 없이 쉼표로 복사한다. */}
@@ -221,14 +230,16 @@ export default async function AdminRecruitPage() {
             </tr>
           </thead>
           <tbody>
-            {applications.map((a) => (
+            {visible.map((a) => (
               <ApplicationRow key={a.id} app={a} urls={urlByPath} />
             ))}
-            {applications.length === 0 && (
+            {visible.length === 0 && (
               <tr>
                 <Td colSpan={6}>
                   <p className="py-12 text-center text-fg-muted">
-                    아직 지원자가 없습니다.
+                    {applications.length === 0
+                      ? '아직 지원자가 없습니다.'
+                      : '해당 상태의 지원자가 없습니다.'}
                   </p>
                 </Td>
               </tr>
@@ -248,6 +259,45 @@ function Header() {
     >
       RECRUIT · APPLICATIONS
     </p>
+  )
+}
+
+/** 집계 칩 겸 필터 링크. status 없이 쓰면 필터 해제(전체). */
+function FilterChip({
+  label,
+  count,
+  active,
+  status,
+}: {
+  label: string
+  count: number
+  active: boolean
+  status?: ApplicationStatus
+}) {
+  const tone = count > 0 ? 'text-fg-primary' : 'text-fg-muted'
+  return (
+    <Link
+      href={{
+        pathname: '/admin/recruit',
+        ...(status ? { query: { status } } : {}),
+      }}
+      aria-current={active ? 'true' : undefined}
+      className={`flex items-baseline gap-2 bg-bg-base px-4 py-2 transition-colors hover:bg-fg-primary/[0.04] ${
+        active ? 'ring-1 ring-inset ring-fg-primary' : ''
+      }`}
+    >
+      <span
+        className={`font-mono text-[10px] uppercase tracking-[0.2em] ${tone}`}
+      >
+        {label}
+      </span>
+      <span
+        translate="no"
+        className={`font-display text-sm font-bold tabular-nums ${tone}`}
+      >
+        {count}
+      </span>
+    </Link>
   )
 }
 
