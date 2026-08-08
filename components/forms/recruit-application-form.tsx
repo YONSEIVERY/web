@@ -22,10 +22,69 @@ const FILE_INPUT_CLASS =
 const MB = 1024 * 1024
 const PLAN_EXTS = ['pdf', 'doc', 'docx', 'hwp', 'hwpx', 'ppt', 'pptx']
 
+const DRAFT_KEY = 'very:recruit-draft'
+const DRAFT_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const DRAFT_FIELDS = [
+  'name',
+  'phone',
+  'email',
+  'remote_interview_reason',
+] as const
+
+type Draft = Record<string, string>
+
+/**
+ * 작성 중인 텍스트 입력을 브라우저에만 임시 보관한다. 파일은 저장하지
+ * 않는다. 접수 성공 시 즉시 지우고, 방치된 초안도 7일이 지나면 버린다.
+ * 서버로 보내지 않으므로 개인정보 수집 항목에는 변화가 없다.
+ */
+function readDraft(): Draft | null {
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { savedAt?: number; values?: Draft }
+    if (!parsed.savedAt || Date.now() - parsed.savedAt > DRAFT_TTL_MS) {
+      window.localStorage.removeItem(DRAFT_KEY)
+      return null
+    }
+    return parsed.values ?? null
+  } catch {
+    return null
+  }
+}
+
+function writeDraft(values: Draft) {
+  try {
+    window.localStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({ savedAt: Date.now(), values }),
+    )
+  } catch {
+    // 프라이빗 모드 등 저장이 막힌 환경에서는 조용히 넘어간다
+  }
+}
+
+function clearDraft() {
+  try {
+    window.localStorage.removeItem(DRAFT_KEY)
+  } catch {
+    // 위와 같음
+  }
+}
+
+/** 초안 대상 필드의 DOM 요소. 폼이 비제어라 값은 DOM에서 직접 읽고 쓴다. */
+function draftField(form: HTMLFormElement, name: string) {
+  const el = form.elements.namedItem(name)
+  return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement
+    ? el
+    : null
+}
+
 /**
  * 파일 3종은 서명 업로드 티켓으로 브라우저에서 스토리지에 직접 올린다
  * (서버 경유 시 Vercel 4.5MB 제한). 제출 흐름: 검증 → 티켓 발급 →
- * 직접 업로드 → 접수 확정. 실패해도 입력값은 그대로 남는다.
+ * 직접 업로드 → 접수 확정. 실패해도 입력값은 그대로 남고, 텍스트 입력은
+ * 브라우저에 임시 저장돼 새로고침 뒤에도 복구된다 (파일은 제외).
  */
 export function RecruitApplicationForm() {
   const [phase, setPhase] = useState<'idle' | 'uploading' | 'submitting'>(
@@ -33,6 +92,50 @@ export function RecruitApplicationForm() {
   )
   const [result, setResult] = useState<RecruitFormState>(RECRUIT_INITIAL_STATE)
   const [fileError, setFileError] = useState<string | null>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const [restored, setRestored] = useState(false)
+  const startedRef = useRef(false)
+
+  // 쓰다 만 초안이 있으면 비제어 입력에 직접 채워 넣는다.
+  useEffect(() => {
+    const draft = readDraft()
+    const form = formRef.current
+    if (!draft || !form) return
+    let filled = false
+    for (const name of DRAFT_FIELDS) {
+      const value = draft[name]
+      if (!value) continue
+      const el = draftField(form, name)
+      if (!el) continue
+      el.value = value
+      filled = true
+    }
+    if (filled) setRestored(true)
+  }, [])
+
+  const onFormInput = () => {
+    if (!startedRef.current) {
+      startedRef.current = true
+      track('recruit_form_start')
+    }
+    const form = formRef.current
+    if (!form) return
+    const values: Draft = {}
+    for (const name of DRAFT_FIELDS)
+      values[name] = draftField(form, name)?.value ?? ''
+    writeDraft(values)
+  }
+
+  const discardDraft = () => {
+    clearDraft()
+    const form = formRef.current
+    if (form)
+      for (const name of DRAFT_FIELDS) {
+        const el = draftField(form, name)
+        if (el) el.value = ''
+      }
+    setRestored(false)
+  }
 
   if (result.status === 'success') return <Success />
 
@@ -80,10 +183,13 @@ export function RecruitApplicationForm() {
     const checked = validateFiles(form)
     if ('error' in checked) {
       setFileError(checked.error)
+      track('recruit_submit_failed', { stage: 'validate' })
       return
     }
     const { app, plan, zip } = checked
 
+    // 어느 단계에서 끊겼는지 계측한다. 간헐 503 제보를 판정할 근거가 된다.
+    let failStage = 'ticket'
     try {
       setPhase('uploading')
       const req: { kind: string; ext: string }[] = [
@@ -95,6 +201,7 @@ export function RecruitApplicationForm() {
       const ticketRes = await createRecruitUploadTickets(req)
       if (!ticketRes.ok) throw new Error(ticketRes.error)
 
+      failStage = 'upload'
       const supabase = createClient()
       const fileByKind: Record<string, File | undefined> = {
         application: app,
@@ -113,6 +220,7 @@ export function RecruitApplicationForm() {
       }
 
       setPhase('submitting')
+      failStage = 'submit'
       const fd = new FormData(form)
       fd.set('submission_id', ticketRes.submissionId)
       for (const ticket of ticketRes.tickets) {
@@ -125,9 +233,15 @@ export function RecruitApplicationForm() {
       fd.delete('portfolio_file')
 
       const res = await submitRecruitApplication(RECRUIT_INITIAL_STATE, fd)
-      if (res.status === 'success') track('recruit_submitted')
+      if (res.status === 'success') {
+        track('recruit_submitted')
+        clearDraft()
+      } else {
+        track('recruit_submit_failed', { stage: 'rejected' })
+      }
       setResult(res)
     } catch (err) {
+      track('recruit_submit_failed', { stage: failStage })
       setResult({
         status: 'error',
         message: err instanceof Error ? err.message : '접수에 실패했습니다.',
@@ -141,7 +255,27 @@ export function RecruitApplicationForm() {
   const errorMessage = result.status === 'error' ? result.message : fileError
 
   return (
-    <form onSubmit={onSubmit} className="grid grid-cols-1 gap-8">
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      onInput={onFormInput}
+      className="grid grid-cols-1 gap-8"
+    >
+      {restored && (
+        <div className="flex flex-wrap items-baseline justify-between gap-3 border border-border px-4 py-3">
+          <p className="font-display text-xs leading-relaxed text-fg-subtle md:text-sm">
+            이전에 작성하던 내용을 불러왔습니다. 파일은 다시 첨부해주세요.
+          </p>
+          <button
+            type="button"
+            onClick={discardDraft}
+            className="shrink-0 font-display text-xs text-fg-muted underline underline-offset-4 transition-colors hover:text-fg-primary"
+          >
+            새로 작성
+          </button>
+        </div>
+      )}
+
       {/* honeypot: 실제 사용자에게는 보이지 않는다 */}
       <input
         type="text"
