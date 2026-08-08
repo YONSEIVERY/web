@@ -57,18 +57,27 @@
   Script가 학회 Gmail로 경고 메일을 보낸다
 - 시크릿 교체 시 Vercel env와 Apps Script 상수를 함께 갱신할 것
 
-## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0021)
+## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0022)
 
 핵심만: 0011 학회원 명단 / 0013 리크루팅 / 0014 학회원 포털 / 0016 첨부 확장 /
 0017 자기소개 / 0018 RLS 하드닝 / 0019 어드민 화이트리스트 / 0020 결과 통보 기록 /
-0021 portal_role 익명 실행권 회수.
+0021 portal_role 익명 실행권 회수 / 0022 is_admin 경화(search_path 고정 +
+portal_role과 동일한 대소문자 무시 이메일 비교).
 새 마이그레이션은 파일 추가 후 Supabase SQL Editor에서 수동 실행한다.
 
 ## 6. 알려진 사항·백로그
 
-- 자동화 브라우저에서 서버 액션 POST가 간헐 503 (실사용자 영향 보고 없음. 제보 시 Vercel 방화벽 의심)
+- 자동화 브라우저에서 서버 액션 POST가 간헐 503 (실사용자 영향 보고 없음.
+  이제 실패 시 recruit_submit_failed 이벤트가 stage와 함께 남으므로,
+  Vercel Analytics에서 ticket·submit 단계 실패가 잡히면 실사용자 영향으로 판정)
+- SECURITY DEFINER 함수 is_admin·portal_role을 authenticated가 임의 이메일로
+  호출 가능 (advisor WARN). 임의 주소의 어드민·학회원 여부를 알아낼 수 있다.
+  인자를 없애고 함수 안에서 auth.jwt()의 이메일을 읽는 방식이 정석. 호출부
+  2곳(미들웨어 membersGate, getPortalIdentity) 수정이 함께 필요해 미착수
+- Auth 유출 비밀번호 보호 비활성 (advisor WARN). 로그인은 Google OAuth 전용이라
+  실효가 낮다. 콘솔에서 Email provider가 꺼져 있는지만 확인하면 충분
 - 상단 탭 구조 재논의 (착수 시점 제약 없음, 대표 결정 사항)
 - 개강 후: 소모임·조별 과제 구조는 수요 확인 후 결정
 
 해소된 항목: portal_role 익명 호출은 0021로 차단(2026-08-08). /recruit 본문
-중앙 정렬은 같은 날 반영.
+중앙 정렬은 같은 날 반영. is_admin search_path는 0022로 고정(2026-08-08).
