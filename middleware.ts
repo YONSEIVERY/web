@@ -88,9 +88,9 @@ async function membersGate(
     return loginRedirect(request, isMembersHost)
   }
 
-  const { data: role, error } = await supabase.rpc('portal_role', {
-    check_email: user.email,
-  })
+  // 인자 없는 시그니처(0023). 함수가 세션 토큰의 이메일을 스스로 읽으므로
+  // 호출자가 남의 주소를 넣어 등록 여부를 캐낼 수 없다.
+  const { data: role, error } = await supabase.rpc('portal_role')
   if (error) {
     console.error('[middleware] portal_role rpc failed', error)
   }
@@ -147,8 +147,8 @@ async function adminGate(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // is_admin RPC not yet in generated types; regen after migration applied
-  const { data: ok, error } = await supabase.rpc('is_admin', { check_email: user.email })
+  // 인자 없는 시그니처(0023). 세션 이메일은 함수가 직접 읽는다.
+  const { data: ok, error } = await supabase.rpc('is_admin')
   if (error) {
     console.error('[middleware] is_admin rpc failed', error)
   }

@@ -23,9 +23,8 @@ export async function getPortalIdentity(): Promise<PortalIdentity | null> {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user?.email) return null
-  const { data: role, error } = await supabase.rpc('portal_role', {
-    check_email: user.email,
-  })
+  // 인자 없는 시그니처(0023). 세션 이메일은 함수가 직접 읽는다.
+  const { data: role, error } = await supabase.rpc('portal_role')
   if (error) {
     console.error('[getPortalIdentity] portal_role rpc failed', error)
     return null

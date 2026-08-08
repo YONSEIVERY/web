@@ -57,23 +57,31 @@
   Script가 학회 Gmail로 경고 메일을 보낸다
 - 시크릿 교체 시 Vercel env와 Apps Script 상수를 함께 갱신할 것
 
-## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0022)
+## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0023)
 
 핵심만: 0011 학회원 명단 / 0013 리크루팅 / 0014 학회원 포털 / 0016 첨부 확장 /
 0017 자기소개 / 0018 RLS 하드닝 / 0019 어드민 화이트리스트 / 0020 결과 통보 기록 /
 0021 portal_role 익명 실행권 회수 / 0022 is_admin 경화(search_path 고정 +
-portal_role과 동일한 대소문자 무시 이메일 비교).
+portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·portal_role
+무인자 버전 추가(세션 이메일을 함수가 직접 읽어 임의 주소 조회를 차단).
 새 마이그레이션은 파일 추가 후 Supabase SQL Editor에서 수동 실행한다.
+
+**함수 권한을 다룰 때 주의**: Supabase는 public 스키마에 default privileges가
+걸려 있어, 새로 만든 함수에 anon·authenticated·service_role 실행권이 자동으로
+붙는다. `revoke all ... from public`은 PUBLIC 롤만 회수하므로 anon 직접 권한이
+그대로 남는다. anon을 막으려면 `revoke execute ... from anon`을 따로 써야 한다
+(0023 최초 적용 때 실제로 anon 호출이 통과했다).
 
 ## 6. 알려진 사항·백로그
 
 - 자동화 브라우저에서 서버 액션 POST가 간헐 503 (실사용자 영향 보고 없음.
   이제 실패 시 recruit_submit_failed 이벤트가 stage와 함께 남으므로,
   Vercel Analytics에서 ticket·submit 단계 실패가 잡히면 실사용자 영향으로 판정)
-- SECURITY DEFINER 함수 is_admin·portal_role을 authenticated가 임의 이메일로
-  호출 가능 (advisor WARN). 임의 주소의 어드민·학회원 여부를 알아낼 수 있다.
-  인자를 없애고 함수 안에서 auth.jwt()의 이메일을 읽는 방식이 정석. 호출부
-  2곳(미들웨어 membersGate, getPortalIdentity) 수정이 함께 필요해 미착수
+- 인자 있는 is_admin(text)·portal_role(text)이 아직 남아 있다. 0023이 무인자
+  버전을 올리고 호출부 4곳(미들웨어 2곳, getPortalIdentity, requireAdmin)을
+  그쪽으로 옮겼으므로, 배포가 정상 동작하는 것을 확인한 뒤 0024로 인자 버전을
+  드롭하면 끝난다. 드롭 전까지는 authenticated가 임의 이메일로 조회할 수 있는
+  상태가 유지된다. 순서를 뒤집으면(드롭 먼저) 배포 사이에 어드민·포털이 잠긴다
 - Auth 유출 비밀번호 보호 비활성 (advisor WARN). 로그인은 Google OAuth 전용이라
   실효가 낮다. 콘솔에서 Email provider가 꺼져 있는지만 확인하면 충분
 - 상단 탭 구조 재논의 (착수 시점 제약 없음, 대표 결정 사항)
