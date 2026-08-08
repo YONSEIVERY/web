@@ -81,7 +81,11 @@ portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·
   버전을 올리고 호출부 4곳(미들웨어 2곳, getPortalIdentity, requireAdmin)을
   그쪽으로 옮겼으므로, 배포가 정상 동작하는 것을 확인한 뒤 0024로 인자 버전을
   드롭하면 끝난다. 드롭 전까지는 authenticated가 임의 이메일로 조회할 수 있는
-  상태가 유지된다. 순서를 뒤집으면(드롭 먼저) 배포 사이에 어드민·포털이 잠긴다
+  상태가 유지된다. 순서를 뒤집으면(드롭 먼저) 배포 사이에 어드민·포털이 잠긴다.
+  참고: advisor의 "Signed-In Users Can Execute SECURITY DEFINER Function" WARN은
+  드롭 후에도 남는다. 이 lint는 authenticated가 SECURITY DEFINER 함수를 실행할 수
+  있다는 사실 자체를 지적하는데, 두 함수는 미들웨어가 로그인 세션으로 호출해야 해서
+  의도된 설계다. 0023이 닫는 것은 advisor 점수가 아니라 남의 주소 조회 가능성이다
 - Auth 유출 비밀번호 보호 비활성 (advisor WARN). 로그인은 Google OAuth 전용이라
   실효가 낮다. 콘솔에서 Email provider가 꺼져 있는지만 확인하면 충분
 - 상단 탭 구조 재논의 (착수 시점 제약 없음, 대표 결정 사항)
