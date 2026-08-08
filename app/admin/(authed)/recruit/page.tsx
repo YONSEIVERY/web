@@ -217,12 +217,13 @@ export default async function AdminRecruitPage({
         </div>
       )}
 
+      {/* 좁은 화면에서는 지원자 열을 고정한다. 오른쪽 끝 상태 열을 조작할 때
+          대상이 누구인지 화면에서 사라지지 않게 하기 위함이다. */}
       <div className="mt-10 overflow-x-auto">
-        <table className="w-full min-w-[860px] text-sm">
+        <table className="w-full min-w-[720px] text-sm">
           <thead className="border-b border-border">
             <tr className="text-left">
-              <Th>접수</Th>
-              <Th>지원자</Th>
+              <Th sticky>지원자</Th>
               <Th>첨부</Th>
               <Th>비대면 사유</Th>
               <Th>상태</Th>
@@ -235,7 +236,7 @@ export default async function AdminRecruitPage({
             ))}
             {visible.length === 0 && (
               <tr>
-                <Td colSpan={6}>
+                <Td colSpan={5}>
                   <p className="py-12 text-center text-fg-muted">
                     {applications.length === 0
                       ? '아직 지원자가 없습니다.'
@@ -346,16 +347,14 @@ function ApplicationRow({
 }) {
   return (
     <tr className="border-b border-border align-top transition-colors hover:bg-fg-primary/[0.03]">
-      <Td>
-        <span className="whitespace-nowrap font-mono text-xs text-fg-muted">
-          {formatKstDateTime(app.created_at)}
-        </span>
-      </Td>
-      <Td>
+      <Td sticky>
         <p className="font-display font-bold text-fg-primary">{app.name}</p>
         <p className="mt-1 font-mono text-xs text-fg-muted">{app.email}</p>
         <p className="mt-0.5 whitespace-nowrap font-mono text-xs text-fg-muted">
           {app.phone}
+        </p>
+        <p className="mt-1.5 whitespace-nowrap font-mono text-[10px] text-fg-muted opacity-70">
+          {formatKstDateTime(app.created_at)} 접수
         </p>
       </Td>
       <Td>
@@ -393,12 +392,16 @@ function ApplicationRow({
         )}
       </Td>
       <Td>
-        <form action={setApplicationStatus} className="flex items-center gap-2">
+        <form
+          action={setApplicationStatus}
+          className="flex flex-wrap items-center gap-2"
+        >
           <input type="hidden" name="application_id" value={app.id} />
           <select
             name="status"
             defaultValue={app.status}
-            className="border border-border bg-bg-base px-2 py-1.5 text-xs text-fg-primary focus:border-fg-primary focus:outline-none"
+            aria-label={`${app.name} 심사 상태`}
+            className="min-h-9 border border-border bg-bg-base px-2 py-2 text-xs text-fg-primary focus:border-fg-primary focus:outline-none"
           >
             {APPLICATION_STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -408,7 +411,7 @@ function ApplicationRow({
           </select>
           <button
             type="submit"
-            className="border border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
+            className="min-h-9 border border-border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
           >
             저장
           </button>
@@ -431,9 +434,22 @@ function ApplicationRow({
   )
 }
 
-function Th({ children }: { children: React.ReactNode }) {
+/** 가로 스크롤이 생기는 좁은 화면에서만 열을 왼쪽에 고정한다. */
+const STICKY_CELL = 'max-md:sticky max-md:left-0 max-md:z-10 max-md:bg-bg-base'
+
+function Th({
+  children,
+  sticky,
+}: {
+  children: React.ReactNode
+  sticky?: boolean
+}) {
   return (
-    <th className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted py-3 pr-4">
+    <th
+      className={`font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted py-3 pr-4 ${
+        sticky ? STICKY_CELL : ''
+      }`}
+    >
       {children}
     </th>
   )
@@ -441,12 +457,17 @@ function Th({ children }: { children: React.ReactNode }) {
 function Td({
   children,
   colSpan,
+  sticky,
 }: {
   children: React.ReactNode
   colSpan?: number
+  sticky?: boolean
 }) {
   return (
-    <td colSpan={colSpan} className="py-4 pr-4 text-fg-subtle">
+    <td
+      colSpan={colSpan}
+      className={`py-4 pr-4 text-fg-subtle ${sticky ? STICKY_CELL : ''}`}
+    >
       {children}
     </td>
   )
