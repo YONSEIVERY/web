@@ -33,7 +33,11 @@ export default async function RecruitPage() {
   if (!open) {
     return (
       <main className="pt-14 md:pt-16">
-        <section className="relative grid grid-cols-12 gap-x-8 px-6 pb-24 pt-24 md:gap-x-12 md:px-10 md:pb-32 md:pt-32">
+        <section
+          className={`relative grid grid-cols-12 gap-x-8 px-6 pt-24 md:gap-x-12 md:px-10 md:pt-32 ${
+            deadlinePassed ? 'pb-12 md:pb-16' : 'pb-24 md:pb-32'
+          }`}
+        >
           <div className="col-span-12 md:col-span-8 md:col-start-3">
             <p
               translate="no"
@@ -70,6 +74,13 @@ export default async function RecruitPage() {
             </div>
           </div>
         </section>
+        {/* 마감 직후 이 페이지를 찾는 사람은 대개 결과를 기다리는 지원자다.
+            면접·발표 날짜를 다시 확인할 수 있게 일정만 남긴다. */}
+        {deadlinePassed && (
+          <div className="pb-16 md:pb-24">
+            <ScheduleSection />
+          </div>
+        )}
       </main>
     )
   }
@@ -96,32 +107,7 @@ export default async function RecruitPage() {
         </div>
       </section>
 
-      {/* Schedule - 5칸 일정 스트립은 본문(8칸)보다 넓은 10칸 밴드 (cohorts 상세 관행) */}
-      <section className="grid grid-cols-12 gap-x-8 px-6 pb-16 md:gap-x-12 md:px-10 md:pb-20">
-        <div className="col-span-12 md:col-span-10 md:col-start-2">
-          <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
-            {RECRUIT.schedule.title}
-          </h2>
-          <dl className="mt-8 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
-            {RECRUIT.schedule.items.map((item) => (
-              <div key={item.mono} className="bg-bg-base p-5">
-                <dt
-                  translate="no"
-                  className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted"
-                >
-                  {item.mono}
-                </dt>
-                <dd className="mt-3 font-display text-sm font-bold text-fg-primary">
-                  {item.label}
-                </dd>
-                <dd className="mt-1 font-display text-sm text-fg-subtle">
-                  {item.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+      <ScheduleSection />
 
       {/* How to apply */}
       <section className="grid grid-cols-12 gap-x-8 px-6 pb-16 md:gap-x-12 md:px-10 md:pb-20">
@@ -189,6 +175,37 @@ export default async function RecruitPage() {
         </div>
       </section>
     </main>
+  )
+}
+
+/** 5칸 일정 스트립은 본문(8칸)보다 넓은 10칸 밴드 (cohorts 상세 관행). */
+function ScheduleSection() {
+  return (
+    <section className="grid grid-cols-12 gap-x-8 px-6 pb-16 md:gap-x-12 md:px-10 md:pb-20">
+      <div className="col-span-12 md:col-span-10 md:col-start-2">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
+          {RECRUIT.schedule.title}
+        </h2>
+        <dl className="mt-8 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
+          {RECRUIT.schedule.items.map((item) => (
+            <div key={item.mono} className="bg-bg-base p-5">
+              <dt
+                translate="no"
+                className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted"
+              >
+                {item.mono}
+              </dt>
+              <dd className="mt-3 font-display text-sm font-bold text-fg-primary">
+                {item.label}
+              </dd>
+              <dd className="mt-1 font-display text-sm text-fg-subtle">
+                {item.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
   )
 }
 
