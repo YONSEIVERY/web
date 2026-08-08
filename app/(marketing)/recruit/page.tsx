@@ -1,7 +1,12 @@
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getCurrentRecruitRound, isDeadlinePassed } from '@/lib/recruit/queries'
+import {
+  getCurrentRecruitRound,
+  isDeadlinePassed,
+  daysUntilDeadline,
+  formatDeadlineKst,
+} from '@/lib/recruit/queries'
 import { RECRUIT } from '@/lib/content/recruit'
 import { RecruitApplicationForm } from '@/components/forms/recruit-application-form'
 
@@ -22,6 +27,8 @@ export default async function RecruitPage() {
   const open = Boolean(round?.apply_open) && !deadlinePassed
   const heroEyebrow = `Recruit · ${volLabel(siteConfig)}`
   const notice = deadlinePassed ? RECRUIT.deadlineNotice : RECRUIT.closedNotice
+  const daysLeft = daysUntilDeadline(round)
+  const deadlineText = formatDeadlineKst(round)
 
   if (!open) {
     return (
@@ -85,6 +92,7 @@ export default async function RecruitPage() {
           <p className="mt-6 max-w-[58ch] font-display text-base leading-[1.8] text-fg-subtle md:text-lg">
             {RECRUIT.hero.subline}
           </p>
+          <Countdown left={daysLeft} deadline={deadlineText} />
         </div>
       </section>
 
@@ -169,7 +177,7 @@ export default async function RecruitPage() {
       </section>
 
       {/* Form */}
-      <section className="px-6 pb-32 md:px-10 md:pb-40">
+      <section id="apply" className="px-6 pb-32 md:px-10 md:pb-40">
         <div className="mx-auto max-w-2xl">
           <h2 className="mb-10 font-display text-2xl font-bold tracking-tight text-fg-primary md:text-3xl">
             지원서 접수
@@ -181,5 +189,47 @@ export default async function RecruitPage() {
         </div>
       </section>
     </main>
+  )
+}
+
+/**
+ * 마감 카운트다운. 남은 일수가 있을 때만 뜨고 3일 이하면 accent로 바뀐다.
+ * 누르면 접수 폼으로 내려간다. 마감 임박 유입을 폼까지 끌고 가는 것이 목적.
+ */
+function Countdown({
+  left,
+  deadline,
+}: {
+  left: number | null
+  deadline: string | null
+}) {
+  if (left === null) return null
+  const urgent = left <= 3
+  return (
+    <a
+      href="#apply"
+      className="group mt-8 inline-flex items-baseline gap-4 border border-border px-5 py-3 transition-colors hover:border-fg-primary md:mt-10"
+    >
+      <span
+        translate="no"
+        className={`font-mono text-xs uppercase tracking-[0.28em] ${
+          urgent ? 'text-accent' : 'text-fg-primary'
+        }`}
+      >
+        {left === 0 ? 'D-DAY' : `D-${left}`}
+      </span>
+      {deadline && (
+        <span className="font-display text-sm text-fg-subtle">
+          {deadline} 마감
+        </span>
+      )}
+      <span
+        aria-hidden
+        className="font-mono text-xs text-fg-muted transition-transform group-hover:translate-x-1"
+      >
+        →
+      </span>
+      <span className="sr-only">지원서 접수 폼으로 이동</span>
+    </a>
   )
 }

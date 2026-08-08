@@ -62,6 +62,34 @@ export function isDeadlinePassed(round: RecruitRound | null): boolean {
   return Date.now() > new Date(round.apply_deadline).getTime()
 }
 
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/**
+ * 마감까지 남은 일수. 시각 차가 아니라 KST 날짜 차이라 0은 "마감 당일"을
+ * 뜻한다. 이미 지났거나 마감 시각이 없으면 null.
+ * 호출부(/recruit)는 force-dynamic이라 Date.now()를 써도 캐시에 굳지 않는다.
+ */
+export function daysUntilDeadline(round: RecruitRound | null): number | null {
+  if (!round?.apply_deadline) return null
+  const kstDay = (ms: number) => Math.floor((ms + KST_OFFSET_MS) / DAY_MS)
+  const left = kstDay(new Date(round.apply_deadline).getTime()) - kstDay(Date.now())
+  return left < 0 ? null : left
+}
+
+/** 마감 시각을 KST 기준 "8월 23일 23:59"로 표기한다. */
+export function formatDeadlineKst(round: RecruitRound | null): string | null {
+  if (!round?.apply_deadline) return null
+  return new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(new Date(round.apply_deadline))
+}
+
 export const APPLICATION_STATUSES = [
   'submitted',
   'docs_pass',
