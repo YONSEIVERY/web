@@ -132,9 +132,12 @@ export async function sendRecruitResultBatch(args: {
   cohort: number
   stage: 'docs' | 'final'
   pass: boolean
-}): Promise<{ ok: boolean; error?: string }> {
+}): Promise<{ ok: boolean; error?: string; sentTo: string[] }> {
   const stageLabel = args.stage === 'docs' ? '서류 전형' : '최종 전형'
   const CHUNK = 100
+  // 청크 중간에 실패해도 앞선 청크는 이미 나갔다. 호출부가 중복 발송을
+  // 피할 수 있도록 실제로 나간 주소를 항상 함께 돌려준다.
+  const sentTo: string[] = []
   for (let i = 0; i < args.recipients.length; i += CHUNK) {
     const chunk = args.recipients.slice(i, i + CHUNK)
     const { error } = await resend.batch.send(
@@ -152,10 +155,11 @@ export async function sendRecruitResultBatch(args: {
     )
     if (error) {
       console.error('sendRecruitResultBatch failed', error)
-      return { ok: false, error: error.message }
+      return { ok: false, error: error.message, sentTo }
     }
+    sentTo.push(...chunk.map((r) => r.to))
   }
-  return { ok: true }
+  return { ok: true, sentTo }
 }
 
 export async function sendAlumniRegistrationNotification(args: {

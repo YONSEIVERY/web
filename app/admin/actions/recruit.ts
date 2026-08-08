@@ -88,9 +88,9 @@ export async function deleteApplication(
 
 /**
  * 단계별(서류·최종) 결과 통보 일괄 발송.
- * 해당 단계의 합불 상태이면서 아직 발송 기록이 없는 지원자에게만 보내고,
- * 발송 성공 그룹에만 시각을 찍는다. 재클릭해도 중복 발송되지 않는다.
- * "검토 전(submitted)" 지원자는 대상에서 제외된다.
+ * 해당 단계의 합불 상태이면서 아직 발송 기록이 없는 지원자에게만 보낸다.
+ * 기록을 먼저 찍고 보낸 뒤 나가지 않은 대상만 되돌리므로, 재클릭해도
+ * 중복 발송되지 않는다. "검토 전(submitted)" 지원자는 대상에서 제외된다.
  */
 export async function sendStageResults(
   _prev: SendResultsState,
@@ -139,38 +139,69 @@ export async function sendStageResults(
 
   let sentCount = 0
   const failures: string[] = []
+  // 메일은 되돌릴 수 없고 발송 기록은 되돌릴 수 있다. 그래서 스탬프를 먼저
+  // 찍고 보낸다. 후-스탬프 구조에서는 기록만 실패해도 재클릭 시 같은
+  // 지원자에게 합불 메일이 두 번 나갈 수 있었다.
   for (const pass of [true, false]) {
     const group = rows.filter(
       (r) => r.status === (pass ? passStatus : failStatus),
     )
     if (group.length === 0) continue
-    const res = await sendRecruitResultBatch({
-      recipients: group.map((r) => ({ to: r.email, name: r.name })),
-      cohort: round.cohort,
-      stage,
-      pass,
-    })
-    if (!res.ok) {
-      failures.push(pass ? '합격 그룹' : '불합격 그룹')
-      continue
-    }
-    const { error: stampErr } = await supabaseService
+    const groupLabel = pass ? '합격 그룹' : '불합격 그룹'
+
+    const { error: claimErr } = await supabaseService
       .from('applications')
       .update({ [sentColumn]: new Date().toISOString() })
       .in(
         'id',
         group.map((r) => r.id),
       )
-    if (stampErr)
-      console.error('[sendStageResults] stamp failed', stampErr)
-    sentCount += group.length
+    if (claimErr) {
+      console.error('[sendStageResults] claim failed', claimErr)
+      failures.push(`${groupLabel}(기록 실패로 미발송)`)
+      continue
+    }
+
+    const res = await sendRecruitResultBatch({
+      recipients: group.map((r) => ({ to: r.email, name: r.name })),
+      cohort: round.cohort,
+      stage,
+      pass,
+    })
+    if (res.ok) {
+      sentCount += group.length
+      continue
+    }
+
+    // 실제로 나간 주소는 스탬프를 남겨 두고, 나가지 않은 대상만 되돌려
+    // 재시도 대상으로 만든다.
+    const delivered = new Set(res.sentTo)
+    const undelivered = group.filter((r) => !delivered.has(r.email))
+    sentCount += group.length - undelivered.length
+    if (undelivered.length === 0) {
+      failures.push(groupLabel)
+      continue
+    }
+    const { error: rollbackErr } = await supabaseService
+      .from('applications')
+      .update({ [sentColumn]: null })
+      .in(
+        'id',
+        undelivered.map((r) => r.id),
+      )
+    if (rollbackErr) {
+      console.error('[sendStageResults] rollback failed', rollbackErr)
+      failures.push(`${groupLabel}(발송 실패, 기록 복구 실패. 재시도 전 확인 필요)`)
+      continue
+    }
+    failures.push(groupLabel)
   }
 
   revalidatePath('/admin/recruit')
   if (failures.length > 0)
     return {
       ok: sentCount > 0,
-      message: `${sentCount}건 발송, ${failures.join('·')} 발송 실패. 잠시 후 다시 시도하면 실패분만 재발송됩니다.`,
+      message: `${sentCount}건 발송, ${failures.join(' · ')} 실패. 다시 시도하면 미발송분만 재발송됩니다.`,
     }
   return { ok: true, message: `${sentCount}건 발송 완료.` }
 }
