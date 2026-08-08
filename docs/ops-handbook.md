@@ -26,6 +26,8 @@
 2. 지원서 양식 파일 교체: `public/downloads/very44-application.docx` (파일명·다운로드명은 recruit.ts)
 3. 접수 열기: /admin/recruit 토글. 마감은 apply_deadline이 자동 차단
 4. 심사: 상태 저장 → "결과 통보" 버튼으로 서류·최종 단계별 일괄 발송 (0020의 발송 기록 컬럼이 중복 발송을 차단)
+   - **첫 통보 전에 리허설을 한 번 돌릴 것.** 운영진 본인 이메일로 지원서를 1건 제출하고, 어드민에서 그 건만 합격으로 바꾼 뒤 "결과 통보"를 눌러 메일 도착과 발송 기록을 확인하고, 끝나면 어드민 삭제 버튼으로 그 행을 지운다 (SQL로 지우면 스토리지 첨부가 남는다). 메일은 되돌릴 수 없는데 이 경로는 시즌에 두 번밖에 쓰지 않아, 실전이 첫 실행이 되기 쉽다
+   - 심사 전 지원자는 status가 submitted라 발송 대상에서 빠진다. 리허설 전에 합불 상태인 실제 지원자가 없는지만 확인하면 메일이 섞일 일은 없다 (2026-08-09 리허설로 검증: 테스트 1건에만 기록이 찍히고 submitted 지원자는 그대로, 재클릭 대상은 0건)
 5. 합격자 확정 후: 어드민 학회원 메뉴에서 새 기수 명단 등록 (**이메일 필수**, 포털 로그인 자격). 등록 즉시 포털 멤버 디렉토리·자기소개 자동 오픈
 
 **데모데이 시즌 (매 학기 말)**
@@ -57,13 +59,14 @@
   Script가 학회 Gmail로 경고 메일을 보낸다
 - 시크릿 교체 시 Vercel env와 Apps Script 상수를 함께 갱신할 것
 
-## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0023)
+## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0024)
 
 핵심만: 0011 학회원 명단 / 0013 리크루팅 / 0014 학회원 포털 / 0016 첨부 확장 /
 0017 자기소개 / 0018 RLS 하드닝 / 0019 어드민 화이트리스트 / 0020 결과 통보 기록 /
 0021 portal_role 익명 실행권 회수 / 0022 is_admin 경화(search_path 고정 +
 portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·portal_role
-무인자 버전 추가(세션 이메일을 함수가 직접 읽어 임의 주소 조회를 차단).
+무인자 버전 추가(세션 이메일을 함수가 직접 읽어 임의 주소 조회를 차단) /
+0024 인자 있는 두 함수 드롭.
 새 마이그레이션은 파일 추가 후 Supabase SQL Editor에서 수동 실행한다.
 
 **함수 권한을 다룰 때 주의**: Supabase는 public 스키마에 default privileges가
@@ -77,15 +80,10 @@ portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·
 - 자동화 브라우저에서 서버 액션 POST가 간헐 503 (실사용자 영향 보고 없음.
   이제 실패 시 recruit_submit_failed 이벤트가 stage와 함께 남으므로,
   Vercel Analytics에서 ticket·submit 단계 실패가 잡히면 실사용자 영향으로 판정)
-- 인자 있는 is_admin(text)·portal_role(text)이 아직 남아 있다. 0023이 무인자
-  버전을 올리고 호출부 4곳(미들웨어 2곳, getPortalIdentity, requireAdmin)을
-  그쪽으로 옮겼으므로, 배포가 정상 동작하는 것을 확인한 뒤 0024로 인자 버전을
-  드롭하면 끝난다. 드롭 전까지는 authenticated가 임의 이메일로 조회할 수 있는
-  상태가 유지된다. 순서를 뒤집으면(드롭 먼저) 배포 사이에 어드민·포털이 잠긴다.
-  참고: advisor의 "Signed-In Users Can Execute SECURITY DEFINER Function" WARN은
-  드롭 후에도 남는다. 이 lint는 authenticated가 SECURITY DEFINER 함수를 실행할 수
-  있다는 사실 자체를 지적하는데, 두 함수는 미들웨어가 로그인 세션으로 호출해야 해서
-  의도된 설계다. 0023이 닫는 것은 advisor 점수가 아니라 남의 주소 조회 가능성이다
+- advisor의 "Signed-In Users Can Execute SECURITY DEFINER Function" WARN 2건은
+  앞으로도 남는다 (is_admin, portal_role). 이 lint는 authenticated가 SECURITY
+  DEFINER 함수를 실행할 수 있다는 사실 자체를 지적하는데, 두 함수는 미들웨어가
+  로그인 세션으로 호출해야 하므로 의도된 설계다. 조치 불필요
 - Auth 유출 비밀번호 보호 비활성 (advisor WARN). 로그인은 Google OAuth 전용이라
   실효가 낮다. 콘솔에서 Email provider가 꺼져 있는지만 확인하면 충분
 - 상단 탭 구조 재논의 (착수 시점 제약 없음, 대표 결정 사항)
@@ -93,3 +91,6 @@ portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·
 
 해소된 항목: portal_role 익명 호출은 0021로 차단(2026-08-08). /recruit 본문
 중앙 정렬은 같은 날 반영. is_admin search_path는 0022로 고정(2026-08-08).
+임의 이메일로 운영진·학회원 여부를 조회하던 경로는 0023(무인자 전환)과
+0024(인자 버전 드롭)로 차단(2026-08-09). 결과 통보 전 구간은 같은 날
+리허설로 검증했다.
