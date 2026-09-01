@@ -105,6 +105,10 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     count: signed.length + publicFiles.length,
+    // 서명에 실패한 항목은 위에서 걸러진다. 시도한 수를 함께 내려야
+    // 호출부가 "원래 몇 개였는데 몇 개가 빠졌는지"를 알 수 있다.
+    // 이것이 없으면 사진이 조용히 백업에서 사라져도 아무도 모른다.
+    signedExpected: slots.length,
     signedCount: signed.length,
     publicCount: publicFiles.length,
     files: [...signed, ...publicFiles],
