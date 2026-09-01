@@ -202,10 +202,17 @@ export default async function MemberSignupsPage() {
         </p>
       )}
 
-      {/* 좁은 화면에서는 신청자 열을 고정한다. 오른쪽 끝 승인·반려를 누를 때
-          대상이 화면에서 사라지지 않게 하기 위함이다. */}
-      <div className="mt-8 overflow-x-auto">
-        <table className="w-full min-w-[960px] text-sm">
+      {/* 0건일 때 표를 그리면 min-w-[960px] 때문에 안내 문구가 화면 밖으로
+          밀려 잘린 헤더만 보인다. 빈 상태는 표 없이 문구만 낸다. */}
+      {pending.length === 0 ? (
+        <p className="mt-8 border border-border p-12 text-center text-sm text-fg-muted">
+          대기 중인 신청이 없습니다.
+        </p>
+      ) : (
+        /* 좁은 화면에서는 신청자 열을 고정한다. 오른쪽 끝 승인·반려를 누를 때
+           대상이 화면에서 사라지지 않게 하기 위함이다. */
+        <div className="mt-8 overflow-x-auto">
+          <table className="w-full min-w-[960px] text-sm">
           <thead className="border-b border-border">
             <tr className="text-left">
               <Th sticky>신청자</Th>
@@ -275,18 +282,10 @@ export default async function MemberSignupsPage() {
                 </tr>
               )
             })}
-            {pending.length === 0 && (
-              <tr>
-                <Td colSpan={6}>
-                  <p className="py-12 text-center text-fg-muted">
-                    대기 중인 신청이 없습니다.
-                  </p>
-                </Td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {reviewed.length > 0 && (
         <section className="mt-14">
