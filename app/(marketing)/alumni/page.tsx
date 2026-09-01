@@ -153,7 +153,7 @@ function SpotlightSection({ companies }: { companies: AlumniCompany[] }) {
                     {company.stage && (
                       <span
                         translate="no"
-                        className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                        className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent-text md:text-xs"
                       >
                         {company.stage}
                       </span>
@@ -272,7 +272,7 @@ function SponsorSubsection({
               {s.cohort_label && (
                 <span
                   translate="no"
-                  className="font-mono text-[10px] uppercase tracking-[0.28em] text-accent"
+                  className="font-mono text-[10px] uppercase tracking-[0.28em] text-accent-text"
                 >
                   {s.cohort_label}
                 </span>

@@ -147,7 +147,7 @@ function RosterSection({ roster }: { roster: Partner[] }) {
               >
                 <span
                   translate="no"
-                  className="col-span-4 font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:col-span-2 md:text-xs"
+                  className="col-span-4 font-mono text-[10px] uppercase tracking-[0.32em] text-accent-text md:col-span-2 md:text-xs"
                 >
                   {partner.category}
                 </span>

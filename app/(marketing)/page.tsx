@@ -215,7 +215,7 @@ function ManifestoSection() {
           <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
             {heroHeadline}
           </span>
-          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05] text-accent">
+          <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05] text-accent-text">
             {heroHeadline2}
           </span>
         </h2>

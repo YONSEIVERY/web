@@ -100,7 +100,7 @@ function ChannelsSection() {
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
                 translate="no"
-                className="col-span-8 inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight text-fg-primary transition-colors hover:text-accent md:col-span-4 md:text-xl"
+                className="col-span-8 inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight text-fg-primary transition-colors hover:text-accent-text md:col-span-4 md:text-xl"
               >
                 {item.label}
                 <span aria-hidden className="text-fg-muted">

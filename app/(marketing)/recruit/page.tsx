@@ -230,7 +230,7 @@ function Countdown({
       <span
         translate="no"
         className={`font-mono text-xs uppercase tracking-[0.28em] ${
-          urgent ? 'text-accent' : 'text-fg-primary'
+          urgent ? 'text-accent-text' : 'text-fg-primary'
         }`}
       >
         {left === 0 ? 'D-DAY' : `D-${left}`}

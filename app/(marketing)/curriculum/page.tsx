@@ -91,7 +91,7 @@ function TracksSection() {
               <div className="flex shrink-0 items-baseline gap-2">
                 <span
                   translate="no"
-                  className="font-mono text-xs tracking-[0.16em] text-accent"
+                  className="font-mono text-xs tracking-[0.16em] text-accent-text"
                 >
                   {item.num}
                 </span>
@@ -136,7 +136,7 @@ function TracksSection() {
                 </p>
                 <ul
                   translate="no"
-                  className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.24em] text-accent md:text-xs"
+                  className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.24em] text-accent-text md:text-xs"
                 >
                   {item.tags.map((t) => (
                     <li key={t}>{t}</li>
@@ -207,7 +207,7 @@ function SessionsSection() {
               <div className="col-span-12 flex flex-col gap-2 md:col-span-4">
                 <span
                   translate="no"
-                  className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                  className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent-text md:text-xs"
                 >
                   <span
                     aria-hidden

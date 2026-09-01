@@ -9,7 +9,7 @@ import {
 import { PrivacyConsent } from '@/components/forms/privacy-consent'
 
 const INPUT_CLASS =
-  'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
+  'w-full border border-border bg-bg-base px-4 py-3 font-display text-base text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none md:text-sm'
 const LABEL_CLASS =
   'flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs'
 
@@ -64,7 +64,7 @@ export function PartnerApplicationForm() {
       <PrivacyConsent text="파트너십 검토와 연락을 위해 신청자 이름과 이메일을 수집·이용하는 것에 동의합니다. 자료는 목적 달성 후 1년이 지나면 파기됩니다. 동의를 거부할 권리가 있으며, 거부 시 신청이 불가합니다." />
 
       {state.status === 'error' && (
-        <p className="text-sm text-red-400">{state.message}</p>
+        <p aria-live="polite" className="text-sm text-red-400">{state.message}</p>
       )}
       <SubmitButton />
     </form>
@@ -123,7 +123,7 @@ function Field({ name, label, type = 'text', required, maxLength }: FieldProps) 
     <label className="flex flex-col gap-2">
       <span className={LABEL_CLASS}>
         {label}
-        {required && <span aria-hidden className="ml-1 text-accent">*</span>}
+        {required && <span aria-hidden className="ml-1 text-accent-text">*</span>}
       </span>
       <input
         type={type}
@@ -163,7 +163,7 @@ function RadioRow({
     <fieldset className="flex flex-col gap-2">
       <legend className={LABEL_CLASS}>
         {label}
-        <span aria-hidden className="ml-1 text-accent">
+        <span aria-hidden className="ml-1 text-accent-text">
           *
         </span>
       </legend>

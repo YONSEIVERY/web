@@ -10,6 +10,10 @@
      copy reads neutral against full-bleed photographic backgrounds (per
      the instagram session card system: monochrome + natural tones). */
   --color-accent: #3340c8;
+  /* 텍스트 전용 accent. #3340c8은 #161616 위에서 명암비 2.3:1이라 배경과
+     보더에만 쓰고, 글자에는 같은 코발트 계열에서 4.5:1을 넘는 이 값을 쓴다.
+     라벨·아이브로우가 야외 밝기 폰에서 읽히지 않던 문제의 수정이다. */
+  --color-accent-text: #7b87ec;
   --color-accent-2: #9098b0;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-strong: rgba(255, 255, 255, 0.18);

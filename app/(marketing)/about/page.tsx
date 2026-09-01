@@ -162,7 +162,7 @@ function ManifestoSection() {
               <span
                 aria-hidden
                 translate="no"
-                className="mt-[0.3em] inline-block font-mono text-xs text-accent"
+                className="mt-[0.3em] inline-block font-mono text-xs text-accent-text"
               >
                 &gt;
               </span>
@@ -199,7 +199,7 @@ function CoreValueSection() {
                   </span>
                   <span
                     translate="no"
-                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-accent-text md:text-xs"
                   >
                     {item.mono}
                   </span>
@@ -239,7 +239,7 @@ function MindsetSection() {
               <div className="col-span-12 flex flex-col gap-2 md:col-span-4">
                 <span
                   translate="no"
-                  className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent md:text-xs"
+                  className="flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-accent-text md:text-xs"
                 >
                   <span
                     aria-hidden
