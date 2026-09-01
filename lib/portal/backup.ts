@@ -48,6 +48,41 @@ export type PortalDump = {
 }
 
 /**
+ * 한 번에 가져오는 행 수. Supabase(PostgREST)는 요청당 기본 1000행에서
+ * 자르고 오류를 내지 않는다. 페이지네이션이 없으면 덤프가 조용히 잘린다.
+ * 잘린 백업은 백업이 아니다.
+ */
+const PAGE = 1000
+
+/** 무한 루프 방지. 이 저장소 규모에서 100만 행은 도달할 수 없는 수다. */
+const MAX_PAGES = 1000
+
+/**
+ * 페이지 경계가 흔들리지 않도록 정렬 키를 고정한다. 정렬 없이 range로
+ * 나눠 읽으면 중간에 행이 들어오고 나갈 때 같은 행을 두 번 받거나
+ * 통째로 놓칠 수 있다. 대부분 id지만 기본키가 다른 두 테이블이 있다.
+ */
+const ORDER_BY: Record<BackupTable, string> = {
+  admins: 'id',
+  alumni: 'id',
+  alumni_companies: 'id',
+  applications: 'id',
+  attendance: 'id',
+  club_sessions: 'id',
+  cohort_members: 'id',
+  demoday_attendees: 'id',
+  demoday_events: 'id',
+  inquiries: 'id',
+  member_intros: 'member_id',
+  notices: 'id',
+  partners: 'id',
+  recruit_rounds: 'id',
+  session_posts: 'id',
+  site_config: 'key',
+  sponsors: 'id',
+}
+
+/**
  * 모든 대상 테이블을 통째로 읽어 하나의 객체로 만든다.
  *
  * 한 테이블이 실패해도 나머지를 포기하지 않는다. 백업이 전부 아니면
@@ -60,17 +95,36 @@ export async function buildPortalDump(): Promise<PortalDump> {
   let totalRows = 0
 
   for (const table of BACKUP_TABLES) {
-    const { data, error } = await supabaseService
-      .from(table)
-      .select('*')
-      .returns<Record<string, unknown>[]>()
+    const rows: Record<string, unknown>[] = []
 
-    if (error) {
-      console.error('[backup-portal] dump failed', table, error)
-      failed.push({ table, message: error.message })
-      continue
+    for (let page = 0; page < MAX_PAGES; page++) {
+      const from = page * PAGE
+      const { data, error } = await supabaseService
+        .from(table)
+        .select('*')
+        .order(ORDER_BY[table], { ascending: true })
+        .range(from, from + PAGE - 1)
+        .returns<Record<string, unknown>[]>()
+
+      if (error) {
+        console.error('[backup-portal] dump failed', table, error)
+        failed.push({ table, message: error.message })
+        break
+      }
+      const batch = data ?? []
+      rows.push(...batch)
+      if (batch.length < PAGE) break
+      if (page === MAX_PAGES - 1) {
+        // 여기 닿았다면 PAGE * MAX_PAGES 행을 넘었다는 뜻이다.
+        // 조용히 자르지 않고 실패로 올린다.
+        failed.push({
+          table,
+          message: `행 수가 ${PAGE * MAX_PAGES}를 넘어 덤프가 잘렸습니다.`,
+        })
+      }
     }
-    const rows = data ?? []
+
+    // 실패한 테이블도 받은 만큼은 남긴다. 부분 사본이 없는 것보다 낫다.
     tables[table] = { rows, count: rows.length }
     totalRows += rows.length
   }
