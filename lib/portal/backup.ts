@@ -75,6 +75,7 @@ const ORDER_BY: Record<BackupTable, string> = {
   demoday_events: 'id',
   inquiries: 'id',
   member_intros: 'member_id',
+  member_signups: 'id',
   notices: 'id',
   partners: 'id',
   recruit_rounds: 'id',
