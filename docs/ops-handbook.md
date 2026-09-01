@@ -52,22 +52,80 @@
 
 ## 4.5 백업 (pull 구조)
 
-- 학회 계정의 Apps Script(트리거 매일)가 `/api/backup-recruit`(명단 엑셀)와
-  `/api/backup-recruit/files`(첨부 서명 URL 목록)를 `CRON_SECRET` Bearer로
-  호출해 드라이브 "VERY 지원자 백업" 폴더에 증분 저장한다
-- 서버는 드라이브 자격증명을 갖지 않는다 (격리 원칙). 백업 실패 시 Apps
-  Script가 학회 Gmail로 경고 메일을 보낸다
-- 시크릿 교체 시 Vercel env와 Apps Script 상수를 함께 갱신할 것
+**이 프로젝트는 Supabase Free 플랜이라 플랫폼 자동 백업이 없다.** 일 1회 자동
+백업은 Pro 이상이고, 공식 문서도 Free 프로젝트는 직접 export해 외부에 보관하라고
+안내한다. 아래 드라이브 백업이 사고 시 되돌릴 수 있는 유일한 지점이다.
 
-## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0024)
+학회 계정의 Apps Script(트리거 매일)가 아래 넷을 `CRON_SECRET` Bearer로 호출해
+드라이브에 증분 저장한다. 서버는 드라이브 자격증명을 갖지 않는다 (격리 원칙).
+
+| 엔드포인트 | 내용 | 저장 폴더 |
+|---|---|---|
+| `/api/backup-recruit` | 지원자 명단 엑셀 (사람이 읽는 용도) | VERY 지원자 백업 |
+| `/api/backup-recruit/files` | 지원서 첨부 서명 URL 목록 | VERY 지원자 백업 |
+| `/api/backup-portal` | **전 테이블 JSON 덤프 (복원용)** | VERY 포털 백업 |
+| `/api/backup-portal/files` | 세션 기록 사진 서명 URL + 공개 자산 URL | VERY 포털 백업 |
+
+- 백업 실패 시 Apps Script가 학회 Gmail로 경고 메일을 보낸다
+- `/api/backup-portal` 응답 헤더 `x-total-rows`, `x-table-count`, `x-failed-count`로
+  본문을 파싱하지 않고 이상을 감지할 수 있다. **`x-failed-count`가 0이 아니거나
+  `x-total-rows`가 전날보다 크게 줄면 경고를 보내도록 Apps Script에 조건을 둘 것**
+- 백업 대상 테이블은 `lib/portal/backup.ts`의 `BACKUP_TABLES`다. 새 테이블을
+  만들고 여기에 넣지 않으면 조용히 백업에서 빠지므로,
+  `scripts/check-backup-tables.mjs`가 빌드에서 마이그레이션과 대조해 막는다
+- 시크릿 교체 시 Vercel env와 Apps Script 상수를 함께 갱신할 것
+- 매일 도는 이 호출은 Free 플랜의 7일 무활동 일시정지도 함께 막는다.
+  방학 중 포털 접속이 끊겨도 프로젝트가 멈추지 않는다
+
+**점검 주기**: 매달 1일, 드라이브 폴더의 최신 파일 날짜가 어제인지 확인한다.
+백업은 조용히 죽는다. 확인하지 않으면 필요할 때 비어 있다.
+
+포털 백업 Apps Script 코드와 설치 절차는 `docs/apps-script-backup.md`에 있다.
+
+## 4.6 위험 작업 절차 (DB를 직접 만질 때)
+
+운영 중 보수·개선은 계속 하되, 아래는 예외 없이 지킨다. 2026-08-09의 지원서
+소실 의심은 테스트 건이었던 것으로 종결됐지만, 그 판정에 3주가 걸렸고 근거는
+사람의 기억뿐이었다. 기록이 있었다면 당일에 끝났을 일이다.
+
+1. **영향 범위를 먼저 센다.** DELETE·UPDATE를 실행하기 전에 같은 `where`로
+   `select count(*)`를 돌려 몇 행이 걸리는지 확인한다. 예상과 다르면 멈춘다
+2. **트랜잭션으로 감싼다.** `begin;` 실행 후 결과를 확인하고 `commit;`.
+   이상하면 `rollback;`. SQL Editor는 자동 커밋이므로 이 습관이 유일한 방어다
+3. **스키마를 바꾸기 전에 백업을 한 번 당긴다.** `/api/backup-portal`을 수동
+   호출해 그 시점 덤프를 드라이브에 남긴 뒤 마이그레이션을 실행한다
+4. **마이그레이션은 파일로 남긴다.** SQL Editor에 즉석으로 친 문장은 이력이
+   없다. `supabase/migrations/`에 번호를 붙여 커밋한 뒤 그 파일을 실행한다
+5. **삭제는 마지막 수단이다.** 세션은 `is_published=false` 아카이브,
+   학회원은 명단 이관으로 대부분 해결된다
+
+0025 이후 출결·기록이 딸린 세션과 학회원은 삭제 자체가 막힌다(RESTRICT).
+0026 이후 모든 삭제는 `audit_log`에 원본 행째로 남고 TRUNCATE는 차단된다.
+누가 지웠는지 확인하려면:
+
+```sql
+select occurred_at, table_name, actor, actor_role, old_row
+from audit_log order by occurred_at desc limit 50;
+```
+
+`actor_role`이 `service_role`이면 웹 화면 경유, `direct`이면 대시보드 수동 SQL이다.
+
+## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0024, **0025·0026 적용 대기**)
 
 핵심만: 0011 학회원 명단 / 0013 리크루팅 / 0014 학회원 포털 / 0016 첨부 확장 /
 0017 자기소개 / 0018 RLS 하드닝 / 0019 어드민 화이트리스트 / 0020 결과 통보 기록 /
 0021 portal_role 익명 실행권 회수 / 0022 is_admin 경화(search_path 고정 +
 portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·portal_role
 무인자 버전 추가(세션 이메일을 함수가 직접 읽어 임의 주소 조회를 차단) /
-0024 인자 있는 두 함수 드롭.
+0024 인자 있는 두 함수 드롭 / **0025 연쇄 삭제 차단(출결·기록·지원서를 딸린
+세션·학회원·라운드와 함께 지우지 못하게 RESTRICT로 전환)** / **0026 삭제 감사
+기록과 TRUNCATE 차단**.
 새 마이그레이션은 파일 추가 후 Supabase SQL Editor에서 수동 실행한다.
+
+**0025·0026 적용 순서**: 0025 먼저, 0026 다음. 각각 `begin;`으로 감싸고 끝의
+`select ... as result`가 기대한 문자열을 돌려주는지 확인한 뒤 `commit;` 한다.
+0025 적용 후 `deleteSession`과 학회원 삭제가 딸린 데이터가 있으면 실패하게
+되는데, 이는 의도한 동작이다.
 
 **함수 권한을 다룰 때 주의**: Supabase는 public 스키마에 default privileges가
 걸려 있어, 새로 만든 함수에 anon·authenticated·service_role 실행권이 자동으로

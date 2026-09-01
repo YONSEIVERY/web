@@ -5,6 +5,7 @@ import type { Route } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseService } from '@/lib/supabase/service'
 import { requireAdmin } from '@/lib/admin/is-admin'
+import { deleteBlockedMessage } from '@/lib/db/fk-error'
 import type { CohortMemberActionState } from './cohort-members-state'
 
 /**
@@ -329,7 +330,8 @@ export async function deleteMember(
     .eq('id', id)
   if (error) {
     console.error('[deleteMember] failed', error)
-    return { status: 'error', message: '삭제에 실패했습니다.' }
+    const blocked = deleteBlockedMessage(error, '학회원', '출결 기록')
+    return { status: 'error', message: blocked ?? '삭제에 실패했습니다.' }
   }
   const oldPath = extractStoragePath(photoUrl, 'cohort-member-photos')
   if (oldPath) {
