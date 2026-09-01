@@ -1,3 +1,4 @@
+import { PortalSubmitButton } from '@/components/portal/submit-button'
 import type { ClubSession } from '@/lib/portal/queries'
 import { formatKstDatetimeLocal } from '@/lib/utils/format-date'
 
@@ -165,13 +166,11 @@ export function SessionForm({
         </span>
       </label>
 
-      <button
-        type="submit"
+      <PortalSubmitButton
+        label={submitLabel}
         className="inline-flex w-fit items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base"
-      >
-        {submitLabel}
-        <span aria-hidden>→</span>
-      </button>
+        withArrow
+      />
     </form>
   )
 }

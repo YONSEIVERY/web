@@ -78,7 +78,10 @@ export async function createSession(formData: FormData) {
     throw new Error('세션 저장에 실패했습니다.')
   }
   revalidatePath('/members')
-  redirect(`/members/manage/sessions/${data.id}`)
+  revalidatePath('/members/manage/sessions')
+  // 편집 화면으로 보내면 방금 채운 폼이 그대로 다시 떠서 저장이 된 것인지 알 수 없다.
+  // 목록으로 보내야 새 세션이 눈에 보이고, 그래야 연타로 중복 생성하지 않는다.
+  redirect('/members/manage/sessions')
 }
 
 export async function updateSession(formData: FormData) {
@@ -95,8 +98,10 @@ export async function updateSession(formData: FormData) {
     throw new Error('세션 저장에 실패했습니다.')
   }
   revalidatePath('/members')
+  revalidatePath('/members/manage/sessions')
   revalidatePath(`/members/sessions/${id}`)
   revalidatePath(`/members/manage/sessions/${id}`)
+  redirect('/members/manage/sessions')
 }
 
 export async function deleteSession(formData: FormData) {

@@ -2,6 +2,7 @@ import { requireExec } from '@/lib/portal/auth'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getNotices } from '@/lib/portal/queries'
 import { createNotice, deleteNotice } from '@/app/members/actions/portal'
+import { PortalSubmitButton } from '@/components/portal/submit-button'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 
 export const dynamic = 'force-dynamic'
@@ -54,12 +55,11 @@ export default async function ManageNoticesPage() {
             />
             상단 고정
           </label>
-          <button
-            type="submit"
+          <PortalSubmitButton
+            label="공지 올리기"
+            pendingLabel="올리는 중…"
             className="border border-fg-primary px-5 py-2 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base"
-          >
-            공지 올리기
-          </button>
+          />
         </div>
       </form>
 
