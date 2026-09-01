@@ -29,7 +29,7 @@ const LABEL_CLASS =
   'flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs'
 
 const CONSENT_TEXT =
-  '학회원 포털 계정 등록과 학회 운영을 위해 이름, 이메일, 연락처와 학번·단과대·전공(선택)을 수집·이용하는 것에 동의합니다. 정보는 학회원 자격이 유지되는 동안 보유하며, 본인이 삭제를 요청하면 파기합니다. 동의를 거부할 권리가 있으며, 거부 시 등록 신청이 불가합니다.'
+  '학회원 포털 계정 등록과 학회 운영을 위해 이름, 이메일, 연락처와 학번·단과대·전공을 수집·이용하는 것에 동의합니다. 정보는 학회원 자격이 유지되는 동안 보유하며, 본인이 삭제를 요청하면 파기합니다. 동의를 거부할 권리가 있으며, 거부 시 등록 신청이 불가합니다.'
 
 export function MemberSignupForm({ cohort }: { cohort: number }) {
   const [pending, setPending] = useState(false)
@@ -118,10 +118,10 @@ export function MemberSignupForm({ cohort }: { cohort: number }) {
         />
       </Fieldset>
 
-      <Fieldset legend="학적 정보 (선택)">
-        <Field name="student_id" label="학번" maxLength={20} />
-        <Field name="college" label="단과대" maxLength={60} />
-        <Field name="major" label="전공" maxLength={60} />
+      <Fieldset legend="학적 정보">
+        <Field name="student_id" label="학번" required maxLength={20} />
+        <Field name="college" label="단과대" required maxLength={60} />
+        <Field name="major" label="전공" required maxLength={60} />
       </Fieldset>
 
       <div className="border-t border-border pt-8">
@@ -224,14 +224,9 @@ function Field({
   return (
     <div className="flex flex-col gap-2">
       <label className="flex flex-col gap-2">
-        <span className={LABEL_CLASS}>
-          {label}
-          {required && (
-            <span aria-hidden className="ml-1 text-accent">
-              *
-            </span>
-          )}
-        </span>
+        {/* 모든 칸이 필수라 표시가 정보를 주지 않는다. 별표를 붙이면
+            선택 항목이 있는 것처럼 읽혀 오히려 헷갈린다. */}
+        <span className={LABEL_CLASS}>{label}</span>
         <input
           type={type}
           name={name}
