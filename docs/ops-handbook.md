@@ -145,11 +145,18 @@ where tc.constraint_type = 'FOREIGN KEY'
     'attendance_session_id_fkey', 'attendance_member_id_fkey',
     'session_posts_session_id_fkey', 'applications_round_id_fkey');
 
--- 2) 감사 트리거가 붙었는가. 11개 테이블 x 2종 = 22행이어야 한다
-select count(*) as triggers
-from information_schema.triggers
-where trigger_schema = 'public'
-  and trigger_name in ('audit_delete', 'no_truncate');
+-- 2) 감사 트리거가 붙었는가. audit_delete 11, no_truncate 11이어야 한다.
+--    information_schema.triggers를 쓰지 말 것. 그 뷰는 TRUNCATE 트리거를
+--    표시하지 않아 no_truncate가 통째로 빠지고, 22가 아니라 11이 나온다.
+--    적용이 덜 된 것으로 오판하기 쉽다. pg_trigger를 직접 본다.
+select t.tgname, count(*) as n
+from pg_trigger t
+join pg_class c on c.oid = t.tgrelid
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and not t.tgisinternal
+  and t.tgname in ('audit_delete', 'no_truncate')
+group by t.tgname order by t.tgname;
 
 -- 3) audit_log가 전면 차단인가. rls=true, policies=0이어야 한다
 select c.relrowsecurity as rls,
