@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseService } from '@/lib/supabase/service'
 import { requireExec } from '@/lib/portal/auth'
+import { deleteBlockedMessage } from '@/lib/db/fk-error'
 import type { DeleteState } from '@/app/admin/actions/delete-state'
 import {
   ATTENDANCE_STATUSES,
@@ -121,7 +122,10 @@ export async function deleteSession(
     .eq('id', id)
   if (error) {
     console.error('[deleteSession] delete failed', error)
-    return { ok: false, error: '세션 삭제에 실패했습니다.' }
+    // 0025 이후 출결이나 기록이 딸린 세션은 삭제가 막힌다. 의도한 동작이므로
+    // 실패가 아니라 무엇을 먼저 정리해야 하는지로 안내한다.
+    const blocked = deleteBlockedMessage(error, '세션', '출결 또는 기록')
+    return { ok: false, error: blocked ?? '세션 삭제에 실패했습니다.' }
   }
   revalidatePath('/members')
   redirect('/members/manage/sessions')
