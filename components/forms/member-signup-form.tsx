@@ -96,7 +96,7 @@ export function MemberSignupForm({ cohort }: { cohort: number }) {
           type="email"
           maxLength={254}
           autoComplete="email"
-          hint="지메일 또는 연세대 메일(@yonsei.ac.kr)을 적어주세요. 포털은 구글 계정으로만 열려서 네이버·다음 주소로는 로그인할 수 없습니다."
+          hint="지메일 또는 연세메일(@yonsei.ac.kr)을 적어주세요. 포털은 구글 계정으로만 열려서 네이버·다음 주소로는 로그인할 수 없습니다."
         />
         <Field
           name="email_confirm"
