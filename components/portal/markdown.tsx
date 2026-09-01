@@ -60,6 +60,14 @@ export function Markdown({ content }: { content: string }) {
               {...props}
             />
           ),
+          // 펜스 코드 블록도 위 code 오버라이드를 타므로, 블록 안에서는 인라인
+          // 칩 스타일(테두리·패딩)을 되돌리고 가로 스크롤은 pre가 받는다.
+          pre: (props) => (
+            <pre
+              className="my-4 overflow-x-auto border border-border p-4 font-mono text-xs [&>code]:border-0 [&>code]:bg-transparent [&>code]:p-0 [&>code]:text-[1em]"
+              {...props}
+            />
+          ),
           table: (props) => (
             <div className="my-5 overflow-x-auto">
               <table className="w-full border-collapse text-sm" {...props} />

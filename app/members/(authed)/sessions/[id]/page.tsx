@@ -1,4 +1,6 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { notFound } from 'next/navigation'
 import { getSiteConfig } from '@/lib/data/site-config'
@@ -9,6 +11,18 @@ import { Markdown } from '@/components/portal/markdown'
 import { SessionPosts } from '@/components/portal/session-posts'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const session = await getSessionById(id)
+  // 비공개 초안 제목은 임원진 전용이라 탭 제목으로도 내보내지 않는다
+  if (!session || !session.is_published) return {}
+  return { title: session.title }
+}
 
 export default async function MemberSessionPage({
   params,
@@ -70,11 +84,13 @@ export default async function MemberSessionPage({
       )}
 
       {session.allow_posts && identity && (
-        <SessionPosts
-          sessionId={session.id}
-          viewerEmail={identity.email}
-          viewerIsExec={isExec}
-        />
+        <Suspense fallback={<SessionPostsFallback />}>
+          <SessionPosts
+            sessionId={session.id}
+            viewerEmail={identity.email}
+            viewerIsExec={isExec}
+          />
+        </Suspense>
       )}
 
       <div className="mt-12 flex flex-wrap gap-6">
@@ -92,6 +108,28 @@ export default async function MemberSessionPage({
             편집
           </Link>
         )}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * 기록 피드는 서명 URL 배치 발급까지 기다리므로 세션 본문보다 늦다.
+ * 경계를 두어 본문을 먼저 흘려보내고, 이 골격이 자리를 잡아둔다.
+ * 모양은 sessions/[id]/loading.tsx의 스켈레톤 관용구를 따른다.
+ */
+function SessionPostsFallback() {
+  return (
+    <div
+      role="status"
+      className="mt-14 border-t border-border pt-10 motion-safe:animate-pulse"
+    >
+      <span className="sr-only">불러오는 중</span>
+      <div aria-hidden>
+        <div className="h-3 w-40 bg-border/30" />
+        <div className="mt-3 h-7 w-40 bg-border/30 md:h-8" />
+        <div className="mt-6 h-24 border border-border" />
+        <div className="mt-8 h-28 border border-border" />
       </div>
     </div>
   )

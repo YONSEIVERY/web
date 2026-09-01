@@ -3,8 +3,9 @@ import type { Route } from 'next'
 import { notFound } from 'next/navigation'
 import { requireExec } from '@/lib/portal/auth'
 import { getSessionById } from '@/lib/portal/queries'
-import { deleteSession, updateSession } from '@/app/members/actions/portal'
+import { updateSession } from '@/app/members/actions/portal'
 import { SessionForm } from '@/components/portal/session-form'
+import { DeleteButton } from '@/components/admin/delete-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,15 +52,25 @@ export default async function EditSessionPage({
         submitLabel="저장"
       />
 
-      <form action={deleteSession} className="mt-12 border-t border-border pt-6">
-        <input type="hidden" name="id" value={session.id} />
-        <button
-          type="submit"
-          className="font-mono text-[10px] uppercase tracking-[0.28em] text-red-600 underline"
+      <section className="mt-12 max-w-3xl border border-red-400 p-6">
+        <h2
+          translate="no"
+          className="font-mono text-[10px] uppercase tracking-[0.32em] text-red-400"
         >
-          세션 삭제 (출결 기록 포함, 복구 불가)
-        </button>
-      </form>
+          DANGER · DELETE
+        </h2>
+        <p className="mt-2 text-xs text-fg-muted">
+          이 세션을 삭제하면 연결된 출결 기록과 학회원 기록이 함께 사라집니다.
+          복구할 수 없습니다.
+        </p>
+        <div className="mt-4">
+          <DeleteButton
+            kind="club_session"
+            id={session.id}
+            label={`${session.week !== null ? `${session.week}주차 · ` : ''}${session.title} (출결 기록 포함)`}
+          />
+        </div>
+      </section>
     </div>
   )
 }

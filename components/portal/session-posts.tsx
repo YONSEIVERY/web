@@ -44,7 +44,7 @@ export async function SessionPosts({
         MEMBER NOTES · {posts.length}
       </p>
       <h2 className="mt-3 font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
-        학회원 기록.
+        학회원 기록
       </h2>
 
       <div className="mt-6">

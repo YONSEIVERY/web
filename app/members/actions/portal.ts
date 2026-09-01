@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseService } from '@/lib/supabase/service'
 import { requireExec } from '@/lib/portal/auth'
+import type { DeleteState } from '@/app/admin/actions/delete-state'
 import {
   ATTENDANCE_STATUSES,
   SESSION_KINDS,
@@ -104,17 +105,23 @@ export async function updateSession(formData: FormData) {
   redirect('/members/manage/sessions')
 }
 
-export async function deleteSession(formData: FormData) {
+// DeleteButton(useActionState)이 쓰는 시그니처. 실패는 던지지 않고 상태로
+// 돌려줘야 편집 화면이 살아 있는 채로 사유가 보인다. 성공 경로의 redirect는
+// never라 반환형과 충돌하지 않는다.
+export async function deleteSession(
+  _prev: DeleteState,
+  formData: FormData,
+): Promise<DeleteState> {
   await requireExec()
   const id = String(formData.get('id') ?? '')
-  if (!id) return
+  if (!id) return { ok: false, error: '잘못된 요청입니다.' }
   const { error } = await supabaseService
     .from('club_sessions')
     .delete()
     .eq('id', id)
   if (error) {
     console.error('[deleteSession] delete failed', error)
-    throw new Error('세션 삭제에 실패했습니다.')
+    return { ok: false, error: '세션 삭제에 실패했습니다.' }
   }
   revalidatePath('/members')
   redirect('/members/manage/sessions')
@@ -140,17 +147,21 @@ export async function createNotice(formData: FormData) {
   revalidatePath('/members/manage/notices')
 }
 
-export async function deleteNotice(formData: FormData) {
+export async function deleteNotice(
+  _prev: DeleteState,
+  formData: FormData,
+): Promise<DeleteState> {
   await requireExec()
   const id = String(formData.get('id') ?? '')
-  if (!id) return
+  if (!id) return { ok: false, error: '잘못된 요청입니다.' }
   const { error } = await supabaseService.from('notices').delete().eq('id', id)
   if (error) {
     console.error('[deleteNotice] delete failed', error)
-    throw new Error('공지 삭제에 실패했습니다.')
+    return { ok: false, error: '공지 삭제에 실패했습니다.' }
   }
   revalidatePath('/members')
   revalidatePath('/members/manage/notices')
+  return { ok: true, error: null }
 }
 
 export async function setAttendance(formData: FormData) {

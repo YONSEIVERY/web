@@ -56,7 +56,7 @@ export function IndustryInquiryForm() {
       <PrivacyConsent text="문의 응대를 위해 회사명, 담당자 이름, 이메일과 문의 내용을 수집·이용하는 것에 동의합니다. 자료는 목적 달성 후 1년이 지나면 파기됩니다. 동의를 거부할 권리가 있으며, 거부 시 문의 접수가 불가합니다." />
 
       {state.status === 'error' && (
-        <p className="text-sm text-red-600">{state.message}</p>
+        <p className="text-sm text-red-400">{state.message}</p>
       )}
       <SubmitButton />
     </form>

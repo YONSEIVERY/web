@@ -28,7 +28,7 @@ export function PosterUploadForm({ id }: { id: string }) {
           <span className="text-xs text-green-700">{state.message}</span>
         )}
         {state.status === 'error' && (
-          <span className="text-xs text-red-600">{state.message}</span>
+          <span className="text-xs text-red-400">{state.message}</span>
         )}
       </div>
       <p className="text-[10px] text-fg-muted">PNG·JPEG·WEBP / 5MB 이하</p>

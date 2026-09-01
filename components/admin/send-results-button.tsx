@@ -54,7 +54,7 @@ export function SendResultsButton({
       {state.message && (
         <span
           role="status"
-          className={`text-xs ${state.ok ? 'text-fg-subtle' : 'text-red-600'}`}
+          className={`text-xs ${state.ok ? 'text-fg-subtle' : 'text-red-400'}`}
         >
           {state.message}
         </span>

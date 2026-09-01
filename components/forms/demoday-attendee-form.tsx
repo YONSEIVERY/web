@@ -134,7 +134,7 @@ export function DemodayAttendeeForm({
       </div>
 
       {state.status === 'error' && (
-        <p className="text-sm text-red-600">{state.message}</p>
+        <p className="text-sm text-red-400">{state.message}</p>
       )}
       <SubmitButton />
     </form>

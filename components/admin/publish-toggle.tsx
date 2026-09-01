@@ -41,7 +41,7 @@ export function PublishToggle({
       <input type="hidden" name="value" value={String(!published)} />
       <ToggleButton published={published} />
       {state.error ? (
-        <span className="text-xs text-red-600">{state.error}</span>
+        <span className="text-xs text-red-400">{state.error}</span>
       ) : null}
     </form>
   )

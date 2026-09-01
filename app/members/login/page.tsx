@@ -13,7 +13,7 @@ export default async function MembersLoginPage({
 }) {
   const { error } = await searchParams
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
+    <main className="min-h-dvh flex items-center justify-center px-6">
       <div className="w-full max-w-sm border border-border p-10">
         <p
           translate="no"
@@ -25,12 +25,12 @@ export default async function MembersLoginPage({
           학회원 포털
         </h1>
         {error === 'not_member' && (
-          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-600">
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-400">
             ▲ 학회원 명단에 없는 계정입니다.
           </p>
         )}
         {error === 'oauth_failed' && (
-          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-600">
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-400">
             ▲ 로그인에 실패했습니다. 다시 시도해주세요.
           </p>
         )}

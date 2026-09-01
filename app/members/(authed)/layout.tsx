@@ -21,7 +21,7 @@ export default async function MembersLayout({
   if (!identity) redirect('/members/login')
 
   return (
-    <div className="min-h-screen bg-bg-base">
+    <div className="min-h-dvh bg-bg-base">
       <PortalNav isExec={identity.role === 'exec'} />
       <main className="px-4 pb-16 pt-20 md:ml-56 md:p-10">{children}</main>
     </div>

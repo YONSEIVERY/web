@@ -4,6 +4,8 @@ import {
   getAttendanceForMember,
   getSessions,
   summarizeAttendance,
+  type AttendanceRow,
+  type ClubSession,
 } from '@/lib/portal/queries'
 
 export const dynamic = 'force-dynamic'
@@ -31,15 +33,22 @@ export default async function MyAttendancePage() {
 
   const [rows, sessions] = await Promise.all([
     getAttendanceForMember(member.id),
-    getSessions({ cohort: member.cohort, publishedOnly: false }),
+    getSessions({ cohort: member.cohort, publishedOnly: true }),
   ])
-  const sessionById = new Map(sessions.map((s) => [s.id, s]))
-  const summary = summarizeAttendance(rows)
-  const sorted = [...rows].sort((a, b) => {
-    const wa = sessionById.get(a.session_id)?.week ?? 99
-    const wb = sessionById.get(b.session_id)?.week ?? 99
-    return wa - wb
-  })
+  // 공개 세션을 기준으로 좌측 조인한다. 출결이 아직 입력되지 않은 세션은
+  // '미기록'으로 남고, 정렬은 세션 목록과 같은 기준(kind·sort_order·week)을
+  // 그대로 물려받는다. 요약도 같은 집합의 기록만 세어야 상단 집계와 표가
+  // 어긋나지 않는다.
+  const rowBySession = new Map(rows.map((r) => [r.session_id, r]))
+  const entries = sessions.map((s) => ({
+    session: s,
+    row: rowBySession.get(s.id),
+  }))
+  const summary = summarizeAttendance(
+    entries
+      .map((e) => e.row)
+      .filter((r): r is AttendanceRow => r !== undefined),
+  )
 
   return (
     <div>
@@ -62,7 +71,7 @@ export default async function MyAttendancePage() {
         <strong
           className={
             summary.convertedAbsences >= 3
-              ? 'text-red-600'
+              ? 'text-red-400'
               : 'text-fg-primary'
           }
         >
@@ -72,45 +81,81 @@ export default async function MyAttendancePage() {
         환산 결석 3회 이상 시 제명 대상입니다.
       </p>
 
-      <div className="mt-10 overflow-x-auto">
-      <table className="w-full min-w-[520px] text-sm">
-        <thead className="border-b border-border">
-          <tr className="text-left">
-            <Th>세션</Th>
-            <Th>출결</Th>
-            <Th>과제</Th>
-            <Th>비고</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((r) => {
-            const s = sessionById.get(r.session_id)
-            return (
-              <tr key={r.id} className="border-b border-border">
-                <Td>
-                  {s
-                    ? `${s.week !== null ? `${s.week}주차 · ` : ''}${s.title}`
-                    : '(삭제된 세션)'}
-                </Td>
-                <Td>{ATTENDANCE_STATUS_LABELS[r.status]}</Td>
-                <Td>{r.assignment_missing ? '미제출' : '-'}</Td>
-                <Td>{r.note ?? '-'}</Td>
-              </tr>
-            )
-          })}
-          {sorted.length === 0 && (
-            <tr>
-              <Td colSpan={4}>
-                <p className="py-12 text-center text-fg-muted">
-                  아직 출결 기록이 없습니다.
+      {entries.length === 0 ? (
+        <p className="mt-16 text-center font-display text-sm text-fg-muted">
+          아직 공개된 세션이 없습니다.
+        </p>
+      ) : (
+        <>
+          {/* 모바일: 카드 리스트 (읽기 전용이라 제목·상태·비고만 쌓는다) */}
+          <ul className="mt-8 flex flex-col gap-3 md:hidden">
+            {entries.map(({ session, row }) => (
+              <li key={session.id} className="border border-border p-4">
+                <p className="font-display text-sm font-bold text-fg-primary">
+                  {sessionTitle(session)}
                 </p>
-              </Td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      </div>
+                <p className="mt-2 text-sm">
+                  <Status row={row} />
+                </p>
+                {row?.note && (
+                  <p className="mt-1 text-sm text-fg-subtle">{row.note}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {/* 데스크톱: 표 */}
+          <div
+            role="region"
+            aria-label="출결 기록"
+            tabIndex={0}
+            className="mt-10 hidden overflow-x-auto md:block"
+          >
+            <table className="w-full min-w-[520px] text-sm">
+              <thead className="border-b border-border">
+                <tr className="text-left">
+                  <Th>세션</Th>
+                  <Th>출결</Th>
+                  <Th>과제</Th>
+                  <Th>비고</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {entries.map(({ session, row }) => (
+                  <tr key={session.id} className="border-b border-border">
+                    <Td>{sessionTitle(session)}</Td>
+                    <Td>
+                      {row ? (
+                        ATTENDANCE_STATUS_LABELS[row.status]
+                      ) : (
+                        <span className="text-fg-muted">미기록</span>
+                      )}
+                    </Td>
+                    <Td>{row?.assignment_missing ? '미제출' : '-'}</Td>
+                    <Td>{row?.note ?? '-'}</Td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
+  )
+}
+
+function sessionTitle(s: ClubSession) {
+  return `${s.week !== null ? `${s.week}주차 · ` : ''}${s.title}`
+}
+
+/** 모바일 카드용 한 줄 상태. 과제 미제출은 열이 없으므로 상태 뒤에 붙인다. */
+function Status({ row }: { row: AttendanceRow | undefined }) {
+  if (!row) return <span className="text-fg-muted">미기록</span>
+  return (
+    <span className="text-fg-subtle">
+      {ATTENDANCE_STATUS_LABELS[row.status]}
+      {row.assignment_missing ? ' · 과제 미제출' : ''}
+    </span>
   )
 }
 
@@ -136,23 +181,12 @@ function Stat({ label, value }: { label: string; value: number }) {
   )
 }
 
+/** 열 제목이 한글이라 uppercase는 무효고 0.32em 자간은 글자를 흩어놓는다. */
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted py-3 pr-4">
-      {children}
-    </th>
+    <th className="font-mono text-[10px] text-fg-muted py-3 pr-4">{children}</th>
   )
 }
-function Td({
-  children,
-  colSpan,
-}: {
-  children: React.ReactNode
-  colSpan?: number
-}) {
-  return (
-    <td colSpan={colSpan} className="py-3 pr-4 text-fg-subtle">
-      {children}
-    </td>
-  )
+function Td({ children }: { children: React.ReactNode }) {
+  return <td className="py-3 pr-4 text-fg-subtle">{children}</td>
 }

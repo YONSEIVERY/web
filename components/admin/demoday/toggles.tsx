@@ -60,7 +60,7 @@ function CurrentRow({ id, isCurrent }: { id: string; isCurrent: boolean }) {
           <SetCurrentButton />
         )}
         {state.status === 'error' && (
-          <span className="text-[10px] text-red-600">{state.message}</span>
+          <span className="text-[10px] text-red-400">{state.message}</span>
         )}
       </div>
     </form>
@@ -106,7 +106,7 @@ function RegisterRow({
       <div className="flex items-center gap-2">
         <RegisterButton registerOpen={registerOpen} />
         {state.status === 'error' && (
-          <span className="text-[10px] text-red-600">{state.message}</span>
+          <span className="text-[10px] text-red-400">{state.message}</span>
         )}
       </div>
     </form>
@@ -156,7 +156,7 @@ function AfterpartyRow({
       <div className="flex items-center gap-2">
         <AfterpartyButton enabled={enabled} />
         {state.status === 'error' && (
-          <span className="text-[10px] text-red-600">{state.message}</span>
+          <span className="text-[10px] text-red-400">{state.message}</span>
         )}
       </div>
     </form>

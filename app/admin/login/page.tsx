@@ -20,7 +20,7 @@ export default async function LoginPage({
         </p>
         <h1 className="mt-4 font-display text-2xl text-fg-primary">로그인</h1>
         {error === 'unauthorized' && (
-          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-600">
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-400">
             ▲ 화이트리스트에 등록되지 않은 계정입니다.
           </p>
         )}
