@@ -25,6 +25,7 @@ export const BACKUP_TABLES = [
   'demoday_events',
   'inquiries',
   'member_intros',
+  'member_signups',
   'notices',
   'partners',
   'recruit_rounds',

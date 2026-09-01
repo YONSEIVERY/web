@@ -24,6 +24,15 @@ export const PRIVACY = {
         retention: '해당 기수 모집 종료 후 1년이 지나면 파기',
       },
       {
+        // /join 자율 등록 폼. 동의문(components/forms/member-signup-form.tsx의
+        // CONSENT_TEXT)과 항목·목적·보유기간이 같아야 한다. 한쪽만 고치지 말 것.
+        name: '학회원 등록 신청',
+        items: '이름, 이메일, 연락처, 학번·단과대·전공(선택)',
+        purpose: '학회원 포털 계정 등록과 학회 운영',
+        retention:
+          '학회원 자격이 유지되는 동안 보유하며, 본인이 삭제를 요청하면 파기',
+      },
+      {
         name: '데모데이 참관 신청',
         items:
           '이름, 소속, 연락처, 이메일, 동문 여부와 기수(해당 시), 참가 목적·역할·유입 경로 등 신청 내용',
