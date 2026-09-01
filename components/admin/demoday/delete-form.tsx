@@ -37,7 +37,7 @@ function Submit() {
     <button
       type="submit"
       disabled={pending}
-      className="border border-red-600 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.28em] text-red-700 hover:bg-red-600 hover:text-bg-base disabled:opacity-50"
+      className="border border-red-600 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.28em] text-red-400 hover:bg-red-600 hover:text-bg-base disabled:opacity-50"
     >
       {pending ? '삭제 중…' : '회차 삭제'}
     </button>

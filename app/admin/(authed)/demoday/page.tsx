@@ -66,7 +66,7 @@ export default async function AdminDemodayPage() {
               </Td>
               <Td>
                 {e.register_open ? (
-                  <span className="text-green-700">OPEN</span>
+                  <span className="text-green-500">OPEN</span>
                 ) : (
                   <span className="text-fg-muted">CLOSED</span>
                 )}

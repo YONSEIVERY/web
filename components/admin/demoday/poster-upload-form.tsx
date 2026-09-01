@@ -25,7 +25,7 @@ export function PosterUploadForm({ id }: { id: string }) {
       <div className="flex items-center gap-3">
         <Submit />
         {state.status === 'success' && (
-          <span className="text-xs text-green-700">{state.message}</span>
+          <span className="text-xs text-green-500">{state.message}</span>
         )}
         {state.status === 'error' && (
           <span className="text-xs text-red-400">{state.message}</span>

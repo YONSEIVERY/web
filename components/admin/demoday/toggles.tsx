@@ -121,7 +121,7 @@ function RegisterButton({ registerOpen }: { registerOpen: boolean }) {
       disabled={pending}
       className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] disabled:opacity-50 ${
         registerOpen
-          ? 'border-green-700 text-green-700 hover:bg-green-700 hover:text-bg-base'
+          ? 'border-green-700 text-green-500 hover:bg-green-700 hover:text-bg-base'
           : 'border-fg-muted text-fg-muted hover:border-fg-primary hover:text-fg-primary'
       }`}
     >
@@ -171,7 +171,7 @@ function AfterpartyButton({ enabled }: { enabled: boolean }) {
       disabled={pending}
       className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] disabled:opacity-50 ${
         enabled
-          ? 'border-green-700 text-green-700 hover:bg-green-700 hover:text-bg-base'
+          ? 'border-green-700 text-green-500 hover:bg-green-700 hover:text-bg-base'
           : 'border-fg-muted text-fg-muted hover:border-fg-primary hover:text-fg-primary'
       }`}
     >
