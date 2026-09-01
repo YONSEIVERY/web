@@ -43,7 +43,7 @@ export function CreateDemodayForm() {
       </label>
       <CreateSubmit />
       {state.status === 'error' && (
-        <span className="text-xs text-red-600">{state.message}</span>
+        <span className="text-xs text-red-400">{state.message}</span>
       )}
     </form>
   )

@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { notFound } from 'next/navigation'
 import { getSiteConfig } from '@/lib/data/site-config'
@@ -7,6 +9,17 @@ import { getMemberProfile } from '@/lib/portal/queries'
 import { Markdown } from '@/components/portal/markdown'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const profile = await getMemberProfile(id)
+  if (!profile) return {}
+  return { title: `${profile.name} · Vol.${profile.cohort}` }
+}
 
 export default async function PersonPage({
   params,
@@ -18,10 +31,13 @@ export default async function PersonPage({
     getPortalIdentity(),
     getSiteConfig(),
   ])
-  const profile = await getMemberProfile(id)
+  // 프로필 조회와 본인 확인은 서로 의존하지 않으므로 함께 띄운다
+  const [profile, me] = await Promise.all([
+    getMemberProfile(id),
+    identity ? getMemberByEmail(identity.email) : null,
+  ])
   if (!profile) notFound()
 
-  const me = identity ? await getMemberByEmail(identity.email) : null
   const isSelf = me?.id === profile.id
   // 지난 기수 멤버 페이지는 임원진만. 단 본인 페이지는 허용
   // (학회장 결정, 2026-08-04)
@@ -42,10 +58,11 @@ export default async function PersonPage({
 
       <div className="mt-8 flex items-start gap-6">
         {profile.photo_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={profile.photo_url}
             alt={`${profile.name} 프로필 사진`}
+            width={112}
+            height={112}
             className="h-24 w-24 shrink-0 border border-border object-cover md:h-28 md:w-28"
           />
         ) : (

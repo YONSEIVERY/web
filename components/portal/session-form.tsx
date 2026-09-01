@@ -2,8 +2,9 @@ import { PortalSubmitButton } from '@/components/portal/submit-button'
 import type { ClubSession } from '@/lib/portal/queries'
 import { formatKstDatetimeLocal } from '@/lib/utils/format-date'
 
+// 모바일에서 16px 미만이면 iOS가 포커스 시 화면을 확대한다. 데스크톱 밀도는 md 분기로 유지.
 const INPUT_CLASS =
-  'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
+  'w-full border border-border bg-bg-base px-4 py-3 font-display text-base text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none md:text-sm'
 const LABEL_CLASS =
   'flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary'
 
@@ -135,10 +136,10 @@ export function SessionForm({
         <span className={LABEL_CLASS}>본문 (마크다운)</span>
         <textarea
           name="content_md"
-          rows={24}
+          rows={10}
           defaultValue={session?.content_md ?? ''}
           placeholder={'## 세션 개요\n\n| 시간 | 내용 |\n| --- | --- |\n| 19:00 | ... |'}
-          className={`${INPUT_CLASS} font-mono text-xs leading-relaxed`}
+          className={`${INPUT_CLASS} min-h-[45dvh] font-mono leading-relaxed md:min-h-[36rem] md:text-xs`}
         />
       </label>
 

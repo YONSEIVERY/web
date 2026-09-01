@@ -396,7 +396,7 @@ export function RecruitApplicationForm() {
         </div>
       </div>
 
-      {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
+      {errorMessage && <p className="text-sm text-red-400">{errorMessage}</p>}
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <button

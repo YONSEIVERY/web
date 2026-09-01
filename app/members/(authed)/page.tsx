@@ -82,7 +82,7 @@ export default async function MembersHomePage({
                   {n.pinned && (
                     <span
                       translate="no"
-                      className="font-mono text-[10px] uppercase tracking-[0.24em] text-accent"
+                      className="font-mono text-[10px] uppercase tracking-[0.24em] text-fg-primary"
                     >
                       PIN
                     </span>
@@ -164,17 +164,20 @@ function SessionList({
                   W{String(s.week).padStart(2, '0')}
                 </span>
               )}
-              <span className="font-display text-sm font-bold text-fg-primary md:text-base">
-                {s.title}
-              </span>
-              {!s.is_published && isExec && (
-                <span
-                  translate="no"
-                  className="shrink-0 border border-fg-muted px-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-muted"
-                >
-                  DRAFT
+              {/* 폰에서는 DRAFT 배지가 제목 폭을 잠식해 제목이 여러 줄로 접힌다 */}
+              <span className="flex min-w-0 flex-1 flex-col items-start gap-1 sm:flex-row sm:items-baseline sm:gap-3">
+                <span className="font-display text-sm font-bold text-fg-primary md:text-base">
+                  {s.title}
                 </span>
-              )}
+                {!s.is_published && isExec && (
+                  <span
+                    translate="no"
+                    className="shrink-0 border border-fg-muted px-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-muted"
+                  >
+                    DRAFT
+                  </span>
+                )}
+              </span>
               {s.event_date && (
                 <span className="ml-auto shrink-0 font-mono text-[10px] text-fg-muted">
                   {formatKstDateTime(s.event_date).slice(0, 10)}

@@ -123,11 +123,10 @@ export default async function ManageSessionsPage({
   )
 }
 
+/** 열 제목이 한글이라 uppercase는 무효고 0.32em 자간은 글자를 흩어놓는다. */
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted py-3 pr-4">
-      {children}
-    </th>
+    <th className="font-mono text-[10px] text-fg-muted py-3 pr-4">{children}</th>
   )
 }
 function Td({

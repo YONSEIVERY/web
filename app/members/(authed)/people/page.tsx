@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Route } from 'next'
 import { redirect } from 'next/navigation'
 import { getSiteConfig } from '@/lib/data/site-config'
@@ -23,7 +24,14 @@ export default async function PeoplePage({
     getSiteConfig(),
     getPortalIdentity(),
   ])
-  const cohort = cohortParam ? Number(cohortParam) : siteConfig.cohort
+  // ?cohort=abc 같은 값이 그대로 Number로 넘어가면 'NaN기'가 화면에 찍히고
+  // PostgREST도 파싱 에러를 낸다. 0014 마이그레이션의 check 제약과 같은
+  // 범위(1~100)를 벗어나면 현재 기수로 되돌린다.
+  const parsedCohort = cohortParam ? Number(cohortParam) : NaN
+  const cohort =
+    Number.isInteger(parsedCohort) && parsedCohort >= 1 && parsedCohort <= 100
+      ? parsedCohort
+      : siteConfig.cohort
   const isArchive = cohort !== siteConfig.cohort
   const isExec = identity?.role === 'exec'
   // 지난 기수 아카이브는 임원진 전용 (학회장 결정, 2026-08-04)
@@ -56,7 +64,8 @@ export default async function PeoplePage({
             ← {siteConfig.cohort}기로 돌아가기
           </Link>
         ) : (
-          isExec && (
+          isExec &&
+          cohort > 1 && (
             <Link
               href={`/members/people?cohort=${cohort - 1}` as Route}
               className="font-mono text-[11px] uppercase tracking-[0.24em] text-fg-subtle underline hover:text-fg-primary"
@@ -98,10 +107,11 @@ export default async function PeoplePage({
               >
                 <div className="flex items-center gap-4">
                   {m.photo_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={m.photo_url}
                       alt=""
+                      width={56}
+                      height={56}
                       className="h-14 w-14 shrink-0 border border-border object-cover"
                     />
                   ) : (
@@ -134,7 +144,7 @@ export default async function PeoplePage({
                     {m.excerpt}
                   </p>
                 ) : (
-                  <p className="font-display text-sm text-fg-muted opacity-60">
+                  <p className="font-display text-sm text-fg-muted">
                     아직 소개가 없습니다
                   </p>
                 )}

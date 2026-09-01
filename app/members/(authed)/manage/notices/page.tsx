@@ -1,14 +1,16 @@
 import { requireExec } from '@/lib/portal/auth'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getNotices } from '@/lib/portal/queries'
-import { createNotice, deleteNotice } from '@/app/members/actions/portal'
+import { createNotice } from '@/app/members/actions/portal'
 import { PortalSubmitButton } from '@/components/portal/submit-button'
+import { DeleteButton } from '@/components/admin/delete-button'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 
 export const dynamic = 'force-dynamic'
 
+// 모바일에서 16px 미만이면 iOS가 포커스 시 화면을 확대한다. 데스크톱 밀도는 md 분기로 유지.
 const INPUT_CLASS =
-  'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
+  'w-full border border-border bg-bg-base px-4 py-3 font-display text-base text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none md:text-sm'
 
 export default async function ManageNoticesPage() {
   await requireExec()
@@ -71,7 +73,7 @@ export default async function ManageNoticesPage() {
                 {n.pinned && (
                   <span
                     translate="no"
-                    className="font-mono text-[10px] uppercase tracking-[0.24em] text-accent"
+                    className="font-mono text-[10px] uppercase tracking-[0.24em] text-fg-primary"
                   >
                     PIN
                   </span>
@@ -79,8 +81,8 @@ export default async function ManageNoticesPage() {
                 <span className="font-display text-sm font-bold text-fg-primary">
                   {n.title}
                 </span>
-                <span className="font-mono text-[10px] text-fg-muted">
-                  {formatKstDateTime(n.created_at)}
+                <span className="ml-auto shrink-0 font-mono text-[10px] text-fg-muted">
+                  {formatKstDateTime(n.created_at).slice(0, 10)}
                 </span>
               </div>
               {n.content_md && (
@@ -89,15 +91,7 @@ export default async function ManageNoticesPage() {
                 </p>
               )}
             </div>
-            <form action={deleteNotice}>
-              <input type="hidden" name="id" value={n.id} />
-              <button
-                type="submit"
-                className="text-xs text-red-600 underline"
-              >
-                삭제
-              </button>
-            </form>
+            <DeleteButton kind="notice" id={n.id} label={`${n.title} 공지`} />
           </li>
         ))}
         {notices.length === 0 && (

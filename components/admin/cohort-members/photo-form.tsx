@@ -31,7 +31,7 @@ export function PhotoUploadForm({ id }: { id: string }) {
         <span className="text-xs text-green-700">{state.message}</span>
       )}
       {state.status === 'error' && (
-        <span className="text-xs text-red-600">{state.message}</span>
+        <span className="text-xs text-red-400">{state.message}</span>
       )}
     </form>
   )
@@ -66,7 +66,7 @@ export function DeletePhotoForm({ id }: { id: string }) {
       <input type="hidden" name="id" value={id} />
       <DeleteBtn />
       {state.status === 'error' && (
-        <span className="ml-3 text-xs text-red-600">{state.message}</span>
+        <span className="ml-3 text-xs text-red-400">{state.message}</span>
       )}
     </form>
   )
@@ -102,7 +102,7 @@ export function DeleteMemberForm({ id, label }: { id: string; label: string }) {
       <input type="hidden" name="id" value={id} />
       <MemberDeleteBtn />
       {state.status === 'error' && (
-        <span className="text-xs text-red-600">{state.message}</span>
+        <span className="text-xs text-red-400">{state.message}</span>
       )}
     </form>
   )

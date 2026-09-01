@@ -21,11 +21,11 @@ export function IntroForm({ defaultValue }: { defaultValue: string }) {
     <form action={action} className="grid grid-cols-1 gap-4">
       <textarea
         name="body_md"
-        rows={18}
+        rows={8}
         maxLength={8000}
         defaultValue={defaultValue}
         placeholder={PLACEHOLDER}
-        className="w-full border border-border bg-bg-base px-4 py-3 font-display text-sm leading-[1.8] text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none"
+        className="min-h-[40dvh] w-full border border-border bg-bg-base px-4 py-3 font-display text-base leading-[1.8] text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none md:min-h-[28rem] md:text-sm"
       />
       <p className="font-display text-xs leading-relaxed text-fg-muted">
         마크다운을 지원합니다. # 제목, - 목록, **굵게**, [링크](주소) 형식을
@@ -43,7 +43,7 @@ export function IntroForm({ defaultValue }: { defaultValue: string }) {
           </p>
         )}
         {state.status === 'error' && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="text-sm text-red-400">
             {state.message}
           </p>
         )}

@@ -4,7 +4,15 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { NoiseLayer } from '@/components/ui/noise-layer'
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-display' })
+// fallback에 Pretendard를 넣는 이유: next/font가 <html>에 --font-display를
+// 레이어 밖 규칙으로 다시 선언해 globals.css의 @theme 값을 덮는다. 그래서
+// 한글 폴백은 여기서만 지정할 수 있고, 빠지면 font-display를 쓰는 본문
+// 한글이 전부 기기 기본 글꼴로 떨어진다. 라틴은 Geist가 먼저 잡는다.
+const geist = Geist({
+  subsets: ['latin'],
+  variable: '--font-display',
+  fallback: ['Pretendard Variable', 'system-ui', 'sans-serif'],
+})
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 export const metadata: Metadata = {

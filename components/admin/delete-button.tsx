@@ -4,12 +4,19 @@ import { useFormStatus } from 'react-dom'
 import { deleteAlumni, deletePartner } from '@/app/admin/actions/delete'
 import { deleteApplication } from '@/app/admin/actions/recruit'
 import { deleteSessionPost } from '@/app/members/actions/posts'
+import { deleteNotice, deleteSession } from '@/app/members/actions/portal'
 import {
   DELETE_INITIAL,
   type DeleteState,
 } from '@/app/admin/actions/delete-state'
 
-type Kind = 'alumni' | 'partner' | 'application' | 'session_post'
+type Kind =
+  | 'alumni'
+  | 'partner'
+  | 'application'
+  | 'session_post'
+  | 'club_session'
+  | 'notice'
 
 const ACTIONS: Record<
   Kind,
@@ -19,6 +26,8 @@ const ACTIONS: Record<
   partner: deletePartner,
   application: deleteApplication,
   session_post: deleteSessionPost,
+  club_session: deleteSession,
+  notice: deleteNotice,
 }
 
 export function DeleteButton({
@@ -44,21 +53,24 @@ export function DeleteButton({
       className="inline-flex items-center gap-2"
     >
       <input type="hidden" name="id" value={id} />
-      <SubmitButton />
+      <SubmitButton label={label} />
       {state.error ? (
-        <span className="text-xs text-red-600">{state.error}</span>
+        <span className="text-xs text-red-400">{state.error}</span>
       ) : null}
     </form>
   )
 }
 
-function SubmitButton() {
+// 화면 텍스트는 '삭제' 하나뿐이라, 목록에서는 aria-label로만 대상이 구분된다.
+// 모바일에서만 44px 타깃을 채우고 데스크톱 목록 밀도는 md 분기로 되돌린다.
+function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus()
   return (
     <button
       type="submit"
       disabled={pending}
-      className="text-xs text-red-600 underline disabled:opacity-50"
+      aria-label={`${label} 삭제`}
+      className="inline-flex min-h-11 min-w-11 items-center justify-center px-2 text-xs text-red-400 underline disabled:opacity-50 md:min-h-0 md:px-0"
     >
       {pending ? '삭제 중…' : '삭제'}
     </button>

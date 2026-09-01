@@ -117,7 +117,7 @@ export function EditDemodayForm({ id, initial }: { id: string; initial: Initial 
           <span className="text-xs text-green-700">{state.message ?? '저장됨'}</span>
         )}
         {state.status === 'error' && (
-          <span className="text-xs text-red-600">{state.message}</span>
+          <span className="text-xs text-red-400">{state.message}</span>
         )}
       </div>
     </form>

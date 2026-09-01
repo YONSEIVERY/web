@@ -101,7 +101,7 @@ export function PostComposer({ sessionId }: { sessionId: string }) {
         rows={4}
         maxLength={5000}
         placeholder="소감문, 내용 정리, 사진 한 줄 설명 등 자유롭게 남겨주세요. (마크다운 지원)"
-        className="mt-4 w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none"
+        className="mt-4 w-full border border-border bg-bg-base px-4 py-3 font-display text-base text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none md:text-sm"
       />
       <div className="mt-3 flex flex-wrap items-center gap-4">
         <input
@@ -126,7 +126,7 @@ export function PostComposer({ sessionId }: { sessionId: string }) {
           사진 {files.length}장 첨부됨 (장당 10MB, 최대 {MAX_IMAGES}장)
         </p>
       )}
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
     </div>
   )
 }
