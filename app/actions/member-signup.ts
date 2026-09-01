@@ -90,9 +90,12 @@ export async function submitMemberSignup(
   if (email.toLowerCase() !== emailConfirm.toLowerCase())
     return fail('두 이메일이 서로 다릅니다. 다시 확인해주세요.')
   if (!PHONE_RE.test(phone)) return fail('연락처 형식을 확인해주세요.')
-  if (studentId.length > MAX_STUDENT_ID) return fail('학번을 확인해주세요.')
-  if (college.length > MAX_COLLEGE) return fail('단과대를 확인해주세요.')
-  if (major.length > MAX_MAJOR) return fail('전공을 확인해주세요.')
+  // 학적 정보도 필수다. 클라이언트의 required만 믿지 않는다.
+  if (!studentId || studentId.length > MAX_STUDENT_ID)
+    return fail('학번을 확인해주세요.')
+  if (!college || college.length > MAX_COLLEGE)
+    return fail('단과대를 확인해주세요.')
+  if (!major || major.length > MAX_MAJOR) return fail('전공을 확인해주세요.')
   if (!privacyConsent) return fail('개인정보 수집·이용에 동의해주세요.')
 
   const ip = await clientKey()
@@ -152,9 +155,9 @@ export async function submitMemberSignup(
     name,
     email,
     phone,
-    student_id: studentId || null,
-    college: college || null,
-    major: major || null,
+    student_id: studentId,
+    college: college,
+    major: major,
   })
   if (insErr) {
     // 동시 제출로 위 조회를 통과한 중복은 유니크 인덱스가 막는다.

@@ -36,7 +36,7 @@ export default async function JoinPage() {
         </h1>
         <p className="mt-4 font-display text-base leading-[1.8] text-fg-subtle">
           <span translate="no">{cohort}기</span> 학회원 포털에 등록하기 위한
-          신청서입니다. 합격 안내를 받으신 분만 작성해주세요.
+          신청서입니다.
         </p>
 
         <ul className="mt-10 grid grid-cols-1 gap-4 border border-border-strong px-5 py-5">
@@ -52,7 +52,7 @@ export default async function JoinPage() {
             않습니다.
           </Point>
           <Point label="03">
-            수집 항목은 이름, 이메일, 연락처와 학번·단과대·전공(선택)입니다.
+            수집 항목은 이름, 이메일, 연락처, 학번, 단과대, 전공입니다.
             학회원 포털 계정 등록과 학회 운영에만 사용합니다.
           </Point>
         </ul>
