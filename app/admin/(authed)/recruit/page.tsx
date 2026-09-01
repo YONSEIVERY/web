@@ -13,13 +13,55 @@ import {
   setApplicationStatus,
   toggleRecruitOpen,
 } from '@/app/admin/actions/recruit'
+import {
+  REGISTRATION_VALUES,
+  type RegistrationValue,
+} from '@/app/admin/actions/applications-state'
 import { DeleteButton } from '@/components/admin/delete-button'
 import { SendResultsButton } from '@/components/admin/send-results-button'
 import { CopyPhonesButton } from '@/components/admin/copy-phones-button'
+import { RegistrationSelect } from '@/components/admin/registration-select'
 
 export const dynamic = 'force-dynamic'
 
 const SIGNED_URL_TTL_SEC = 60 * 60 // 1시간. 페이지를 새로고침하면 재발급된다.
+
+/**
+ * 등록 회신(applications.registration)을 지원서 id로 찾을 수 있게 읽어 온다.
+ *
+ * lib/recruit/queries.ts의 Application 타입에 얹지 않고 여기서 따로 읽는
+ * 이유는 두 가지다. 그 파일은 공개 /recruit 화면도 함께 쓰고, 등록 회신은
+ * 어드민에게만 의미가 있다. 그리고 컬럼이 아직 없는 환경에서도 이 화면이
+ * 통째로 죽지 않아야 한다.
+ *
+ * 컬럼을 읽지 못하면 null을 돌려준다. 빈 Map으로 뭉뚱그리면 전원이 "회신
+ * 없음"으로 보여 실제 회신이 지워진 것처럼 읽힌다.
+ */
+async function readRegistrations(
+  roundId: string,
+): Promise<Map<string, RegistrationValue> | null> {
+  const { data, error } = await supabaseService
+    .from('applications')
+    .select('id, registration')
+    .eq('round_id', roundId)
+  if (error || !data) {
+    console.error('[admin/recruit] registration read failed', error)
+    return null
+  }
+  const map = new Map<string, RegistrationValue>()
+  for (const row of data as Record<string, unknown>[]) {
+    const v = String(row.registration ?? '')
+    // 모르는 값은 회신 없음으로 본다. 일괄 등록(bulk-import-members.ts)의
+    // 판정과 같아야 화면 인원과 실제 등록 인원이 어긋나지 않는다.
+    map.set(
+      String(row.id),
+      REGISTRATION_VALUES.includes(v as RegistrationValue)
+        ? (v as RegistrationValue)
+        : 'pending',
+    )
+  }
+  return map
+}
 
 export default async function AdminRecruitPage({
   searchParams,
@@ -39,7 +81,10 @@ export default async function AdminRecruitPage({
     )
   }
 
-  const applications = await getApplications(round.id)
+  const [applications, registrations] = await Promise.all([
+    getApplications(round.id),
+    readRegistrations(round.id),
+  ])
 
   // 상태 필터는 표시용. 통보·문자 명단·집계·엑셀은 전체(applications) 기준.
   const rawStatus = (await searchParams).status
@@ -217,26 +262,44 @@ export default async function AdminRecruitPage({
         </div>
       )}
 
+      {registrations === null && (
+        <p className="mt-8 border border-border px-5 py-4 text-xs leading-relaxed text-red-400">
+          등록 회신을 읽지 못했습니다. applications.registration 컬럼
+          마이그레이션이 적용됐는지 확인해주세요. 적용 전까지 등록 회신은
+          표시되지 않습니다.
+        </p>
+      )}
+
       {/* 좁은 화면에서는 지원자 열을 고정한다. 오른쪽 끝 상태 열을 조작할 때
           대상이 누구인지 화면에서 사라지지 않게 하기 위함이다. */}
       <div className="mt-10 overflow-x-auto">
-        <table className="w-full min-w-[720px] text-sm">
+        <table className="w-full min-w-[860px] text-sm">
           <thead className="border-b border-border">
             <tr className="text-left">
               <Th sticky>지원자</Th>
               <Th>첨부</Th>
               <Th>비대면 사유</Th>
               <Th>상태</Th>
+              <Th>등록 회신</Th>
               <Th>삭제</Th>
             </tr>
           </thead>
           <tbody>
             {visible.map((a) => (
-              <ApplicationRow key={a.id} app={a} urls={urlByPath} />
+              <ApplicationRow
+                key={a.id}
+                app={a}
+                urls={urlByPath}
+                registration={
+                  registrations === null
+                    ? null
+                    : (registrations.get(a.id) ?? 'pending')
+                }
+              />
             ))}
             {visible.length === 0 && (
               <tr>
-                <Td colSpan={5}>
+                <Td colSpan={6}>
                   <p className="py-12 text-center text-fg-muted">
                     {applications.length === 0
                       ? '아직 지원자가 없습니다.'
@@ -341,9 +404,12 @@ function FileSlot({
 function ApplicationRow({
   app,
   urls,
+  registration,
 }: {
   app: Application
   urls: Map<string, string>
+  /** null이면 등록 회신 컬럼을 읽지 못한 것. 값이 비었다는 뜻이 아니다. */
+  registration: RegistrationValue | null
 }) {
   return (
     <tr className="border-b border-border align-top transition-colors hover:bg-fg-primary/[0.03]">
@@ -424,6 +490,9 @@ function ApplicationRow({
         )}
       </Td>
       <Td>
+        <RegistrationCell app={app} registration={registration} />
+      </Td>
+      <Td>
         <DeleteButton
           kind="application"
           id={app.id}
@@ -431,6 +500,47 @@ function ApplicationRow({
         />
       </Td>
     </tr>
+  )
+}
+
+/**
+ * 등록 회신 칸.
+ *
+ * 회신은 최종 합격자에게만 의미가 있다. 서류 불합격자 옆에 "회신 없음"이
+ * 떠 있으면 아직 답을 기다리는 사람처럼 읽힌다. 그래서 최종 합격이 아니고
+ * 값도 비어 있으면 컨트롤을 두지 않고 빈 칸으로 남긴다.
+ *
+ * 다만 최종 합격이 아닌데 값이 남아 있는 경우(합격 처리 후 회신을 받았다가
+ * 심사 상태를 되돌린 경우)에는 반드시 보여 준다. 숨기면 화면에 없는 값이
+ * 일괄 등록에만 영향을 주는 상태가 되어, 아무도 못 고친다.
+ */
+function RegistrationCell({
+  app,
+  registration,
+}: {
+  app: Application
+  registration: RegistrationValue | null
+}) {
+  if (registration === null)
+    return (
+      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg-muted">
+        미적용
+      </span>
+    )
+  const finalPass = app.status === 'final_pass'
+  if (!finalPass && registration === 'pending')
+    return (
+      <span className="text-fg-muted opacity-50" title="최종 합격자만 표시합니다">
+        -
+      </span>
+    )
+  return (
+    <RegistrationSelect
+      applicationId={app.id}
+      applicantName={app.name}
+      registration={registration}
+      finalPass={finalPass}
+    />
   )
 }
 
