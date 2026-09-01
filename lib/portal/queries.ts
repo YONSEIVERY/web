@@ -285,28 +285,25 @@ function introExcerpt(bodyMd: string): string | null {
 }
 
 export async function getDirectory(cohort: number): Promise<DirectoryMember[]> {
+  // member_intros는 임베디드 조회로 같은 요청에 실어 온다(FK: member_id -> id).
+  // 왕복 2회가 1회로 접힌다. PostgREST가 일대일을 감지하지 못하면 배열로
+  // 내려오므로 아래에서 양쪽 형태를 다 받는다.
   const { data: members } = await supabaseService
     .from('cohort_members')
-    .select('id, name, role_tier, role_label, college, major, photo_url, sort_order')
+    .select(
+      'id, name, role_tier, role_label, college, major, photo_url, sort_order, member_intros(body_md)',
+    )
     .eq('cohort', cohort)
     .order('sort_order', { ascending: true })
     .order('name', { ascending: true })
   if (!members || members.length === 0) return []
 
-  const ids = (members as Record<string, unknown>[]).map((m) => String(m.id))
-  const { data: intros } = await supabaseService
-    .from('member_intros')
-    .select('member_id, body_md')
-    .in('member_id', ids)
-  const introByMember = new Map(
-    ((intros ?? []) as Record<string, unknown>[]).map((r) => [
-      String(r.member_id),
-      String(r.body_md ?? ''),
-    ]),
-  )
-
   return (members as Record<string, unknown>[]).map((m) => {
-    const body = introByMember.get(String(m.id)) ?? ''
+    const intro = m.member_intros
+    const introRow = Array.isArray(intro) ? intro[0] : intro
+    const body = String(
+      (introRow as Record<string, unknown> | null | undefined)?.body_md ?? '',
+    )
     return {
       id: String(m.id),
       name: String(m.name),
@@ -337,17 +334,20 @@ export type MemberProfile = {
 export async function getMemberProfile(
   id: string,
 ): Promise<MemberProfile | null> {
-  const { data: m } = await supabaseService
-    .from('cohort_members')
-    .select('id, cohort, name, role_tier, role_label, college, major, photo_url')
-    .eq('id', id)
-    .maybeSingle()
+  // 두 조회는 서로 의존하지 않는다. 순차로 기다릴 이유가 없다.
+  const [{ data: m }, { data: intro }] = await Promise.all([
+    supabaseService
+      .from('cohort_members')
+      .select('id, cohort, name, role_tier, role_label, college, major, photo_url')
+      .eq('id', id)
+      .maybeSingle(),
+    supabaseService
+      .from('member_intros')
+      .select('body_md, updated_at')
+      .eq('member_id', id)
+      .maybeSingle(),
+  ])
   if (!m) return null
-  const { data: intro } = await supabaseService
-    .from('member_intros')
-    .select('body_md, updated_at')
-    .eq('member_id', id)
-    .maybeSingle()
   const row = m as Record<string, unknown>
   return {
     id: String(row.id),
