@@ -2,6 +2,7 @@
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
 import { requireAdmin } from '@/lib/admin/is-admin'
+import { normName, phoneTail } from '@/lib/members/identity'
 import type { MemberSignupActionState } from './member-signups-state'
 
 /**
@@ -43,20 +44,6 @@ type SignupRow = {
   college: string | null
   major: string | null
   status: string
-}
-
-/**
- * 같은 사람인지 보는 정규화. 승인 화면(members/signups/page.tsx)이 지원서와
- * 대조할 때 쓰는 것과 같은 규칙이다. 이름은 공백 제거, 전화는 끝 8자리로
- * 맞춰 010-1234-5678과 +82 10 1234 5678을 같은 번호로 본다.
- */
-function normName(v: unknown): string {
-  return String(v ?? '').replace(/\s+/g, '')
-}
-
-function phoneTail(v: unknown): string {
-  const digits = String(v ?? '').replace(/\D/g, '')
-  return digits.length >= 8 ? digits.slice(-8) : digits
 }
 
 function fail(message: string): MemberSignupActionState {

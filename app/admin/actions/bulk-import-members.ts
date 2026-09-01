@@ -4,6 +4,7 @@ import { supabaseService } from '@/lib/supabase/service'
 import { requireAdmin } from '@/lib/admin/is-admin'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getCurrentRecruitRound } from '@/lib/recruit/queries'
+import { identityKey } from '@/lib/members/identity'
 import type { CohortMemberActionState } from './cohort-members-state'
 
 /**
@@ -156,18 +157,26 @@ export async function bulkImportFinalPassMembers(
 
   const { data: existing, error: exErr } = await supabaseService
     .from('cohort_members')
-    .select('email')
+    .select('email, name, phone')
     .eq('cohort', cohort)
   if (exErr) {
     console.error('[bulkImportFinalPassMembers] members read failed', exErr)
     return { status: 'error', message: '기존 명부를 읽지 못했습니다.' }
   }
   const taken = new Set<string>()
+  // 이메일뿐 아니라 동일인(이름 + 전화 끝자리)으로도 거른다. 자율 등록
+  // 승인이 먼저 돌면 그 사람은 지원서와 다른 이메일로 명단에 있다. 이메일만
+  // 보면 여기서 지원서 주소로 한 번 더 들어가 같은 사람이 두 줄이 된다.
+  // identityKey는 이름이나 전화가 빈 행을 null로 걸러, 전화 없는 서로 다른
+  // 사람들이 하나로 뭉치는 오판을 막는다.
+  const takenIdentity = new Set<string>()
   for (const row of (existing ?? []) as Record<string, unknown>[]) {
     const key = String(row.email ?? '')
       .trim()
       .toLowerCase()
     if (key) taken.add(key)
+    const idKey = identityKey(row.name, row.phone)
+    if (idKey) takenIdentity.add(idKey)
   }
 
   let alreadyIn = 0
@@ -188,7 +197,13 @@ export async function bulkImportFinalPassMembers(
       alreadyIn += 1
       continue
     }
+    const idKey = identityKey(name, app.phone)
+    if (idKey && takenIdentity.has(idKey)) {
+      alreadyIn += 1
+      continue
+    }
     taken.add(key) // 같은 배치 안의 중복 이메일도 한 번만
+    if (idKey) takenIdentity.add(idKey)
     const phone = String(app.phone ?? '').trim()
     toInsert.push({
       cohort,

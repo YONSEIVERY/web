@@ -25,9 +25,24 @@ export default async function MembersLoginPage({
           학회원 포털
         </h1>
         {error === 'not_member' && (
-          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-400">
-            ▲ 학회원 명단에 없는 계정입니다.
-          </p>
+          <div className="mt-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-red-400">
+              ▲ 학회원 명단에 없는 계정입니다.
+            </p>
+            {/* 여기서 막힌 사람의 다음 걸음이 등록 신청이다. 절대 URL을 쓴다.
+                members 호스트에서 상대경로 /join은 미들웨어가 포털 경로로
+                리라이트해 마케팅의 신청 폼에 닿지 못한다. */}
+            <p className="mt-2 font-display text-xs leading-relaxed text-fg-subtle">
+              44기 신규 학회원이라면{' '}
+              <a
+                href="https://yonseivery.com/join"
+                className="text-fg-primary underline"
+              >
+                등록 신청
+              </a>
+              을 먼저 해주세요. 방금 신청하셨다면 운영진 승인을 기다려주세요.
+            </p>
+          </div>
         )}
         {error === 'oauth_failed' && (
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.24em] text-red-400">
