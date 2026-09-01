@@ -127,6 +127,41 @@ portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·
 0025 적용 후 `deleteSession`과 학회원 삭제가 딸린 데이터가 있으면 실패하게
 되는데, 이는 의도한 동작이다.
 
+**적용 후 검증 (읽기 전용, 개인정보 조회 없음)**
+
+세 쿼리 모두 기대값과 일치해야 한다. 하나라도 어긋나면 적용이 덜 된 것이다.
+
+```sql
+-- 1) 연쇄 삭제가 실제로 막혔는가. 4행 전부 RESTRICT여야 한다
+select tc.table_name, kcu.column_name, rc.delete_rule
+from information_schema.table_constraints tc
+join information_schema.key_column_usage kcu
+  on kcu.constraint_name = tc.constraint_name
+join information_schema.referential_constraints rc
+  on rc.constraint_name = tc.constraint_name
+where tc.constraint_type = 'FOREIGN KEY'
+  and tc.table_schema = 'public'
+  and tc.constraint_name in (
+    'attendance_session_id_fkey', 'attendance_member_id_fkey',
+    'session_posts_session_id_fkey', 'applications_round_id_fkey');
+
+-- 2) 감사 트리거가 붙었는가. 11개 테이블 x 2종 = 22행이어야 한다
+select count(*) as triggers
+from information_schema.triggers
+where trigger_schema = 'public'
+  and trigger_name in ('audit_delete', 'no_truncate');
+
+-- 3) audit_log가 전면 차단인가. rls=true, policies=0이어야 한다
+select c.relrowsecurity as rls,
+       (select count(*) from pg_policies where tablename = 'audit_log') as policies
+from pg_class c where c.relname = 'audit_log';
+```
+
+**실전 삭제로 시험하지 말 것.** "출결이 있는 세션을 지워 보고 오류가 나는지"
+같은 확인은 하지 않는다. 0025가 적용됐다면 막히지만, **적용되지 않았다면 그
+시험이 곧 사고다.** 트랜잭션으로 감싸도 롤백을 빠뜨리면 끝이다. 위 카탈로그
+조회로 충분하다.
+
 **함수 권한을 다룰 때 주의**: Supabase는 public 스키마에 default privileges가
 걸려 있어, 새로 만든 함수에 anon·authenticated·service_role 실행권이 자동으로
 붙는다. `revoke all ... from public`은 PUBLIC 롤만 회수하므로 anon 직접 권한이
