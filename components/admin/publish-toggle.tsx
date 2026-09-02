@@ -53,7 +53,7 @@ function ToggleButton({ published }: { published: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className={`text-xs underline disabled:opacity-50 ${published ? 'text-green-700' : 'text-fg-muted'}`}
+      className={`text-xs underline disabled:opacity-50 ${published ? 'text-green-500' : 'text-fg-muted'}`}
     >
       {pending ? '...' : published ? 'ON' : 'OFF'}
     </button>

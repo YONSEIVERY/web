@@ -100,10 +100,10 @@ export default async function AdminMemberDetailPage({
         />
       </section>
 
-      <section className="mt-10 max-w-2xl border border-red-300 p-6">
+      <section className="mt-10 max-w-2xl border border-red-400 p-6">
         <h2
           translate="no"
-          className="font-mono text-[10px] uppercase tracking-[0.32em] text-red-700"
+          className="font-mono text-[10px] uppercase tracking-[0.32em] text-red-400"
         >
           DANGER · DELETE
         </h2>

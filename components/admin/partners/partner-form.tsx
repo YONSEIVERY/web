@@ -129,7 +129,7 @@ export function PartnerForm({ initial }: { initial: Initial }) {
       <div className="flex items-center gap-3">
         <Submit isEdit={isEdit} />
         {state.status === 'success' && (
-          <span className="text-xs text-green-700">{state.message ?? '저장됨'}</span>
+          <span className="text-xs text-green-500">{state.message ?? '저장됨'}</span>
         )}
         {state.status === 'error' && (
           <span className="text-xs text-red-400">{state.message}</span>
