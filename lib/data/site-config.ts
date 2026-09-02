@@ -1,6 +1,6 @@
 import 'server-only'
 import { cache } from 'react'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseAnon } from '@/lib/supabase/anon'
 
 export interface SiteConfig {
   cohort: number
@@ -18,8 +18,10 @@ const FALLBACK: SiteConfig = {
 
 export const getSiteConfig = cache(async (): Promise<SiteConfig> => {
   try {
-    const supabase = await createClient()
-    const { data, error } = await supabase
+    // 쿠키 없는 anon 클라이언트를 쓴다. 쿠키 바인딩 클라이언트를 부르는 순간
+    // 이 함수를 렌더하는 모든 페이지(푸터 경유로 사실상 공개 사이트 전체)가
+    // 요청마다 동적 렌더로 떨어져 CDN 캐시가 0이 된다.
+    const { data, error } = await supabaseAnon
       .from('site_config')
       .select('cohort, year, semester, since_year')
       .eq('key', 'current')

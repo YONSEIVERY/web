@@ -10,7 +10,10 @@ import { MemberSignupForm } from '@/components/forms/member-signup-form'
  * 자리다. 링크는 단톡방으로만 돌리므로 검색 노출은 막는다.
  */
 
-export const dynamic = 'force-dynamic'
+// force-dynamic을 쓰지 않는다. 이 페이지의 서버 데이터는 기수 번호 하나뿐이고
+// 마케팅 레이아웃의 ISR(5분)이 그 신선도를 충분히 보장한다. 지금 44기 22명이
+// 몰려오는 문이라 TTFB가 곧 첫인상이다. 제출 자체는 서버 액션이라 정적화와
+// 무관하게 항상 실시간이다.
 
 export const metadata: Metadata = {
   title: '학회원 등록 신청',

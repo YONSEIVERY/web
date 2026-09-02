@@ -206,7 +206,7 @@ function ManifestoSection() {
   return (
     <section
       id="manifesto"
-      className="manifesto-section relative grid min-h-screen grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40"
+      className="manifesto-section relative grid min-h-dvh grid-cols-12 gap-x-8 px-6 py-32 md:gap-x-12 md:px-10 md:py-40"
     >
       <ManifestoVertical />
 
