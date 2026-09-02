@@ -288,6 +288,8 @@ export type DirectoryMember = {
   college: string | null
   major: string | null
   photo_url: string | null
+  /** 본인이 소개에 올린 대표사진 경로 (비공개 버킷). 카드에서 우선 사용. */
+  intro_photo_path: string | null
   hasIntro: boolean
   excerpt: string | null
 }
@@ -309,7 +311,7 @@ export async function getDirectory(cohort: number): Promise<DirectoryMember[]> {
   const { data: members } = await supabaseService
     .from('cohort_members')
     .select(
-      'id, name, role_tier, role_label, college, major, photo_url, sort_order, member_intros(body_md, strengths, likes, tmi)',
+      'id, name, role_tier, role_label, college, major, photo_url, sort_order, member_intros(body_md, strengths, likes, tmi, photo_path)',
     )
     .eq('cohort', cohort)
     .order('sort_order', { ascending: true })
@@ -345,6 +347,7 @@ export async function getDirectory(cohort: number): Promise<DirectoryMember[]> {
       college: (m.college as string | null) ?? null,
       major: (m.major as string | null) ?? null,
       photo_url: (m.photo_url as string | null) ?? null,
+      intro_photo_path: (introRow?.photo_path as string | null) ?? null,
       hasIntro:
         strengths.length > 0 ||
         likes.length > 0 ||
