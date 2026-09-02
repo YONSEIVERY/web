@@ -262,6 +262,24 @@ export function summarizeAttendance(rows: AttendanceRow[]) {
  * 자기소개 디렉토리. cohort_members의 공개 성격 필드만 고른다
  * (email·phone·student_id·birth는 절대 select하지 않는다).
  */
+/** 구조화 자기소개의 한 항목 (0030 strengths·likes jsonb 원소). */
+export type IntroItem = { title: string; body: string }
+
+/** jsonb를 신뢰하지 않는다. 형태가 틀린 원소는 버리고 3개로 자른다. */
+export function parseIntroItems(v: unknown): IntroItem[] {
+  if (!Array.isArray(v)) return []
+  return v
+    .map((it) => {
+      const r = (it ?? {}) as Record<string, unknown>
+      return {
+        title: String(r.title ?? '').trim(),
+        body: String(r.body ?? '').trim(),
+      }
+    })
+    .filter((it) => it.title || it.body)
+    .slice(0, 3)
+}
+
 export type DirectoryMember = {
   id: string
   name: string
@@ -291,7 +309,7 @@ export async function getDirectory(cohort: number): Promise<DirectoryMember[]> {
   const { data: members } = await supabaseService
     .from('cohort_members')
     .select(
-      'id, name, role_tier, role_label, college, major, photo_url, sort_order, member_intros(body_md)',
+      'id, name, role_tier, role_label, college, major, photo_url, sort_order, member_intros(body_md, strengths, likes, tmi)',
     )
     .eq('cohort', cohort)
     .order('sort_order', { ascending: true })
@@ -300,10 +318,25 @@ export async function getDirectory(cohort: number): Promise<DirectoryMember[]> {
 
   return (members as Record<string, unknown>[]).map((m) => {
     const intro = m.member_intros
-    const introRow = Array.isArray(intro) ? intro[0] : intro
-    const body = String(
-      (introRow as Record<string, unknown> | null | undefined)?.body_md ?? '',
-    )
+    const introRow = (Array.isArray(intro) ? intro[0] : intro) as
+      | Record<string, unknown>
+      | null
+      | undefined
+    const body = String(introRow?.body_md ?? '')
+    const strengths = parseIntroItems(introRow?.strengths)
+    const likes = parseIntroItems(introRow?.likes)
+    const tmi = String(introRow?.tmi ?? '').trim()
+    // 카드 발췌는 구조화 항목 우선: 잘하는 것 제목 나열 → 좋아하는 것 제목
+    // 나열 → TMI 첫 문장 → 옛 마크다운 첫 문장.
+    const titles = (strengths.length > 0 ? strengths : likes)
+      .map((it) => it.title)
+      .filter(Boolean)
+    const structuredExcerpt =
+      titles.length > 0
+        ? titles.join(' · ')
+        : tmi
+          ? introExcerpt(tmi)
+          : null
     return {
       id: String(m.id),
       name: String(m.name),
@@ -312,8 +345,12 @@ export async function getDirectory(cohort: number): Promise<DirectoryMember[]> {
       college: (m.college as string | null) ?? null,
       major: (m.major as string | null) ?? null,
       photo_url: (m.photo_url as string | null) ?? null,
-      hasIntro: body.trim().length > 0,
-      excerpt: introExcerpt(body),
+      hasIntro:
+        strengths.length > 0 ||
+        likes.length > 0 ||
+        tmi.length > 0 ||
+        body.trim().length > 0,
+      excerpt: structuredExcerpt ?? introExcerpt(body),
     }
   })
 }
@@ -329,6 +366,13 @@ export type MemberProfile = {
   photo_url: string | null
   intro_md: string
   intro_updated_at: string | null
+  mbti: string | null
+  /** 구조화 소개의 대표사진 (portal-photos 비공개 버킷 경로). */
+  intro_photo_path: string | null
+  strengths: IntroItem[]
+  likes: IntroItem[]
+  tmi: string
+  portfolio: string
 }
 
 export async function getMemberProfile(
@@ -343,12 +387,15 @@ export async function getMemberProfile(
       .maybeSingle(),
     supabaseService
       .from('member_intros')
-      .select('body_md, updated_at')
+      .select(
+        'body_md, updated_at, mbti, photo_path, strengths, likes, tmi, portfolio',
+      )
       .eq('member_id', id)
       .maybeSingle(),
   ])
   if (!m) return null
   const row = m as Record<string, unknown>
+  const introRow = intro as Record<string, unknown> | null
   return {
     id: String(row.id),
     cohort: Number(row.cohort),
@@ -358,12 +405,13 @@ export async function getMemberProfile(
     college: (row.college as string | null) ?? null,
     major: (row.major as string | null) ?? null,
     photo_url: (row.photo_url as string | null) ?? null,
-    intro_md: String(
-      (intro as Record<string, unknown> | null)?.body_md ?? '',
-    ),
-    intro_updated_at:
-      ((intro as Record<string, unknown> | null)?.updated_at as
-        | string
-        | null) ?? null,
+    intro_md: String(introRow?.body_md ?? ''),
+    intro_updated_at: (introRow?.updated_at as string | null) ?? null,
+    mbti: (introRow?.mbti as string | null) ?? null,
+    intro_photo_path: (introRow?.photo_path as string | null) ?? null,
+    strengths: parseIntroItems(introRow?.strengths),
+    likes: parseIntroItems(introRow?.likes),
+    tmi: String(introRow?.tmi ?? '').trim(),
+    portfolio: String(introRow?.portfolio ?? '').trim(),
   }
 }
