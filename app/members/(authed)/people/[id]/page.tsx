@@ -8,6 +8,7 @@ import { getSiteConfig } from '@/lib/data/site-config'
 import { getMemberByEmail, getPortalIdentity } from '@/lib/portal/auth'
 import { getMemberProfile, type IntroItem } from '@/lib/portal/queries'
 import { Markdown } from '@/components/portal/markdown'
+import { IntroComments } from '@/components/portal/intro-comments'
 
 const SIGNED_URL_TTL_SEC = 60 * 60
 
@@ -184,6 +185,12 @@ export default async function PersonPage({
           </Link>
         </div>
       )}
+
+      <IntroComments
+        profileId={profile.id}
+        viewerEmail={identity?.email ?? ''}
+        viewerIsExec={identity?.role === 'exec'}
+      />
     </div>
   )
 }

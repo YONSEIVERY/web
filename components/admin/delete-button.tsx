@@ -4,6 +4,7 @@ import { useFormStatus } from 'react-dom'
 import { deleteAlumni, deletePartner } from '@/app/admin/actions/delete'
 import { deleteApplication } from '@/app/admin/actions/recruit'
 import { deleteSessionPost } from '@/app/members/actions/posts'
+import { deleteIntroComment } from '@/app/members/actions/intro-comments'
 import { deleteNotice, deleteSession } from '@/app/members/actions/portal'
 import {
   DELETE_INITIAL,
@@ -15,6 +16,7 @@ type Kind =
   | 'partner'
   | 'application'
   | 'session_post'
+  | 'intro_comment'
   | 'club_session'
   | 'notice'
 
@@ -26,6 +28,7 @@ const ACTIONS: Record<
   partner: deletePartner,
   application: deleteApplication,
   session_post: deleteSessionPost,
+  intro_comment: deleteIntroComment,
   club_session: deleteSession,
   notice: deleteNotice,
 }

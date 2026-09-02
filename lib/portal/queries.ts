@@ -415,3 +415,38 @@ export async function getMemberProfile(
     portfolio: String(introRow?.portfolio ?? '').trim(),
   }
 }
+
+/** 자기소개 댓글 (0031). 소개 페이지 주인 기준 시간순. */
+export type IntroComment = {
+  id: string
+  author_member_id: string | null
+  author_email: string
+  author_name: string
+  body: string
+  created_at: string
+}
+
+export async function getIntroComments(
+  memberId: string,
+): Promise<IntroComment[]> {
+  // 학회원끼리 남기는 한마디라 페이지당 수십 건이 상한이다. 200이면
+  // 정상 운영을 넉넉히 덮고, 넘친다는 것 자체가 이상 신호다.
+  const { data, error } = await supabaseService
+    .from('intro_comments')
+    .select('id, author_member_id, author_email, author_name, body, created_at')
+    .eq('member_id', memberId)
+    .order('created_at', { ascending: true })
+    .limit(200)
+  if (error) {
+    console.error('[getIntroComments] query failed', error)
+    return []
+  }
+  return ((data ?? []) as Record<string, unknown>[]).map((r) => ({
+    id: String(r.id),
+    author_member_id: (r.author_member_id as string | null) ?? null,
+    author_email: String(r.author_email ?? ''),
+    author_name: String(r.author_name ?? ''),
+    body: String(r.body ?? ''),
+    created_at: String(r.created_at),
+  }))
+}
