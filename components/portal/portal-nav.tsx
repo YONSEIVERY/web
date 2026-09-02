@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { Route } from 'next'
+import { LogoutButton } from '@/components/portal/logout-button'
 
 type NavItem = { href: Route; label: string }
 
@@ -26,7 +27,14 @@ function isActive(pathname: string, href: string) {
     : pathname.startsWith(href)
 }
 
-export function PortalNav({ isExec }: { isExec: boolean }) {
+export function PortalNav({
+  isExec,
+  email,
+}: {
+  isExec: boolean
+  /** 레이아웃이 이미 확인한 로그인 이메일. 추가 조회 없이 프롭으로 받는다. */
+  email: string
+}) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
@@ -36,6 +44,7 @@ export function PortalNav({ isExec }: { isExec: boolean }) {
       <aside className="fixed inset-y-0 left-0 hidden w-56 flex-col gap-1 border-r border-border p-6 md:flex">
         <Brand className="mb-6" />
         <NavList isExec={isExec} pathname={pathname} />
+        <LogoutButton email={email} />
       </aside>
 
       {/* Mobile: top bar with hamburger */}
@@ -80,6 +89,7 @@ export function PortalNav({ isExec }: { isExec: boolean }) {
               pathname={pathname}
               onNavigate={() => setOpen(false)}
             />
+            <LogoutButton email={email} />
           </nav>
         </div>
       )}
