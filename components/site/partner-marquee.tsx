@@ -48,6 +48,11 @@ export async function PartnerMarquee() {
             key={`${logo.id}-${i}`}
             src={logo.marquee_logo_url}
             alt=""
+            // 페이지 맨 아래 장식 밴드다. 즉시 로드하면 헤드 시점에 로고
+            // 수백 KB가 CSS·폰트·JS와 커넥션을 나눠 쓴다. 스크롤이 닿을
+            // 때 받아도 마퀴는 아무 문제가 없다.
+            loading="lazy"
+            decoding="async"
             className="block h-12 w-auto shrink-0 md:h-20"
           />
         ))}

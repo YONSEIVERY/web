@@ -35,7 +35,9 @@ export function SiteNav() {
         <details className="site-nav-disclosure relative md:hidden">
           <summary
             translate="no"
-            className="list-none font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary [&::-webkit-details-marker]:hidden"
+            // 모바일의 유일한 내비게이션 입구인데 히트 박스가 글자 높이
+            // 13px뿐이었다. 시각 크기는 그대로 두고 여백으로 44px을 채운다.
+            className="-mx-3 flex min-h-11 cursor-pointer list-none items-center px-3 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary [&::-webkit-details-marker]:hidden"
           >
             MENU
           </summary>

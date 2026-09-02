@@ -8,7 +8,7 @@ import {
 } from '@/app/actions/demoday-state'
 
 const INPUT_CLASS =
-  'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
+  'w-full border border-border bg-bg-base px-4 py-3 font-display text-base text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none md:text-sm'
 const LABEL_CLASS =
   'flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs'
 
@@ -134,7 +134,7 @@ export function DemodayAttendeeForm({
       </div>
 
       {state.status === 'error' && (
-        <p className="text-sm text-red-400">{state.message}</p>
+        <p aria-live="polite" className="text-sm text-red-400">{state.message}</p>
       )}
       <SubmitButton />
     </form>
@@ -220,7 +220,7 @@ function Field({
       <span className={LABEL_CLASS}>
         {label}
         {required && (
-          <span aria-hidden className="ml-1 text-accent">
+          <span aria-hidden className="ml-1 text-accent-text">
             *
           </span>
         )}
@@ -261,7 +261,7 @@ function RadioGroup({
         <span className={LABEL_CLASS}>
           {label}
           {required && (
-            <span aria-hidden className="ml-1 text-accent">
+            <span aria-hidden className="ml-1 text-accent-text">
               *
             </span>
           )}

@@ -59,15 +59,18 @@ export default async function EditSessionPage({
         >
           DANGER · DELETE
         </h2>
+        {/* 0025 이후 출결이나 기록이 딸린 세션은 DB가 삭제를 막는다.
+            "함께 사라진다"는 옛 CASCADE 시절 문구라 사실과 다르다. */}
         <p className="mt-2 text-xs text-fg-muted">
-          이 세션을 삭제하면 연결된 출결 기록과 학회원 기록이 함께 사라집니다.
-          복구할 수 없습니다.
+          출결 기록이나 학회원 기록이 있는 세션은 삭제되지 않습니다. 그런
+          기록이 없는 세션만 삭제되며, 삭제는 복구할 수 없습니다. 지난
+          세션을 정리하려면 삭제 대신 비공개(초안)로 돌리세요.
         </p>
         <div className="mt-4">
           <DeleteButton
             kind="club_session"
             id={session.id}
-            label={`${session.week !== null ? `${session.week}주차 · ` : ''}${session.title} (출결 기록 포함)`}
+            label={`${session.week !== null ? `${session.week}주차 · ` : ''}${session.title}`}
           />
         </div>
       </section>

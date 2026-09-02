@@ -13,11 +13,11 @@ import {
 import { RECRUIT } from '@/lib/content/recruit'
 
 const INPUT_CLASS =
-  'w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none'
+  'w-full border border-border bg-bg-base px-4 py-3 font-display text-base text-fg-primary placeholder:text-fg-muted focus:border-fg-primary focus:outline-none md:text-sm'
 const LABEL_CLASS =
   'flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs'
 const FILE_INPUT_CLASS =
-  'block w-full border border-border bg-bg-base px-4 py-3 font-display text-sm text-fg-primary file:mr-4 file:border-0 file:bg-transparent file:font-mono file:text-[10px] file:uppercase file:tracking-[0.32em] file:text-fg-primary focus:border-fg-primary focus:outline-none'
+  'block w-full border border-border bg-bg-base px-4 py-3 font-display text-base text-fg-primary file:mr-4 file:border-0 file:bg-transparent file:font-mono file:text-[10px] file:uppercase file:tracking-[0.32em] file:text-fg-primary focus:border-fg-primary focus:outline-none md:text-sm'
 
 const MB = 1024 * 1024
 const PLAN_EXTS = ['pdf', 'doc', 'docx', 'hwp', 'hwpx', 'ppt', 'pptx']
@@ -396,7 +396,11 @@ export function RecruitApplicationForm() {
         </div>
       </div>
 
-      {errorMessage && <p className="text-sm text-red-400">{errorMessage}</p>}
+      {errorMessage && (
+        <p aria-live="polite" className="text-sm text-red-400">
+          {errorMessage}
+        </p>
+      )}
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <button
@@ -514,7 +518,7 @@ function FileField({
         <span className={LABEL_CLASS}>
           {label}
           {required && (
-            <span aria-hidden className="ml-1 text-accent">
+            <span aria-hidden className="ml-1 text-accent-text">
               *
             </span>
           )}
@@ -569,7 +573,7 @@ function Field({
       <span className={LABEL_CLASS}>
         {label}
         {required && (
-          <span aria-hidden className="ml-1 text-accent">
+          <span aria-hidden className="ml-1 text-accent-text">
             *
           </span>
         )}

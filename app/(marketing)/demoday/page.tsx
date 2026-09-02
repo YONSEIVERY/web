@@ -362,7 +362,7 @@ function VolumesSection({ volumes }: { volumes: DemodayEvent[] }) {
                   className={`col-span-5 font-mono text-[10px] uppercase tracking-[0.32em] md:col-span-2 md:text-xs ${
                     status === 'CLOSED' || status === 'ENDED'
                       ? 'text-fg-muted'
-                      : 'text-accent'
+                      : 'text-accent-text'
                   }`}
                 >
                   {status}
