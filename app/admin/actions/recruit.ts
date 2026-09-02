@@ -33,6 +33,46 @@ export async function toggleRecruitOpen(formData: FormData) {
   revalidatePath('/recruit')
 }
 
+/**
+ * 마감 시각 설정·해제. 시즌 화면의 상태 기계가 이 값 하나로 움직인다.
+ *
+ *  미래 마감 + 접수 열기  -> 접수 화면 (카운트다운 포함)
+ *  마감 경과              -> "접수가 마감되었습니다" + 면접·발표 일정 유지
+ *  마감 비움 + 접수 닫기  -> "지금은 접수 기간이 아닙니다" (시즌 종료)
+ *
+ * 지금까지 이 값을 고칠 어드민 컨트롤이 없어서, 발표가 끝난 뒤에도 공개
+ * 화면이 지난 시즌 일정에 멈춰 있었고 SQL로만 벗어날 수 있었다.
+ */
+export async function setRecruitDeadline(formData: FormData) {
+  await requireAdmin()
+  const roundId = String(formData.get('round_id') ?? '')
+  const intent = String(formData.get('intent') ?? '')
+  if (!roundId) return
+
+  let deadline: string | null = null
+  if (intent === 'set') {
+    const local = String(formData.get('deadline') ?? '').trim()
+    // datetime-local 값은 시간대가 없다. 어드민은 KST 기준으로 적으므로
+    // +09:00을 붙여 timestamptz로 만든다 (포털 세션 폼과 같은 방식).
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))
+      throw new Error('마감 시각 형식이 올바르지 않습니다.')
+    deadline = new Date(`${local}:00+09:00`).toISOString()
+  } else if (intent !== 'clear') {
+    throw new Error('잘못된 요청입니다.')
+  }
+
+  const { error } = await supabaseService
+    .from('recruit_rounds')
+    .update({ apply_deadline: deadline, updated_at: new Date().toISOString() })
+    .eq('id', roundId)
+  if (error) {
+    console.error('setRecruitDeadline failed', error)
+    throw new Error('마감 시각 변경에 실패했습니다.')
+  }
+  revalidatePath('/admin/recruit')
+  revalidatePath('/recruit')
+}
+
 export async function deleteApplication(
   _prev: DeleteState,
   formData: FormData,
