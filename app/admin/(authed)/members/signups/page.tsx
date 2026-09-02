@@ -22,7 +22,9 @@ import { SignupReview } from '@/components/admin/signup-review'
 export const dynamic = 'force-dynamic'
 
 const SIGNUP_COLUMNS =
-  'id, cohort, name, email, phone, student_id, college, major, note, status, created_at, reviewed_at, reviewed_by'
+  // note는 읽지 않는다. 신청 폼에 메모 칸이 없어 항상 비어 있는데, 표에서
+  // 가장 넓은 자리를 차지하던 열이라 지웠다(2026-09-02 대표 결정).
+  'id, cohort, name, email, phone, student_id, college, major, status, created_at, reviewed_at, reviewed_by'
 
 type SignupStatus = 'pending' | 'approved' | 'rejected'
 
@@ -35,7 +37,6 @@ type Signup = {
   student_id: string | null
   college: string | null
   major: string | null
-  note: string | null
   status: SignupStatus
   created_at: string
   reviewed_at: string | null
@@ -74,7 +75,6 @@ function toSignup(row: Record<string, unknown>): Signup {
     student_id: (row.student_id as string | null) ?? null,
     college: (row.college as string | null) ?? null,
     major: (row.major as string | null) ?? null,
-    note: (row.note as string | null) ?? null,
     status,
     created_at: String(row.created_at),
     reviewed_at: (row.reviewed_at as string | null) ?? null,
@@ -189,8 +189,8 @@ export default async function MemberSignupsPage() {
 
       {signupErr && (
         <p className="mt-6 border border-red-400/40 p-4 text-sm text-red-400">
-          신청 목록을 불러오지 못했습니다. member_signups 테이블과 컬럼(note ·
-          status · reviewed_at · reviewed_by)이 배포되었는지 확인하십시오.
+          신청 목록을 불러오지 못했습니다. member_signups 테이블과 컬럼
+          (status · reviewed_at · reviewed_by)이 배포되었는지 확인하십시오.
         </p>
       )}
 
@@ -210,7 +210,6 @@ export default async function MemberSignupsPage() {
               <Th sticky>신청자</Th>
               <Th>학번 · 학과</Th>
               <Th>지원서 대조</Th>
-              <Th>메모</Th>
               <Th>신청일</Th>
               <Th>처리</Th>
             </tr>
@@ -246,18 +245,6 @@ export default async function MemberSignupsPage() {
                   </Td>
                   <Td>
                     <MatchBadge match={match} />
-                  </Td>
-                  <Td>
-                    {s.note ? (
-                      <p
-                        className="line-clamp-3 max-w-[26ch] leading-relaxed"
-                        title={s.note}
-                      >
-                        {s.note}
-                      </p>
-                    ) : (
-                      '-'
-                    )}
                   </Td>
                   <Td>
                     <span className="whitespace-nowrap font-mono text-[10px] text-fg-muted">
