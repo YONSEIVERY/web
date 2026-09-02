@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { supabaseService } from '@/lib/supabase/service'
-import { formatKstDateTime } from '@/lib/utils/format-date'
+import {
+  formatKstDateTime,
+  formatKstDatetimeLocal,
+} from '@/lib/utils/format-date'
 import {
   getApplications,
   getCurrentRecruitRound,
@@ -11,6 +14,7 @@ import {
 } from '@/lib/recruit/queries'
 import {
   setApplicationStatus,
+  setRecruitDeadline,
   toggleRecruitOpen,
 } from '@/app/admin/actions/recruit'
 import {
@@ -181,6 +185,56 @@ export default async function AdminRecruitPage({
           엑셀 다운로드
         </a>
       </div>
+
+      {/* 시즌 상태 컨트롤. 공개 /recruit 화면은 마감 시각 하나로 세 상태를
+          오간다: 미래 마감이면 접수 화면, 지났으면 마감 안내 + 일정 유지,
+          비어 있으면(그리고 접수 닫힘) 시즌 종료 안내. 이 컨트롤이 없을 때는
+          발표가 끝나도 화면이 지난 시즌 일정에 멈춰 있었고 SQL로만 벗어날
+          수 있었다. */}
+      <form
+        action={setRecruitDeadline}
+        className="mt-4 flex flex-wrap items-end gap-3 border border-border p-4"
+      >
+        <input type="hidden" name="round_id" value={round.id} />
+        <label className="flex flex-col gap-1.5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted">
+            마감 시각 (KST)
+          </span>
+          <input
+            type="datetime-local"
+            name="deadline"
+            required
+            defaultValue={
+              round.apply_deadline
+                ? formatKstDatetimeLocal(round.apply_deadline)
+                : ''
+            }
+            className="border border-border bg-bg-base px-3 py-1.5 font-mono text-base text-fg-primary focus:border-fg-primary focus:outline-none md:text-xs"
+          />
+        </label>
+        <button
+          type="submit"
+          name="intent"
+          value="set"
+          className="border border-fg-primary px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base"
+        >
+          마감 저장
+        </button>
+        <button
+          type="submit"
+          name="intent"
+          value="clear"
+          formNoValidate
+          className="border border-border px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
+        >
+          마감 비우기 (시즌 종료 화면)
+        </button>
+        <p className="w-full font-display text-xs leading-relaxed text-fg-muted">
+          발표까지 끝났으면 마감을 비우고 접수를 닫아두세요. 공개 화면이
+          &quot;지금은 접수 기간이 아닙니다&quot;로 바뀌고 지난 시즌 일정이
+          내려갑니다.
+        </p>
+      </form>
 
       {/* 상태별 집계 겸 필터. 칩을 누르면 목록이 해당 상태만 표시한다. */}
       {applications.length > 0 && (
