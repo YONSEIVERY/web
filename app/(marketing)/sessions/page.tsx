@@ -1,14 +1,15 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import Link from 'next/link'
-import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { CURRICULUM } from '@/lib/content/curriculum'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '세션',
   description:
     'VERY의 주간 세션 구조. 10만원 프로젝트 → 프리토타이핑 → 아이디어톤 → 데모데이의 정규 4단계와 스터디·인사이트·컨벤션 보조 3세션.',
-}
+  path: '/sessions',
+})
 
 /**
  * /sessions - session-focused subset of the curriculum page.

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/content/shared-metadata'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { MemberSignupForm } from '@/components/forms/member-signup-form'
 
@@ -15,12 +15,13 @@ import { MemberSignupForm } from '@/components/forms/member-signup-form'
 // 몰려오는 문이라 TTFB가 곧 첫인상이다. 제출 자체는 서버 액션이라 정적화와
 // 무관하게 항상 실시간이다.
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '학회원 등록 신청',
   description:
     '연세대학교 창업학회 VERY 학회원 포털 등록 신청. 승인 후 포털에 입장할 수 있습니다.',
   robots: 'noindex',
-}
+  path: '/join',
+})
 
 export default async function JoinPage() {
   const { cohort } = await getSiteConfig()

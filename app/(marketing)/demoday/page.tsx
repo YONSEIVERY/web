@@ -1,5 +1,5 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
-import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { DEMODAY } from '@/lib/content/demoday'
 import {
@@ -12,11 +12,12 @@ import {
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '데모데이',
   description:
     'VERY의 학기 말 데모데이. 학회의 모든 창업팀이 한 무대에 올라 IR 피칭으로 한 학기를 결산하는 자리.',
-}
+  path: '/demoday',
+})
 
 const SEMESTER_LABEL: Record<string, string> = {
   '1학기': '1',

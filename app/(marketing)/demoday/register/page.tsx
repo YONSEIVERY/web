@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/content/shared-metadata'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -8,11 +8,12 @@ import { DemodayAttendeeForm } from '@/components/forms/demoday-attendee-form'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '데모데이 참관 신청',
   description:
     'VERY 데모데이 참관 신청. 한 학기 동안 다진 IR 피칭을 결산 무대에서 직접 관람하실 수 있습니다.',
-}
+  path: '/demoday/register',
+})
 
 export default async function DemodayRegisterPage() {
   const current = await getCurrentDemoday()

@@ -1,15 +1,16 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
-import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { ABOUT } from '@/lib/content/about'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { getPublicLeadership } from '@/lib/cohort-members/queries'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '소개',
   description:
     '연세대학교 창업학회 VERY. 1997년 벤처창업연구회로 발족, 매 학기 더 단단해진 지반을 다음 기수에게 넘겨오며 44기째 이어오고 있는 학회.',
-}
+  path: '/about',
+})
 
 export const revalidate = 60
 

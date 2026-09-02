@@ -1,15 +1,16 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
-import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { getPublishedCohortList } from '@/lib/cohort-members/queries'
 
 export const revalidate = 60
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '기수 아카이브',
   description:
     '연세대학교 창업학회 VERY 기수별 학회원 프로필 아카이브. 회장단·임원진·학회원을 기수별로 정리.',
-}
+  path: '/cohorts',
+})
 
 export default async function CohortsIndexPage() {
   const cohorts = await getPublishedCohortList()

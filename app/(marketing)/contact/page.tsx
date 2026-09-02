@@ -1,12 +1,13 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
-import type { Metadata } from 'next'
 import { CONTACT } from '@/lib/content/contact'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '연락',
   description:
     'VERY 학회 연락처. 모집·파트너십·언론 문의는 이메일과 인스타그램으로 받습니다. 담당자가 직접 확인해 회신드립니다.',
-}
+  path: '/contact',
+})
 
 /**
  * /contact - channels-only contact page.

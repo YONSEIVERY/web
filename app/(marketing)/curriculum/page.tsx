@@ -1,17 +1,18 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
 import Image from 'next/image'
-import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { CURRICULUM } from '@/lib/content/curriculum'
 import { CURRICULUM_PHOTOS } from '@/lib/content/photos'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { IndustryInquiryForm } from '@/components/forms/industry-inquiry-form'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '커리큘럼',
   description:
     'VERY 정규 커리큘럼. 10만원 프로젝트 → 프리토타이핑 → 아이디어톤 → 데모데이의 네 단계와 스터디·인사이트·컨벤션 세 갈래의 보조 세션, 그리고 산학 협력.',
-}
+  path: '/curriculum',
+})
 
 /**
  * /curriculum - semester program page.
