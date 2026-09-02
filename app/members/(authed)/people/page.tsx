@@ -2,11 +2,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Route } from 'next'
 import { redirect } from 'next/navigation'
+import { supabaseService } from '@/lib/supabase/service'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getMemberByEmail, getPortalIdentity } from '@/lib/portal/auth'
 import { getDirectory, type DirectoryMember } from '@/lib/portal/queries'
 
 export const dynamic = 'force-dynamic'
+
+const SIGNED_URL_TTL_SEC = 60 * 60
 
 const LEADER_TIERS = ['president', 'vice_president']
 const LABELED_TIERS = [...LEADER_TIERS, 'officer']
@@ -46,6 +49,23 @@ export default async function PeoplePage({
     identity ? getMemberByEmail(identity.email) : null,
   ])
   const myEntry = me ? members.find((m) => m.id === me.id) : null
+
+  // 카드 사진은 본인이 소개에 올린 대표사진을 우선한다. 비공개 버킷이라
+  // 서명 읽기 URL을 배치로 발급한다 (세션 기록과 같은 방식).
+  const introPhotoUrls = new Map<string, string>()
+  const photoPaths = members
+    .map((m) => m.intro_photo_path)
+    .filter((p): p is string => Boolean(p))
+  if (photoPaths.length > 0) {
+    const { data } = await supabaseService.storage
+      .from('portal-photos')
+      .createSignedUrls(photoPaths, SIGNED_URL_TTL_SEC)
+    if (data) {
+      for (const d of data) {
+        if (d.path && d.signedUrl) introPhotoUrls.set(d.path, d.signedUrl)
+      }
+    }
+  }
 
   return (
     <div>
@@ -102,13 +122,19 @@ export default async function PeoplePage({
           임원진이 명단을 등록하면 이곳에 멤버들이 나타납니다.
         </p>
       ) : (
-        <MemberSections members={members} />
+        <MemberSections members={members} introPhotoUrls={introPhotoUrls} />
       )}
     </div>
   )
 }
 
-function MemberSections({ members }: { members: DirectoryMember[] }) {
+function MemberSections({
+  members,
+  introPhotoUrls,
+}: {
+  members: DirectoryMember[]
+  introPhotoUrls: Map<string, string>
+}) {
   // getDirectory가 sort_order·이름순으로 이미 정렬해 준다. 여기서는 tier로
   // 가르기만 하고, 학회장·부학회장 묶음 안에서만 학회장을 앞으로 당긴다.
   const leaders = members.filter((m) => LEADER_TIERS.includes(m.role_tier))
@@ -136,7 +162,15 @@ function MemberSections({ members }: { members: DirectoryMember[] }) {
           </h2>
           <ul className="mt-4 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
             {s.list.map((m) => (
-              <MemberCard key={m.id} member={m} />
+              <MemberCard
+                key={m.id}
+                member={m}
+                introPhotoUrl={
+                  m.intro_photo_path
+                    ? (introPhotoUrls.get(m.intro_photo_path) ?? null)
+                    : null
+                }
+              />
             ))}
           </ul>
         </section>
@@ -145,7 +179,13 @@ function MemberSections({ members }: { members: DirectoryMember[] }) {
   )
 }
 
-function MemberCard({ member: m }: { member: DirectoryMember }) {
+function MemberCard({
+  member: m,
+  introPhotoUrl,
+}: {
+  member: DirectoryMember
+  introPhotoUrl: string | null
+}) {
   return (
     <li className="bg-bg-base">
       <Link
@@ -153,7 +193,16 @@ function MemberCard({ member: m }: { member: DirectoryMember }) {
         className="flex h-full flex-col gap-4 p-5 transition-colors hover:bg-fg-primary/[0.03]"
       >
         <div className="flex items-center gap-4">
-          {m.photo_url ? (
+          {introPhotoUrl ? (
+            // 서명 URL은 만료가 있어 next/image 캐시와 맞지 않는다
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={introPhotoUrl}
+              alt=""
+              loading="lazy"
+              className="h-14 w-14 shrink-0 border border-border object-cover"
+            />
+          ) : m.photo_url ? (
             <Image
               src={m.photo_url}
               alt=""
