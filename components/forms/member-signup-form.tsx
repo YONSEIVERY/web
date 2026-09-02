@@ -29,7 +29,7 @@ const LABEL_CLASS =
   'flex items-center font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary md:text-xs'
 
 const CONSENT_TEXT =
-  '학회원 포털 계정 등록과 학회 운영을 위해 이름, 이메일, 연락처와 학번·단과대·전공을 수집·이용하는 것에 동의합니다. 정보는 학회원 자격이 유지되는 동안 보유하며, 본인이 삭제를 요청하면 파기합니다. 동의를 거부할 권리가 있으며, 거부 시 등록 신청이 불가합니다.'
+  '학회원 포털 계정 등록과 학회 운영을 위해 이름, 이메일, 연락처, 생년월일과 학번·단과대·전공을 수집·이용하는 것에 동의합니다. 정보는 학회원 자격이 유지되는 동안 보유하며, 본인이 삭제를 요청하면 파기합니다. 동의를 거부할 권리가 있으며, 거부 시 등록 신청이 불가합니다.'
 
 export function MemberSignupForm({ cohort }: { cohort: number }) {
   const [pending, setPending] = useState(false)
@@ -115,6 +115,13 @@ export function MemberSignupForm({ cohort }: { cohort: number }) {
           autoComplete="tel"
           pattern="[0-9+\-\s()]{7,20}"
           title="숫자와 하이픈(-)으로 입력해주세요"
+        />
+        <Field
+          name="birth"
+          label="생년월일"
+          required
+          type="date"
+          autoComplete="bday"
         />
       </Fieldset>
 
@@ -221,7 +228,7 @@ function Field({
 }: {
   name: string
   label: string
-  type?: 'text' | 'email' | 'tel'
+  type?: 'text' | 'email' | 'tel' | 'date'
   required?: boolean
   maxLength?: number
   pattern?: string

@@ -32,7 +32,7 @@ const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 const SIGNUP_COLUMNS =
-  'id, cohort, name, email, phone, student_id, college, major, status'
+  'id, cohort, name, email, phone, birth, student_id, college, major, status'
 
 type SignupRow = {
   id: string
@@ -40,6 +40,7 @@ type SignupRow = {
   name: string
   email: string
   phone: string | null
+  birth: string | null
   student_id: string | null
   college: string | null
   major: string | null
@@ -72,6 +73,7 @@ async function loadSignup(id: string): Promise<SignupRow | null> {
     name: String(row.name ?? ''),
     email: String(row.email ?? ''),
     phone: (row.phone as string | null) ?? null,
+    birth: (row.birth as string | null) ?? null,
     student_id: (row.student_id as string | null) ?? null,
     college: (row.college as string | null) ?? null,
     major: (row.major as string | null) ?? null,
@@ -198,6 +200,7 @@ export async function approveMemberSignup(
         role_tier: 'member',
         email,
         phone: signup.phone,
+        birth: signup.birth,
         student_id: signup.student_id,
         college: signup.college,
         major: signup.major,
