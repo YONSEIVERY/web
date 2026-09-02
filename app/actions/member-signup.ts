@@ -20,8 +20,8 @@ import type { MemberSignupState } from './member-signup-state'
  * 쓰기는 service_role로만 한다. member_signups는 개인정보 테이블이라
  * RLS 정책이 0개이고 anon·authenticated는 읽지도 쓰지도 못한다.
  *
- * 의존하는 member_signups 컬럼 (0027_member_signups.sql):
- *   cohort, name, email, phone, student_id, college, major
+ * 의존하는 member_signups 컬럼 (0027_member_signups.sql + 0029 birth):
+ *   cohort, name, email, phone, birth, student_id, college, major
  *   status는 default 'pending'을 그대로 쓴다.
  *   unique (cohort, lower(email)) <- 동시 제출 중복은 23505로 막힌다.
  *
@@ -32,6 +32,9 @@ import type { MemberSignupState } from './member-signup-state'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^[0-9+\-\s()]{7,20}$/
+// 폼의 date 입력이 내는 값 그대로. 저장 컬럼은 text지만(cohort_members.birth와
+// 동일) 이 폼으로 들어오는 새 행만큼은 형식을 하나로 고정한다.
+const BIRTH_RE = /^\d{4}-\d{2}-\d{2}$/
 const MAX_NAME = 80
 const MAX_EMAIL = 254
 const MAX_STUDENT_ID = 20
@@ -60,6 +63,7 @@ export async function submitMemberSignup(
   const email = field(formData, 'email')
   const emailConfirm = field(formData, 'email_confirm')
   const phone = field(formData, 'phone')
+  const birth = field(formData, 'birth')
   const studentId = field(formData, 'student_id')
   const college = field(formData, 'college')
   const major = field(formData, 'major')
@@ -77,6 +81,7 @@ export async function submitMemberSignup(
   if (email.toLowerCase() !== emailConfirm.toLowerCase())
     return fail('두 이메일이 서로 다릅니다. 다시 확인해주세요.')
   if (!PHONE_RE.test(phone)) return fail('연락처 형식을 확인해주세요.')
+  if (!BIRTH_RE.test(birth)) return fail('생년월일을 확인해주세요.')
   // 학적 정보도 필수다. 클라이언트의 required만 믿지 않는다.
   if (!studentId || studentId.length > MAX_STUDENT_ID)
     return fail('학번을 확인해주세요.')
@@ -150,6 +155,7 @@ export async function submitMemberSignup(
     name,
     email,
     phone,
+    birth,
     student_id: studentId,
     college: college,
     major: major,

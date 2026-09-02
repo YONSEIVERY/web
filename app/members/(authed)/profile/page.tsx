@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import type { Route } from 'next'
+import { supabaseService } from '@/lib/supabase/service'
 import { getMemberByEmail, getPortalIdentity } from '@/lib/portal/auth'
 import { getMemberProfile } from '@/lib/portal/queries'
 import { IntroForm } from '@/components/portal/intro-form'
+
+const SIGNED_URL_TTL_SEC = 60 * 60
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +29,15 @@ export default async function MyProfilePage() {
 
   const profile = await getMemberProfile(member.id)
 
+  // 기존 대표사진은 비공개 버킷이라 미리보기용 서명 URL을 만들어 넘긴다.
+  let photoUrl: string | null = null
+  if (profile?.intro_photo_path) {
+    const { data } = await supabaseService.storage
+      .from('portal-photos')
+      .createSignedUrl(profile.intro_photo_path, SIGNED_URL_TTL_SEC)
+    photoUrl = data?.signedUrl ?? null
+  }
+
   return (
     <div>
       <Header />
@@ -33,8 +45,8 @@ export default async function MyProfilePage() {
         {member.name}님의 소개
       </h1>
       <p className="mt-3 max-w-[56ch] font-display text-sm leading-relaxed text-fg-subtle">
-        Vol.{member.cohort} 멤버 페이지에 올라가는 자기소개입니다. 편하게
-        쓰고, 언제든 다시 고치면 됩니다.
+        Vol.{member.cohort} 멤버 페이지에 올라가는 자기소개입니다. 다 채우지
+        않아도 되고, 언제든 다시 고치면 됩니다.
         {' '}
         <Link
           href={`/members/people/${member.id}` as Route}
@@ -45,7 +57,17 @@ export default async function MyProfilePage() {
       </p>
 
       <div className="mt-8 max-w-2xl">
-        <IntroForm defaultValue={profile?.intro_md ?? ''} />
+        <IntroForm
+          initial={{
+            mbti: profile?.mbti ?? '',
+            strengths: profile?.strengths ?? [],
+            likes: profile?.likes ?? [],
+            tmi: profile?.tmi ?? '',
+            portfolio: profile?.portfolio ?? '',
+            photoPath: profile?.intro_photo_path ?? null,
+            photoUrl,
+          }}
+        />
       </div>
     </div>
   )
