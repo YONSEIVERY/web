@@ -3,6 +3,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getCurrentDemoday, isDemodayEnded } from '@/lib/demoday/queries'
+import { formatKstDateTime } from '@/lib/utils/format-date'
 import { DemodayAttendeeForm } from '@/components/forms/demoday-attendee-form'
 
 export const dynamic = 'force-dynamic'
@@ -59,8 +60,11 @@ export default async function DemodayRegisterPage() {
     )
   }
 
+  // 서버 로컬 시간을 쓰면 Vercel(UTC)에서 행사 시각이 9시간 이르게 보인다.
+  // 공용 KST 포맷터로 통일한다. /demoday 본편은 처음부터 Intl+Asia/Seoul이라
+  // 두 페이지의 시각이 다르게 나오던 문제의 수정이다.
   const dateLine = current.event_date
-    ? formatDate(current.event_date)
+    ? formatKstDateTime(current.event_date)
     : null
 
   return (
@@ -115,12 +119,3 @@ export default async function DemodayRegisterPage() {
   )
 }
 
-function formatDate(iso: string) {
-  const d = new Date(iso)
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  const hh = String(d.getHours()).padStart(2, '0')
-  const mm = String(d.getMinutes()).padStart(2, '0')
-  return `${y}.${m}.${day} ${hh}:${mm}`
-}
