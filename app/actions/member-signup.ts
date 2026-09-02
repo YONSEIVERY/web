@@ -53,19 +53,6 @@ function field(formData: FormData, key: string) {
     .trim()
 }
 
-/**
- * ilike 패턴의 `_`, `%`는 와일드카드라 `kim_j@..`가 `kimXj@..`에도 걸린다.
- * 이스케이프 대신 넓게 조회한 뒤 JS에서 정확히 대조한다. ilike는 항상
- * 결과를 넓히기만 하므로 놓치는 행은 없고, 과매칭은 여기서 걸러진다.
- */
-function hasExactEmail(
-  rows: { email: string | null }[] | null,
-  email: string,
-): boolean {
-  const target = email.toLowerCase()
-  return (rows ?? []).some((r) => (r.email ?? '').toLowerCase() === target)
-}
-
 export async function submitMemberSignup(
   formData: FormData,
 ): Promise<MemberSignupState> {
@@ -115,27 +102,14 @@ export async function submitMemberSignup(
 
   const { cohort } = await getSiteConfig()
 
-  // 이미 학회원이면 신청할 이유가 없다. 포털은 기수와 무관하게 이메일로
-  // 사람을 찾으므로(getMemberByEmail) 전 기수를 대상으로 확인한다.
-  const { data: members, error: memberErr } = await supabaseService
-    .from('cohort_members')
-    .select('id, email')
-    .ilike('email', email)
-    .limit(5)
-  if (memberErr) {
-    console.error('submitMemberSignup member lookup failed', memberErr)
-    return fail('확인에 실패했습니다. 잠시 후 다시 시도해주세요.')
-  }
-  if (hasExactEmail(members, email))
-    return {
-      status: 'notice',
-      message:
-        '이미 등록된 학회원입니다. 이 주소로 포털에 바로 로그인하실 수 있습니다. 기수나 정보가 다르면 운영진에게 문의해주세요.',
-    }
+  // 기등록 학회원인지 여기서 미리 확인하지 않는다. "이미 등록된 학회원"
+  // 안내는 로그인 없이 임의 이메일의 학회원 여부를 확인하는 오라클이 된다.
+  // 기등록자의 신청은 그냥 대기열에 올리고, 승인 액션이 명단에 이미 있으면
+  // 새 행 없이 승인 표시만 하도록 되어 있으므로 흐름이 막히지 않는다.
 
   const { data: signups, error: signupErr } = await supabaseService
     .from('member_signups')
-    .select('id, email')
+    .select('id, email, status')
     .eq('cohort', cohort)
     .ilike('email', email)
     .limit(5)
@@ -143,12 +117,33 @@ export async function submitMemberSignup(
     console.error('submitMemberSignup signup lookup failed', signupErr)
     return fail('확인에 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
-  if (hasExactEmail(signups, email))
+  const target = email.toLowerCase()
+  const existing = (signups ?? []).find(
+    (r) => (r.email ?? '').toLowerCase() === target,
+  )
+  if (existing) {
+    // 같은 주소의 신청이 이미 있다. 상태별로 안내가 달라야 한다. 반려를
+    // "승인 대기 중"이라고 안내하면 그 사람은 오지 않을 승인을 기다린다.
+    // 반려 사실 자체는 노출하지 않되, 문의로 유도한다.
+    const status = String(existing.status ?? 'pending')
+    if (status === 'approved')
+      return {
+        status: 'notice',
+        message:
+          '이미 승인된 신청입니다. 신청하신 주소로 포털에 로그인해보세요. 로그인이 안 되면 운영진에게 문의해주세요.',
+      }
+    if (status === 'rejected')
+      return {
+        status: 'notice',
+        message:
+          '이 주소로는 신청을 처리할 수 없습니다. 운영진에게 직접 문의해주세요.',
+      }
     return {
       status: 'notice',
       message:
         '이미 신청하셨습니다. 운영진 승인이 끝나면 포털에 입장하실 수 있습니다. 승인이 오래 걸린다면 운영진에게 문의해주세요.',
     }
+  }
 
   const { error: insErr } = await supabaseService.from('member_signups').insert({
     cohort,
@@ -171,5 +166,7 @@ export async function submitMemberSignup(
     return fail('저장에 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
-  return { status: 'success' }
+  // 어떤 주소로 접수됐는지 화면에 그대로 보여준다. 이 주소가 곧 로그인
+  // 계정이라, 오타를 본인이 확인할 마지막 기회다.
+  return { status: 'success', email }
 }

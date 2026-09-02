@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin/is-admin'
 import { supabaseService } from '@/lib/supabase/service'
 import { formatKstDateTime } from '@/lib/utils/format-date'
+import { normName, phoneTail } from '@/lib/members/identity'
 import { SignupReview } from '@/components/admin/signup-review'
 
 /**
@@ -58,19 +59,6 @@ function normEmail(v: unknown): string {
     .toLowerCase()
 }
 
-function normName(v: unknown): string {
-  return String(v ?? '').replace(/\s+/g, '')
-}
-
-/**
- * 전화번호는 끝 8자리로 맞춘다. 010-1234-5678과 +82 10 1234 5678이
- * 같은 번호인데 표기만 다른 경우를 흡수하기 위함이다.
- */
-function phoneTail(v: unknown): string {
-  const digits = String(v ?? '').replace(/\D/g, '')
-  return digits.length >= 8 ? digits.slice(-8) : digits
-}
-
 function toSignup(row: Record<string, unknown>): Signup {
   const raw = String(row.status ?? '')
   // approved · rejected만 처리 완료로 본다. 나머지는 전부 대기로 묶어
@@ -101,10 +89,14 @@ export default async function MemberSignupsPage() {
     redirect('/admin/login' as Route)
   }
 
+  // 공개 폼이 원천이라 행 수를 신뢰할 수 없다. 상한 없이 읽으면 대량
+  // 제출이 이 화면의 메모리와 렌더 시간을 그대로 부풀린다. 500이면 정상
+  // 운영(기수당 수십 건)을 넉넉히 덮고, 넘친다는 것 자체가 스팸 신호다.
   const { data: signupRows, error: signupErr } = await supabaseService
     .from('member_signups')
     .select(SIGNUP_COLUMNS)
     .order('created_at', { ascending: false })
+    .limit(500)
   if (signupErr) console.error('[MemberSignupsPage] signups query failed', signupErr)
 
   const signups = ((signupRows ?? []) as Record<string, unknown>[]).map(toSignup)
@@ -373,8 +365,10 @@ function Count({
 /**
  * 대조 결과 배지.
  *  합격자 확인          : 이메일이 그 기수 최종 합격 지원서와 같다
- *  이메일 불일치        : 이메일은 다르지만 이름과 전화가 합격자와 같다.
- *                        이 폼을 만든 이유이며, 승인해도 되는 건이다
+ *  이름·전화 일치       : 이메일은 다르지만 이름과 전화가 합격자와 같다.
+ *                        이 폼을 만든 이유이긴 하나, 이름과 전화는 아는
+ *                        사람이 위조할 수 있는 값이다. 자동 통과 근거가
+ *                        아니라 본인 확인을 거쳐 승인할 후보라는 신호다
  *  지원서에 없음        : 어디에도 맞지 않는다. 승인 전에 사람 확인이 필요하다
  */
 function MatchBadge({ match }: { match: Match }) {
@@ -388,7 +382,7 @@ function MatchBadge({ match }: { match: Match }) {
     return (
       <div>
         <span className="inline-block max-w-[22ch] border border-border-strong px-2 py-1 text-[11px] leading-snug text-fg-subtle">
-          이메일 불일치, 이름 · 전화 일치
+          이름 · 전화 일치, 본인 확인 필요
         </span>
         <p className="mt-1.5 break-all font-mono text-[10px] text-fg-muted">
           지원서 {match.applicationEmail}

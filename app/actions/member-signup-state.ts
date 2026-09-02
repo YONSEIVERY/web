@@ -7,7 +7,9 @@
  */
 export type MemberSignupState =
   | { status: 'idle' }
-  | { status: 'success' }
+  // email: 접수된 주소를 완료 화면에 그대로 보여준다. 이 주소가 곧 로그인
+  // 계정이라 오타를 본인이 확인할 마지막 기회다.
+  | { status: 'success'; email: string }
   | { status: 'notice'; message: string }
   | { status: 'error'; message: string }
 

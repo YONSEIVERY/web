@@ -38,7 +38,7 @@ export function MemberSignupForm({ cohort }: { cohort: number }) {
   )
   const [localError, setLocalError] = useState<string | null>(null)
 
-  if (result.status === 'success') return <Success />
+  if (result.status === 'success') return <Success email={result.email} />
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -155,7 +155,7 @@ export function MemberSignupForm({ cohort }: { cohort: number }) {
   )
 }
 
-function Success() {
+function Success({ email }: { email: string }) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -171,9 +171,17 @@ function Success() {
       <p className="mt-4 font-display text-xl font-bold tracking-tight text-fg-primary md:text-2xl">
         등록 신청이 접수되었습니다.
       </p>
+      {/* 접수된 주소를 그대로 보여준다. 이 주소가 곧 로그인 계정이라
+          "오타를 확인하라"는 안내만으로는 확인할 대상이 없다. */}
+      <p
+        translate="no"
+        className="mt-4 break-all border border-border px-4 py-3 font-mono text-sm text-fg-primary"
+      >
+        {email}
+      </p>
       <p className="mt-3 font-display text-sm leading-[1.8] text-fg-subtle md:text-base">
-        운영진 승인 후 포털에 입장하실 수 있습니다. 승인이 끝나면 신청하신
-        이메일 주소로 구글 로그인해주세요. 주소를 잘못 적었다면 운영진에게
+        위 주소로 접수되었습니다. 운영진 승인 후 이 주소의 구글 계정으로
+        포털에 로그인하실 수 있습니다. 주소가 잘못 적혔다면 운영진에게
         알려주셔야 합니다.
       </p>
     </div>
