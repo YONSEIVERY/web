@@ -197,7 +197,6 @@ export function IntroForm({ initial }: { initial: IntroFormInitial }) {
         legend="내가 잘하는 것 3가지"
         rows={strengths}
         onChange={setStrengths}
-        titlePlaceholders={['듣기', '말하기', '쓰기']}
         bodyPlaceholder="왜 잘하는지, 어떤 이야기가 있는지 한두 문장으로 적어주세요."
       />
 
@@ -205,7 +204,6 @@ export function IntroForm({ initial }: { initial: IntroFormInitial }) {
         legend="내가 좋아하는 것 3가지"
         rows={likes}
         onChange={setLikes}
-        titlePlaceholders={['운동', '음악', '동물']}
         bodyPlaceholder="얼마나, 왜 좋아하는지 한두 문장으로 적어주세요."
       />
 
@@ -277,13 +275,11 @@ function ItemsSection({
   legend,
   rows,
   onChange,
-  titlePlaceholders,
   bodyPlaceholder,
 }: {
   legend: string
   rows: ItemRow[]
   onChange: (rows: ItemRow[]) => void
-  titlePlaceholders: string[]
   bodyPlaceholder: string
 }) {
   const update = (i: number, patch: Partial<ItemRow>) => {
@@ -306,7 +302,7 @@ function ItemsSection({
                 value={row.title}
                 onChange={(e) => update(i, { title: e.target.value })}
                 maxLength={60}
-                placeholder={`예: ${titlePlaceholders[i] ?? ''}`}
+                placeholder="제목"
                 aria-label={`${legend} ${i + 1} 제목`}
                 className={INPUT_CLASS}
               />
