@@ -2,7 +2,7 @@
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
-import { getMemberByEmail, getPortalIdentity } from '@/lib/portal/auth'
+import { getMemberByEmail, getPortalIdentityVerified } from '@/lib/portal/auth'
 import { getSessionById } from '@/lib/portal/queries'
 import type { DeleteState } from '@/app/admin/actions/delete-state'
 
@@ -24,7 +24,7 @@ const IMAGE_EXTS = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif'])
 type Ticket = { path: string; token: string }
 
 async function requirePostContext(sessionId: string) {
-  const identity = await getPortalIdentity()
+  const identity = await getPortalIdentityVerified()
   if (!identity) throw new Error('unauthorized')
   const session = await getSessionById(sessionId)
   if (!session) throw new Error('세션을 찾을 수 없습니다.')
@@ -132,7 +132,7 @@ export async function deleteSessionPost(
   const id = String(formData.get('id') ?? '')
   if (!id) return { ok: false, error: '잘못된 요청입니다.' }
 
-  const identity = await getPortalIdentity()
+  const identity = await getPortalIdentityVerified()
   if (!identity) return { ok: false, error: '권한이 없습니다.' }
 
   const { data: row, error: fetchErr } = await supabaseService

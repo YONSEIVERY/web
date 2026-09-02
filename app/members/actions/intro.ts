@@ -1,7 +1,7 @@
 'use server'
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
-import { getMemberByEmail, getPortalIdentity } from '@/lib/portal/auth'
+import { getMemberByEmail, getPortalIdentityVerified } from '@/lib/portal/auth'
 import type { IntroFormState } from './intro-state'
 
 const MAX_INTRO_LENGTH = 8000
@@ -14,7 +14,7 @@ export async function saveMyIntro(
   _prev: IntroFormState,
   formData: FormData,
 ): Promise<IntroFormState> {
-  const identity = await getPortalIdentity()
+  const identity = await getPortalIdentityVerified()
   if (!identity)
     return { status: 'error', message: '로그인이 필요합니다.' }
   const member = await getMemberByEmail(identity.email)
