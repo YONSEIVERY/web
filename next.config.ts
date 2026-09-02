@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
   // Next.js 기본 1MB 한도 그대로면 파일이 server action에 도달하지 못해 400으로 막힌다.
   experimental: {
     serverActions: { bodySizeLimit: '6mb' },
+    // 클라이언트 라우터 캐시. 포털은 전 라우트가 force-dynamic이라 이 값이
+    // 없으면 방금 본 화면으로 되돌아가도 서버 왕복(인증 2회 포함)을 전부
+    // 다시 친다. 30초면 탭을 오가는 체감 구간을 덮고, 서버 액션 이후에는
+    // revalidatePath가 캐시를 무효화하므로 낡은 화면이 굳지 않는다.
+    staleTimes: { dynamic: 30 },
   },
   images: {
     remotePatterns: [

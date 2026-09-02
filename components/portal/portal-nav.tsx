@@ -150,9 +150,17 @@ function NavLink({
   active: boolean
   onNavigate?: () => void
 }) {
+  // 프리페치는 포인터가 올라온 링크만. 기본값(뷰포트 프리페치)이면 데스크톱
+  // 사이드바 링크 4~7개가 페이지를 열 때마다 배경에서 미들웨어와 인증 왕복을
+  // 태운다. 포털은 전 라우트가 force-dynamic이라 프리페치 비용이 크고, 정작
+  // 탭한 순간의 진짜 요청이 그 트래픽과 경쟁한다. 모바일 드로어는 hover가
+  // 없어 프리페치가 안 나가지만, staleTimes 라우터 캐시가 재방문을 덮는다.
+  const [hovered, setHovered] = useState(false)
   return (
     <Link
       href={item.href}
+      prefetch={hovered ? null : false}
+      onMouseEnter={() => setHovered(true)}
       onClick={onNavigate}
       aria-current={active ? 'page' : undefined}
       className={`flex min-h-11 items-center border-l-2 pl-3 pr-2 font-mono text-xs uppercase tracking-[0.28em] transition-colors ${

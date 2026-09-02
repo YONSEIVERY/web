@@ -1,4 +1,5 @@
 import 'server-only'
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseService } from '@/lib/supabase/service'
 
@@ -17,21 +18,26 @@ export type PortalIdentity = {
   role: PortalRole
 }
 
-export async function getPortalIdentity(): Promise<PortalIdentity | null> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user?.email) return null
-  // 인자 없는 시그니처(0023). 세션 이메일은 함수가 직접 읽는다.
-  const { data: role, error } = await supabase.rpc('portal_role')
-  if (error) {
-    console.error('[getPortalIdentity] portal_role rpc failed', error)
-    return null
-  }
-  if (role !== 'exec' && role !== 'member') return null
-  return { email: user.email, role }
-}
+// React cache: 같은 요청 안에서 레이아웃과 페이지가 각각 부르면 인증 왕복이
+// 두 배로 돈다. 요청 단위 메모이제이션이라 요청이 끝나면 사라지므로, 세션
+// 만료나 권한 변경은 다음 요청에 즉시 반영된다.
+export const getPortalIdentity = cache(
+  async (): Promise<PortalIdentity | null> => {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user?.email) return null
+    // 인자 없는 시그니처(0023). 세션 이메일은 함수가 직접 읽는다.
+    const { data: role, error } = await supabase.rpc('portal_role')
+    if (error) {
+      console.error('[getPortalIdentity] portal_role rpc failed', error)
+      return null
+    }
+    if (role !== 'exec' && role !== 'member') return null
+    return { email: user.email, role }
+  },
+)
 
 export async function requireExec(): Promise<PortalIdentity> {
   const identity = await getPortalIdentity()
@@ -46,20 +52,20 @@ export type PortalMember = {
 }
 
 /** 로그인 이메일과 매칭되는 학회원 행. 임원진이라도 명단에 있으면 반환. */
-export async function getMemberByEmail(
-  email: string,
-): Promise<PortalMember | null> {
-  const { data } = await supabaseService
-    .from('cohort_members')
-    .select('id, cohort, name')
-    .ilike('email', email)
-    .order('cohort', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-  if (!data) return null
-  return {
-    id: String(data.id),
-    cohort: Number(data.cohort),
-    name: String(data.name),
-  }
-}
+export const getMemberByEmail = cache(
+  async (email: string): Promise<PortalMember | null> => {
+    const { data } = await supabaseService
+      .from('cohort_members')
+      .select('id, cohort, name')
+      .ilike('email', email)
+      .order('cohort', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (!data) return null
+    return {
+      id: String(data.id),
+      cohort: Number(data.cohort),
+      name: String(data.name),
+    }
+  },
+)
