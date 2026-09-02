@@ -4,15 +4,19 @@ import type { Route } from 'next'
 import { redirect } from 'next/navigation'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getMemberByEmail, getPortalIdentity } from '@/lib/portal/auth'
-import { getDirectory } from '@/lib/portal/queries'
+import { getDirectory, type DirectoryMember } from '@/lib/portal/queries'
 
 export const dynamic = 'force-dynamic'
 
-const ROLE_TIER_ORDER = ['president', 'vice_president', 'officer']
+const LEADER_TIERS = ['president', 'vice_president']
+const LABELED_TIERS = [...LEADER_TIERS, 'officer']
 
 /**
  * 학회원 디렉토리. 43기 노션의 "자기소개" 페이지를 대체한다.
- * 임원진이 먼저, 이후 일반 학회원 (getDirectory가 sort_order로 보장).
+ * 학회장·부학회장 / 임원진 / 학회원 세 섹션으로 나눠 보여준다
+ * (2026-09-02 대표 결정). 44기 임원진은 43기 출신이라 sort_order만으로는
+ * 일반 학회원과 섞여 보였다. 섹션은 role_tier 기준이므로 임원 행의
+ * role_tier만 맞으면 자동으로 위 섹션에 들어간다.
  */
 export default async function PeoplePage({
   searchParams,
@@ -98,61 +102,99 @@ export default async function PeoplePage({
           임원진이 명단을 등록하면 이곳에 멤버들이 나타납니다.
         </p>
       ) : (
-        <ul className="mt-10 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-          {members.map((m) => (
-            <li key={m.id} className="bg-bg-base">
-              <Link
-                href={`/members/people/${m.id}` as Route}
-                className="flex h-full flex-col gap-4 p-5 transition-colors hover:bg-fg-primary/[0.03]"
-              >
-                <div className="flex items-center gap-4">
-                  {m.photo_url ? (
-                    <Image
-                      src={m.photo_url}
-                      alt=""
-                      width={56}
-                      height={56}
-                      className="h-14 w-14 shrink-0 border border-border object-cover"
-                    />
-                  ) : (
-                    <span
-                      aria-hidden
-                      className="flex h-14 w-14 shrink-0 items-center justify-center border border-border bg-border/30 font-display text-lg font-bold text-fg-muted"
-                    >
-                      {m.name.slice(0, 1)}
-                    </span>
-                  )}
-                  <div className="min-w-0">
-                    <p className="font-display text-base font-bold tracking-tight text-fg-primary">
-                      {m.name}
-                      {ROLE_TIER_ORDER.includes(m.role_tier) &&
-                        m.role_label && (
-                          <span className="ml-2 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-muted">
-                            {m.role_label}
-                          </span>
-                        )}
-                    </p>
-                    {(m.college || m.major) && (
-                      <p className="mt-0.5 truncate font-display text-xs text-fg-muted">
-                        {[m.college, m.major].filter(Boolean).join(' ')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {m.excerpt ? (
-                  <p className="line-clamp-2 font-display text-sm leading-relaxed text-fg-subtle">
-                    {m.excerpt}
-                  </p>
-                ) : (
-                  <p className="font-display text-sm text-fg-muted">
-                    아직 소개가 없습니다
-                  </p>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <MemberSections members={members} />
       )}
     </div>
+  )
+}
+
+function MemberSections({ members }: { members: DirectoryMember[] }) {
+  // getDirectory가 sort_order·이름순으로 이미 정렬해 준다. 여기서는 tier로
+  // 가르기만 하고, 학회장·부학회장 묶음 안에서만 학회장을 앞으로 당긴다.
+  const leaders = members.filter((m) => LEADER_TIERS.includes(m.role_tier))
+  leaders.sort(
+    (a, b) => LEADER_TIERS.indexOf(a.role_tier) - LEADER_TIERS.indexOf(b.role_tier),
+  )
+  const officers = members.filter((m) => m.role_tier === 'officer')
+  const general = members.filter((m) => !LABELED_TIERS.includes(m.role_tier))
+
+  const sections = [
+    { label: '학회장 · 부학회장', list: leaders },
+    { label: '임원진', list: officers },
+    { label: '학회원', list: general },
+  ].filter((s) => s.list.length > 0)
+
+  return (
+    <div className="mt-10 space-y-12">
+      {sections.map((s) => (
+        <section key={s.label}>
+          <h2 className="flex items-baseline gap-3 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted">
+            {s.label}
+            <span translate="no" className="tabular-nums">
+              {s.list.length}
+            </span>
+          </h2>
+          <ul className="mt-4 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+            {s.list.map((m) => (
+              <MemberCard key={m.id} member={m} />
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  )
+}
+
+function MemberCard({ member: m }: { member: DirectoryMember }) {
+  return (
+    <li className="bg-bg-base">
+      <Link
+        href={`/members/people/${m.id}` as Route}
+        className="flex h-full flex-col gap-4 p-5 transition-colors hover:bg-fg-primary/[0.03]"
+      >
+        <div className="flex items-center gap-4">
+          {m.photo_url ? (
+            <Image
+              src={m.photo_url}
+              alt=""
+              width={56}
+              height={56}
+              className="h-14 w-14 shrink-0 border border-border object-cover"
+            />
+          ) : (
+            <span
+              aria-hidden
+              className="flex h-14 w-14 shrink-0 items-center justify-center border border-border bg-border/30 font-display text-lg font-bold text-fg-muted"
+            >
+              {m.name.slice(0, 1)}
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="font-display text-base font-bold tracking-tight text-fg-primary">
+              {m.name}
+              {LABELED_TIERS.includes(m.role_tier) && m.role_label && (
+                <span className="ml-2 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-muted">
+                  {m.role_label}
+                </span>
+              )}
+            </p>
+            {(m.college || m.major) && (
+              <p className="mt-0.5 truncate font-display text-xs text-fg-muted">
+                {[m.college, m.major].filter(Boolean).join(' ')}
+              </p>
+            )}
+          </div>
+        </div>
+        {m.excerpt ? (
+          <p className="line-clamp-2 font-display text-sm leading-relaxed text-fg-subtle">
+            {m.excerpt}
+          </p>
+        ) : (
+          <p className="font-display text-sm text-fg-muted">
+            아직 소개가 없습니다
+          </p>
+        )}
+      </Link>
+    </li>
   )
 }
