@@ -1,11 +1,12 @@
-import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/content/shared-metadata'
 import { PRIVACY } from '@/lib/content/privacy'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '개인정보처리방침',
   description:
     '연세대학교 창업학회 VERY의 개인정보처리방침. 수집 항목, 이용 목적, 보유 기간, 처리위탁과 정보주체의 권리를 안내합니다.',
-}
+  path: '/privacy',
+})
 
 export default function PrivacyPage() {
   return (

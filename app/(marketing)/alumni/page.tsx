@@ -1,5 +1,5 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
-import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { ALUMNI } from '@/lib/content/alumni'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
@@ -10,11 +10,12 @@ import type { Sponsor } from '@/lib/sponsors/queries'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '알럼나이',
   description:
     'VERY의 알럼나이 네트워크. 1997년부터 누적된 회원·동문 창업가·후속 합류·투자 라운드로 이어지는 책장.',
-}
+  path: '/alumni',
+})
 
 /**
  * /alumni - accumulated network page.

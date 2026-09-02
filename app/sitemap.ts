@@ -13,6 +13,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
   return [
     { url: `${base}/`, lastModified: now, changeFrequency: 'monthly', priority: 1.0 },
+    // 모집 페이지가 빠져 있었다. 검색으로 학회를 찾는 지원자에게 가장
+    // 중요한 URL이다.
+    { url: `${base}/recruit`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${base}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/curriculum`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/sessions`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },

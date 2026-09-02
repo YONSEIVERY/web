@@ -1,5 +1,5 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
-import type { Metadata } from 'next'
 import type { Route } from 'next'
 import { PARTNERS } from '@/lib/content/partners'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
@@ -7,11 +7,12 @@ import { getPartners } from '@/lib/data/partners'
 import type { Partner } from '@/lib/data/partners'
 import { PartnerApplicationForm } from '@/components/forms/partner-application-form'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '파트너',
   description:
     'VERY의 산업·자본·교내 파트너십. 학회 팀이 학기 안에서 직접 만나는 기업·VC·교내 트랙.',
-}
+  path: '/partners',
+})
 
 /**
  * /partners - external relationships page.

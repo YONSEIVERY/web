@@ -1,9 +1,11 @@
-import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/content/shared-metadata'
 import { AlumniRegistrationForm } from '@/components/forms/alumni-registration-form'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '알럼나이 등록',
-}
+  description: '연세대학교 창업학회 VERY 알럼나이 등록.',
+  path: '/alumni/register',
+})
 
 export default function RegisterPage() {
   return (

@@ -1,5 +1,5 @@
+import { pageMeta } from '@/lib/content/shared-metadata'
 import { getSiteConfig, volLabel } from '@/lib/data/site-config'
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
   getCurrentRecruitRound,
@@ -12,11 +12,12 @@ import { RecruitApplicationForm } from '@/components/forms/recruit-application-f
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: '지원하기',
   description:
     '연세대학교 창업학회 VERY 학회원 모집. 지원서 접수부터 데모데이까지, 한 학기의 시작.',
-}
+  path: '/recruit',
+})
 
 export default async function RecruitPage() {
   const [round, siteConfig] = await Promise.all([
