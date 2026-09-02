@@ -27,6 +27,8 @@ export const PRIVACY = {
         // /join 자율 등록 폼. 동의문(components/forms/member-signup-form.tsx의
         // CONSENT_TEXT)과 항목·목적·보유기간이 같아야 한다. 한쪽만 고치지 말 것.
         name: '학회원 등록 신청',
+        // 폼이 모든 항목을 필수로 받는다. "(선택)" 표기는 실제 수집과
+        // 어긋나는 고지였고, 생년월일은 0029에서 수집 항목에 추가됐다.
         items: '이름, 이메일, 연락처, 생년월일, 학번·단과대·전공',
         purpose: '학회원 포털 계정 등록과 학회 운영',
         retention:
@@ -70,6 +72,12 @@ export const PRIVACY = {
       },
       { name: 'Vercel', work: '웹사이트 호스팅과 요청 처리' },
       { name: 'Resend', work: '접수 알림 메일 발송 (국외 처리)' },
+      {
+        // 학회 계정의 Apps Script가 매일 백업 사본을 드라이브에 저장한다.
+        // 실제로 개인정보가 옮겨 가는 수탁처인데 목록에 빠져 있었다.
+        name: 'Google (Google Drive)',
+        work: '데이터 백업 사본 보관 (국외 처리 가능)',
+      },
     ],
   },
 
