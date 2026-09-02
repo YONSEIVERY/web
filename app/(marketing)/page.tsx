@@ -1,7 +1,13 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { MANIFESTO } from '@/lib/content/manifesto'
 import { STATS } from '@/lib/content/site'
 import { getSiteConfig } from '@/lib/data/site-config'
+import {
+  formatDeadlineKst,
+  getCurrentRecruitRound,
+  isDeadlinePassed,
+} from '@/lib/recruit/queries'
 import { PhotoBand } from '@/components/site/photo-band'
 
 /**
@@ -399,6 +405,50 @@ function StatCell({
   )
 }
 
+/**
+ * 시즌 연동 모집 CTA. 접수가 열려 있을 때만 홈 맨 아래에 뜬다.
+ *
+ * 홈 본문에 지원 경로가 하나도 없어 네비게이션 메뉴를 열어야만 모집을 찾을
+ * 수 있었다. 상시 배너 대신 시즌 상태 기계(apply_open + 마감 시각)에 연동해,
+ * 모집 중이 아닐 때는 홈이 브랜드 포스터로 돌아간다.
+ *
+ * 홈은 ISR(5분)이라 시즌 열림·마감 전환이 화면에 최대 5분 늦게 반영된다.
+ * 접수 차단 자체는 /recruit의 서버 판정이 실시간으로 하므로 무해하다.
+ */
+async function RecruitCtaSection() {
+  const round = await getCurrentRecruitRound()
+  if (!round?.apply_open || isDeadlinePassed(round)) return null
+  const deadline = formatDeadlineKst(round)
+  return (
+    <section className="relative border-t border-border px-6 py-24 md:px-10 md:py-32">
+      <p
+        translate="no"
+        className="flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-accent-text md:text-xs"
+      >
+        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-accent" />
+        RECRUIT · VOL.{round.cohort} OPEN
+      </p>
+      <h2 className="mt-6 font-display text-[clamp(1.75rem,_4.5vw,_3rem)] font-bold leading-tight tracking-tight text-fg-primary">
+        {round.cohort}기 학회원을 모집합니다.
+      </h2>
+      {deadline && (
+        <p className="mt-4 font-display text-sm text-fg-subtle md:text-base">
+          서류 접수 마감 {deadline}
+        </p>
+      )}
+      <div className="mt-8">
+        <Link
+          href="/recruit"
+          className="inline-flex items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base md:text-xs"
+        >
+          지원하기
+          <span aria-hidden>→</span>
+        </Link>
+      </div>
+    </section>
+  )
+}
+
 export default async function HomePage() {
   return (
     <main>
@@ -406,6 +456,7 @@ export default async function HomePage() {
       <ManifestoSection />
       <PhotoBand />
       <StatsSection />
+      <RecruitCtaSection />
     </main>
   )
 }
