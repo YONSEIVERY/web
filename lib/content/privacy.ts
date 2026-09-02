@@ -27,7 +27,7 @@ export const PRIVACY = {
         // /join 자율 등록 폼. 동의문(components/forms/member-signup-form.tsx의
         // CONSENT_TEXT)과 항목·목적·보유기간이 같아야 한다. 한쪽만 고치지 말 것.
         name: '학회원 등록 신청',
-        items: '이름, 이메일, 연락처, 학번·단과대·전공(선택)',
+        items: '이름, 이메일, 연락처, 생년월일, 학번·단과대·전공',
         purpose: '학회원 포털 계정 등록과 학회 운영',
         retention:
           '학회원 자격이 유지되는 동안 보유하며, 본인이 삭제를 요청하면 파기',

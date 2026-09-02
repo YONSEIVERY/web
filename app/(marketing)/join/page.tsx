@@ -56,7 +56,8 @@ export default async function JoinPage() {
             않습니다.
           </Point>
           <Point label="03">
-            수집 항목은 이름, 이메일, 연락처, 학번, 단과대, 전공입니다.
+            수집 항목은 이름, 이메일, 연락처, 생년월일, 학번, 단과대,
+            전공입니다.
             학회원 포털 계정 등록과 학회 운영에만 사용합니다.
           </Point>
         </ul>

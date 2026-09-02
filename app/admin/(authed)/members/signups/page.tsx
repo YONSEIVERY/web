@@ -24,7 +24,7 @@ export const dynamic = 'force-dynamic'
 const SIGNUP_COLUMNS =
   // note는 읽지 않는다. 신청 폼에 메모 칸이 없어 항상 비어 있는데, 표에서
   // 가장 넓은 자리를 차지하던 열이라 지웠다(2026-09-02 대표 결정).
-  'id, cohort, name, email, phone, student_id, college, major, status, created_at, reviewed_at, reviewed_by'
+  'id, cohort, name, email, phone, birth, student_id, college, major, status, created_at, reviewed_at, reviewed_by'
 
 type SignupStatus = 'pending' | 'approved' | 'rejected'
 
@@ -34,6 +34,7 @@ type Signup = {
   name: string
   email: string
   phone: string | null
+  birth: string | null
   student_id: string | null
   college: string | null
   major: string | null
@@ -72,6 +73,7 @@ function toSignup(row: Record<string, unknown>): Signup {
     name: String(row.name ?? ''),
     email: String(row.email ?? ''),
     phone: (row.phone as string | null) ?? null,
+    birth: (row.birth as string | null) ?? null,
     student_id: (row.student_id as string | null) ?? null,
     college: (row.college as string | null) ?? null,
     major: (row.major as string | null) ?? null,
@@ -235,6 +237,12 @@ export default async function MemberSignupsPage() {
                     <p className="mt-0.5 whitespace-nowrap font-mono text-xs text-fg-muted">
                       {s.phone ?? '-'}
                     </p>
+                    {/* 0029 이전 신청 행에는 값이 없다. 빈 값은 줄을 내지 않는다. */}
+                    {s.birth && (
+                      <p className="mt-0.5 whitespace-nowrap font-mono text-xs text-fg-muted">
+                        {s.birth}
+                      </p>
+                    )}
                   </Td>
                   <Td>
                     <p className="font-mono text-xs">{s.student_id ?? '-'}</p>
