@@ -9,6 +9,7 @@ import { getSiteConfig } from '@/lib/data/site-config'
 import { getCurrentRecruitRound } from '@/lib/recruit/queries'
 import { supabaseService } from '@/lib/supabase/service'
 import { BulkImportButton } from '@/components/admin/bulk-import-button'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -286,13 +287,15 @@ export default async function AdminMembersPage({
               걷어내면 방금 받은 "N명 등록, M명 건너뜀"까지 같이 사라진다. */}
           {preview.kind === 'ready' && preview.total > 0 && (
             <>
-              <BulkImportButton
-                cohort={config.cohort}
-                total={preview.total}
-                pending={preview.pending}
-                toImport={preview.toImport}
-                awaitingReply={preview.awaitingReply}
-              />
+              <LeadOnly>
+                <BulkImportButton
+                  cohort={config.cohort}
+                  total={preview.total}
+                  pending={preview.pending}
+                  toImport={preview.toImport}
+                  awaitingReply={preview.awaitingReply}
+                />
+              </LeadOnly>
               {/* 회신 기준으로 말한다. "명부에 없는 N명"만 보여 주면 등록을
                   포기한 사람까지 들어갈 인원처럼 읽힌다. */}
               <p className="text-xs text-fg-muted">

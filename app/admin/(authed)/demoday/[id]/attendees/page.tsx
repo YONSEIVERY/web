@@ -6,6 +6,7 @@ import {
   getDemodayById,
 } from '@/lib/demoday/queries'
 import { ExportAttendeesButtons } from '@/components/admin/demoday/export-buttons'
+import { LeadOnly } from '@/components/admin/lead-only'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 
 export const dynamic = 'force-dynamic'
@@ -43,7 +44,9 @@ export default async function AdminDemodayAttendeesPage({
       </p>
 
       <div className="mt-6">
-        <ExportAttendeesButtons eventId={event.id} />
+        <LeadOnly>
+          <ExportAttendeesButtons eventId={event.id} />
+        </LeadOnly>
       </div>
 
       <div className="mt-10 overflow-x-auto">

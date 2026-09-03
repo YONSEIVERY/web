@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { Route } from 'next'
 import { supabaseService } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireAdmin, requireLead } from '@/lib/admin/is-admin'
 import {
   REGISTRATION_VALUES,
   type RegistrationState,
@@ -84,9 +84,10 @@ export async function setApplicationRegistration(
   const value = raw as RegistrationValue
 
   try {
-    await requireAdmin()
+    // 등록 회신은 리크루팅 데이터다. 0032 기준 lead 전용.
+    await requireLead()
   } catch (err) {
-    console.error('[setApplicationRegistration] requireAdmin failed', err)
+    console.error('[setApplicationRegistration] requireLead failed', err)
     return { ok: false, error: '권한이 없습니다.' }
   }
 

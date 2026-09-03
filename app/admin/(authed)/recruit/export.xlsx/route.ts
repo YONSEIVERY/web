@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireLead } from '@/lib/admin/is-admin'
 import {
   getApplications,
   getCurrentRecruitRound,
@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   try {
-    await requireAdmin()
+    await requireLead()
   } catch {
     return new NextResponse('unauthorized', { status: 401 })
   }

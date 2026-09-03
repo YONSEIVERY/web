@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import ExcelJS from 'exceljs'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireLead } from '@/lib/admin/is-admin'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import {
   getDemodayAttendees,
@@ -30,7 +30,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireAdmin()
+    await requireLead()
   } catch {
     return new NextResponse('unauthorized', { status: 401 })
   }

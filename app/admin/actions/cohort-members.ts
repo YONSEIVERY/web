@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import type { Route } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseService } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireAdmin, requireLead } from '@/lib/admin/is-admin'
 import { deleteBlockedMessage } from '@/lib/db/fk-error'
 import type { CohortMemberActionState } from './cohort-members-state'
 
@@ -310,7 +310,7 @@ export async function deleteMember(
   formData: FormData,
 ): Promise<CohortMemberActionState> {
   try {
-    await requireAdmin()
+    await requireLead()
   } catch {
     return { status: 'error', message: '권한이 없습니다.' }
   }

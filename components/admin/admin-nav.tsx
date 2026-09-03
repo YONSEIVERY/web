@@ -4,8 +4,15 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { Route } from 'next'
+import type { AdminTier } from '@/lib/admin/is-admin'
 
 type NavItem = { href: Route; label: string }
+
+/** 등급 배지 문구. null은 admin_tier()를 못 읽은 경우라 배지를 걸지 않는다. */
+const TIER_LABEL: Record<AdminTier, string> = {
+  lead: '학회장단',
+  officer: '임원진',
+}
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/admin', label: '대시보드' },
@@ -23,7 +30,7 @@ function isActive(pathname: string, href: string) {
   return href === '/admin' ? pathname === '/admin' : pathname.startsWith(href)
 }
 
-export function AdminNav() {
+export function AdminNav({ tier }: { tier: AdminTier | null }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
@@ -31,7 +38,8 @@ export function AdminNav() {
     <>
       {/* Desktop: fixed left sidebar (unchanged layout) */}
       <aside className="fixed inset-y-0 left-0 hidden w-56 flex-col gap-1 border-r border-border p-6 md:flex">
-        <Brand className="mb-6" />
+        <Brand className="mb-1" />
+        <TierBadge tier={tier} className="mb-6" />
         {NAV_ITEMS.map((item) => (
           <NavLink key={item.href} item={item} active={isActive(pathname, item.href)} />
         ))}
@@ -63,7 +71,10 @@ export function AdminNav() {
           />
           <nav className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col gap-1 border-r border-border bg-bg-base p-6">
             <div className="mb-6 flex items-center justify-between">
-              <Brand />
+              <div>
+                <Brand />
+                <TierBadge tier={tier} className="mt-1" />
+              </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -87,6 +98,25 @@ export function AdminNav() {
         </div>
       )}
     </>
+  )
+}
+
+function TierBadge({
+  tier,
+  className = '',
+}: {
+  tier: AdminTier | null
+  className?: string
+}) {
+  if (!tier) return null
+  return (
+    <p
+      className={`font-mono text-[10px] uppercase tracking-[0.28em] ${
+        tier === 'lead' ? 'text-fg-subtle' : 'text-fg-muted'
+      } ${className}`}
+    >
+      {TIER_LABEL[tier]}
+    </p>
   )
 }
 

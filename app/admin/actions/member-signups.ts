@@ -1,7 +1,7 @@
 'use server'
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireLead } from '@/lib/admin/is-admin'
 import { normName, phoneTail } from '@/lib/members/identity'
 import type { MemberSignupActionState } from './member-signups-state'
 
@@ -98,7 +98,7 @@ export async function approveMemberSignup(
 ): Promise<MemberSignupActionState> {
   let adminEmail: string
   try {
-    adminEmail = await requireAdmin()
+    adminEmail = await requireLead()
   } catch {
     return fail('권한이 없습니다.')
   }
@@ -227,7 +227,7 @@ export async function rejectMemberSignup(
 ): Promise<MemberSignupActionState> {
   let adminEmail: string
   try {
-    adminEmail = await requireAdmin()
+    adminEmail = await requireLead()
   } catch {
     return fail('권한이 없습니다.')
   }

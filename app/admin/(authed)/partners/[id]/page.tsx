@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getApplicationDetail } from '@/lib/admin/queries'
 import { PartnerForm } from '@/components/admin/partners/partner-form'
 import { DeleteButton } from '@/components/admin/delete-button'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -138,7 +139,15 @@ export default async function AdminPartnerDetailPage({
           이 파트너를 목록에서 완전히 삭제합니다. 로고 파일도 함께 정리됩니다.
         </p>
         <div className="mt-3">
-          <DeleteButton kind="partner" id={partner.id} label={partner.name} />
+          <LeadOnly
+            fallback={
+              <p className="text-xs text-fg-muted">
+                삭제는 학회장단만 할 수 있습니다.
+              </p>
+            }
+          >
+            <DeleteButton kind="partner" id={partner.id} label={partner.name} />
+          </LeadOnly>
         </div>
       </section>
     </div>

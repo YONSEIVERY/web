@@ -1,7 +1,7 @@
 'use server'
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireLead } from '@/lib/admin/is-admin'
 import type { DeleteState } from './delete-state'
 
 function extractStoragePath(url: string | null, bucket: string): string | null {
@@ -14,10 +14,10 @@ function extractStoragePath(url: string | null, bucket: string): string | null {
 
 async function authorize(): Promise<DeleteState | null> {
   try {
-    await requireAdmin()
+    await requireLead()
     return null
   } catch (err) {
-    console.error('[delete] requireAdmin failed', err)
+    console.error('[delete] requireLead failed', err)
     return { ok: false, error: '권한이 없습니다.' }
   }
 }

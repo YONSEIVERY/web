@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { Route } from 'next'
 import { supabaseService } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireAdmin, requireLead } from '@/lib/admin/is-admin'
 import type { SponsorActionState } from './sponsors-state'
 
 /**
@@ -107,7 +107,7 @@ export async function deleteSponsor(
   formData: FormData,
 ): Promise<SponsorActionState> {
   try {
-    await requireAdmin()
+    await requireLead()
   } catch {
     return { status: 'error', message: '권한이 없습니다.' }
   }

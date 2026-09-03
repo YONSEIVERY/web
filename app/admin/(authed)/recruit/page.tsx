@@ -18,6 +18,7 @@ import {
   toggleRecruitOpen,
 } from '@/app/admin/actions/recruit'
 import {
+  REGISTRATION_LABELS,
   REGISTRATION_VALUES,
   type RegistrationValue,
 } from '@/app/admin/actions/applications-state'
@@ -25,6 +26,7 @@ import { DeleteButton } from '@/components/admin/delete-button'
 import { SendResultsButton } from '@/components/admin/send-results-button'
 import { CopyPhonesButton } from '@/components/admin/copy-phones-button'
 import { RegistrationSelect } from '@/components/admin/registration-select'
+import { getAdminTier } from '@/lib/admin/is-admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -73,6 +75,11 @@ export default async function AdminRecruitPage({
   searchParams: Promise<{ status?: string | string[] }>
 }) {
   const round = await getCurrentRecruitRound()
+
+  // 0032 등급 분리. officer는 지원자 열람까지만 하고, 합불 변경·결과 발송·
+  // PII 반출(엑셀·전화번호 일괄 복사)·삭제는 lead 전용이다. 서버 액션의
+  // requireLead가 실제 방어선이고, 여기서는 누를 수 없는 컨트롤을 지운다.
+  const isLead = (await getAdminTier()) === 'lead'
 
   if (!round) {
     return (
@@ -164,33 +171,45 @@ export default async function AdminRecruitPage({
             마감 {formatKstDateTime(round.apply_deadline)}
           </span>
         )}
-        <form action={toggleRecruitOpen}>
-          <input type="hidden" name="round_id" value={round.id} />
-          <input
-            type="hidden"
-            name="next"
-            value={round.apply_open ? 'close' : 'open'}
-          />
-          <button
-            type="submit"
-            className="border border-fg-primary px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base"
-          >
-            {round.apply_open ? '접수 닫기' : '접수 열기'}
-          </button>
-        </form>
-        <a
-          href={`/admin/recruit/export.xlsx?round=${round.id}`}
-          className="border border-border px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
-        >
-          엑셀 다운로드
-        </a>
+        {isLead && (
+          <>
+            <form action={toggleRecruitOpen}>
+              <input type="hidden" name="round_id" value={round.id} />
+              <input
+                type="hidden"
+                name="next"
+                value={round.apply_open ? 'close' : 'open'}
+              />
+              <button
+                type="submit"
+                className="border border-fg-primary px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base"
+              >
+                {round.apply_open ? '접수 닫기' : '접수 열기'}
+              </button>
+            </form>
+            <a
+              href={`/admin/recruit/export.xlsx?round=${round.id}`}
+              className="border border-border px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.32em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
+            >
+              엑셀 다운로드
+            </a>
+          </>
+        )}
       </div>
+
+      {!isLead && (
+        <p className="mt-5 max-w-[70ch] border border-border px-5 py-4 text-xs leading-relaxed text-fg-subtle">
+          임원진 등급입니다. 지원자 열람과 첨부 확인은 가능하지만 합불 변경,
+          결과 통보, 명단 반출, 삭제는 학회장단만 할 수 있습니다.
+        </p>
+      )}
 
       {/* 시즌 상태 컨트롤. 공개 /recruit 화면은 마감 시각 하나로 세 상태를
           오간다: 미래 마감이면 접수 화면, 지났으면 마감 안내 + 일정 유지,
           비어 있으면(그리고 접수 닫힘) 시즌 종료 안내. 이 컨트롤이 없을 때는
           발표가 끝나도 화면이 지난 시즌 일정에 멈춰 있었고 SQL로만 벗어날
           수 있었다. */}
+      {isLead && (
       <form
         action={setRecruitDeadline}
         className="mt-4 flex flex-wrap items-end gap-3 border border-border p-4"
@@ -235,6 +254,7 @@ export default async function AdminRecruitPage({
           내려갑니다.
         </p>
       </form>
+      )}
 
       {/* 상태별 집계 겸 필터. 칩을 누르면 목록이 해당 상태만 표시한다. */}
       {applications.length > 0 && (
@@ -259,8 +279,9 @@ export default async function AdminRecruitPage({
         </nav>
       )}
 
-      {/* 문자 발송 명단. 상태별 전화번호를 하이픈 없이 쉼표로 복사한다. */}
-      {applications.length > 0 && (
+      {/* 문자 발송 명단. 상태별 전화번호를 하이픈 없이 쉼표로 복사한다.
+          전화번호 일괄 복사도 PII 반출이라 엑셀과 같은 등급으로 묶는다. */}
+      {isLead && applications.length > 0 && (
         <div className="mt-8 border border-border p-5">
           <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary">
             문자 발송 명단
@@ -289,7 +310,7 @@ export default async function AdminRecruitPage({
       )}
 
       {/* 결과 통보. 심사 상태를 저장한 뒤 단계별로 일괄 발송한다. */}
-      {applications.length > 0 && (
+      {isLead && applications.length > 0 && (
         <div className="mt-8 border border-border p-5">
           <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-primary">
             결과 통보
@@ -335,7 +356,7 @@ export default async function AdminRecruitPage({
               <Th>비대면 사유</Th>
               <Th>상태</Th>
               <Th>등록 회신</Th>
-              <Th>삭제</Th>
+              {isLead && <Th>삭제</Th>}
             </tr>
           </thead>
           <tbody>
@@ -344,6 +365,7 @@ export default async function AdminRecruitPage({
                 key={a.id}
                 app={a}
                 urls={urlByPath}
+                isLead={isLead}
                 registration={
                   registrations === null
                     ? null
@@ -353,7 +375,7 @@ export default async function AdminRecruitPage({
             ))}
             {visible.length === 0 && (
               <tr>
-                <Td colSpan={6}>
+                <Td colSpan={isLead ? 6 : 5}>
                   <p className="py-12 text-center text-fg-muted">
                     {applications.length === 0
                       ? '아직 지원자가 없습니다.'
@@ -459,11 +481,14 @@ function ApplicationRow({
   app,
   urls,
   registration,
+  isLead,
 }: {
   app: Application
   urls: Map<string, string>
   /** null이면 등록 회신 컬럼을 읽지 못한 것. 값이 비었다는 뜻이 아니다. */
   registration: RegistrationValue | null
+  /** officer는 상태와 회신을 읽기 전용으로 보고, 삭제 열은 아예 없다. */
+  isLead: boolean
 }) {
   return (
     <tr className="border-b border-border align-top transition-colors hover:bg-fg-primary/[0.03]">
@@ -512,30 +537,36 @@ function ApplicationRow({
         )}
       </Td>
       <Td>
-        <form
-          action={setApplicationStatus}
-          className="flex flex-wrap items-center gap-2"
-        >
-          <input type="hidden" name="application_id" value={app.id} />
-          <select
-            name="status"
-            defaultValue={app.status}
-            aria-label={`${app.name} 심사 상태`}
-            className="min-h-9 border border-border bg-bg-base px-2 py-2 text-xs text-fg-primary focus:border-fg-primary focus:outline-none"
+        {isLead ? (
+          <form
+            action={setApplicationStatus}
+            className="flex flex-wrap items-center gap-2"
           >
-            {APPLICATION_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {APPLICATION_STATUS_LABELS[s]}
-              </option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            className="min-h-9 border border-border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
-          >
-            저장
-          </button>
-        </form>
+            <input type="hidden" name="application_id" value={app.id} />
+            <select
+              name="status"
+              defaultValue={app.status}
+              aria-label={`${app.name} 심사 상태`}
+              className="min-h-9 border border-border bg-bg-base px-2 py-2 text-xs text-fg-primary focus:border-fg-primary focus:outline-none"
+            >
+              {APPLICATION_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {APPLICATION_STATUS_LABELS[s]}
+                </option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="min-h-9 border border-border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
+            >
+              저장
+            </button>
+          </form>
+        ) : (
+          <span className="whitespace-nowrap text-xs text-fg-subtle">
+            {APPLICATION_STATUS_LABELS[app.status]}
+          </span>
+        )}
         {((app.status.startsWith('docs') && app.docs_result_sent_at) ||
           (app.status.startsWith('final') && app.final_result_sent_at)) && (
           <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-muted">
@@ -544,15 +575,21 @@ function ApplicationRow({
         )}
       </Td>
       <Td>
-        <RegistrationCell app={app} registration={registration} />
-      </Td>
-      <Td>
-        <DeleteButton
-          kind="application"
-          id={app.id}
-          label={`${app.name} (${app.email})`}
+        <RegistrationCell
+          app={app}
+          registration={registration}
+          isLead={isLead}
         />
       </Td>
+      {isLead && (
+        <Td>
+          <DeleteButton
+            kind="application"
+            id={app.id}
+            label={`${app.name} (${app.email})`}
+          />
+        </Td>
+      )}
     </tr>
   )
 }
@@ -571,9 +608,11 @@ function ApplicationRow({
 function RegistrationCell({
   app,
   registration,
+  isLead,
 }: {
   app: Application
   registration: RegistrationValue | null
+  isLead: boolean
 }) {
   if (registration === null)
     return (
@@ -586,6 +625,12 @@ function RegistrationCell({
     return (
       <span className="text-fg-muted opacity-50" title="최종 합격자만 표시합니다">
         -
+      </span>
+    )
+  if (!isLead)
+    return (
+      <span className="whitespace-nowrap text-xs text-fg-subtle">
+        {REGISTRATION_LABELS[registration]}
       </span>
     )
   return (

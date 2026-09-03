@@ -6,6 +6,7 @@ import { supabaseService } from '@/lib/supabase/service'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import { normName, phoneTail } from '@/lib/members/identity'
 import { SignupReview } from '@/components/admin/signup-review'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 /**
  * 자율 등록 신청 심사 화면.
@@ -260,11 +261,19 @@ export default async function MemberSignupsPage() {
                     </span>
                   </Td>
                   <Td>
-                    <SignupReview
-                      id={s.id}
-                      label={`${s.name} (${s.email})`}
-                      cohort={s.cohort}
-                    />
+                    <LeadOnly
+                      fallback={
+                        <span className="text-xs text-fg-muted">
+                          승인 대기
+                        </span>
+                      }
+                    >
+                      <SignupReview
+                        id={s.id}
+                        label={`${s.name} (${s.email})`}
+                        cohort={s.cohort}
+                      />
+                    </LeadOnly>
                   </Td>
                 </tr>
               )

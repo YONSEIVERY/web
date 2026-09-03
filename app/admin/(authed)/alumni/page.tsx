@@ -3,6 +3,7 @@ import type { Route } from 'next'
 import { getApprovedAlumni } from '@/lib/admin/queries'
 import { PublishToggle } from '@/components/admin/publish-toggle'
 import { DeleteButton } from '@/components/admin/delete-button'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,7 +38,9 @@ export default async function AdminAlumniPage() {
                 <PublishToggle kind="alumni" id={r.id} published={r.published} />
               </Td>
               <Td>
-                <DeleteButton kind="alumni" id={r.id} label={`${r.name} (${r.cohort}기)`} />
+                <LeadOnly>
+                  <DeleteButton kind="alumni" id={r.id} label={`${r.name} (${r.cohort}기)`} />
+                </LeadOnly>
               </Td>
             </tr>
           ))}

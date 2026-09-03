@@ -3,6 +3,7 @@ import type { Route } from 'next'
 import { getApprovedPartners } from '@/lib/admin/queries'
 import { PublishToggle } from '@/components/admin/publish-toggle'
 import { DeleteButton } from '@/components/admin/delete-button'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,7 +65,9 @@ export default async function AdminPartnersPage() {
                   </Link>
                 </Td>
                 <Td>
-                  <DeleteButton kind="partner" id={r.id} label={r.name} />
+                  <LeadOnly>
+                    <DeleteButton kind="partner" id={r.id} label={r.name} />
+                  </LeadOnly>
                 </Td>
               </tr>
             ))}
