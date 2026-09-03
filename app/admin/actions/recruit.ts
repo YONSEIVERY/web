@@ -1,7 +1,7 @@
 'use server'
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireLead } from '@/lib/admin/is-admin'
 import { sendRecruitResultBatch } from '@/lib/email/notifications'
 import {
   APPLICATION_STATUSES,
@@ -12,11 +12,11 @@ import type { SendResultsState } from './send-results-state'
 
 /**
  * 리크루팅 어드민 액션. 접수 open/close 토글과 지원자 심사 상태 변경.
- * 페이지 자체는 middleware가 gate하지만, 액션은 requireAdmin으로 이중 방어.
+ * 페이지 자체는 middleware가 gate하지만, 액션은 requireLead로 이중 방어 (0032: 리크루팅 쓰기는 lead 전용).
  */
 
 export async function toggleRecruitOpen(formData: FormData) {
-  await requireAdmin()
+  await requireLead()
   const roundId = String(formData.get('round_id') ?? '')
   const next = String(formData.get('next') ?? '') === 'open'
   if (!roundId) return
@@ -44,7 +44,7 @@ export async function toggleRecruitOpen(formData: FormData) {
  * 화면이 지난 시즌 일정에 멈춰 있었고 SQL로만 벗어날 수 있었다.
  */
 export async function setRecruitDeadline(formData: FormData) {
-  await requireAdmin()
+  await requireLead()
   const roundId = String(formData.get('round_id') ?? '')
   const intent = String(formData.get('intent') ?? '')
   if (!roundId) return
@@ -80,7 +80,7 @@ export async function deleteApplication(
   const id = String(formData.get('id') ?? '')
   if (!id) return { ok: false, error: '잘못된 요청입니다.' }
   try {
-    await requireAdmin()
+    await requireLead()
   } catch (err) {
     console.error('[deleteApplication] requireAdmin failed', err)
     return { ok: false, error: '권한이 없습니다.' }
@@ -137,7 +137,7 @@ export async function sendStageResults(
   formData: FormData,
 ): Promise<SendResultsState> {
   try {
-    await requireAdmin()
+    await requireLead()
   } catch {
     return { ok: false, message: '권한이 없습니다.' }
   }
@@ -247,7 +247,7 @@ export async function sendStageResults(
 }
 
 export async function setApplicationStatus(formData: FormData) {
-  await requireAdmin()
+  await requireLead()
   const id = String(formData.get('application_id') ?? '')
   const status = String(formData.get('status') ?? '')
   if (!id) return

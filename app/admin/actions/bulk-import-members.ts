@@ -1,7 +1,7 @@
 'use server'
 import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/admin/is-admin'
+import { requireLead } from '@/lib/admin/is-admin'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getCurrentRecruitRound } from '@/lib/recruit/queries'
 import { identityKey } from '@/lib/members/identity'
@@ -76,7 +76,7 @@ export async function bulkImportFinalPassMembers(
   formData: FormData,
 ): Promise<CohortMemberActionState> {
   try {
-    await requireAdmin()
+    await requireLead()
   } catch {
     return { status: 'error', message: '권한이 없습니다.' }
   }

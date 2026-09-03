@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { getApplicationDetail } from '@/lib/admin/queries'
 import { PublishToggle } from '@/components/admin/publish-toggle'
 import { DeleteButton } from '@/components/admin/delete-button'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -235,11 +236,13 @@ export default async function AdminAlumniDetailPage({
                 published={data.published}
               />
             </div>
-            <DeleteButton
-              kind="alumni"
-              id={data.id}
-              label={`${data.name} (${data.cohort}기)`}
-            />
+            <LeadOnly>
+              <DeleteButton
+                kind="alumni"
+                id={data.id}
+                label={`${data.name} (${data.cohort}기)`}
+              />
+            </LeadOnly>
           </div>
         </div>
       )}

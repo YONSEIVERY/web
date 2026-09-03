@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import { getSponsorById } from '@/lib/sponsors/queries'
 import { SponsorForm } from '@/components/admin/sponsors/sponsor-form'
 import { DeleteSponsorForm } from '@/components/admin/sponsors/delete-sponsor-form'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,7 +62,15 @@ export default async function AdminSponsorDetailPage({
         <p className="mt-2 text-xs text-fg-muted">
           이 후원자를 명단에서 완전히 삭제합니다.
         </p>
-        <DeleteSponsorForm id={sponsor.id} />
+        <LeadOnly
+          fallback={
+            <p className="mt-3 text-xs text-fg-muted">
+              삭제는 학회장단만 할 수 있습니다.
+            </p>
+          }
+        >
+          <DeleteSponsorForm id={sponsor.id} />
+        </LeadOnly>
       </section>
     </div>
   )

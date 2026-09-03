@@ -9,6 +9,7 @@ import {
   DeletePhotoForm,
   PhotoUploadForm,
 } from '@/components/admin/cohort-members/photo-form'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -110,10 +111,18 @@ export default async function AdminMemberDetailPage({
         <p className="mt-2 text-xs text-fg-muted">
           이 회원을 명단에서 완전히 삭제합니다. 프로필 사진도 함께 정리됩니다.
         </p>
-        <DeleteMemberForm
-          id={member.id}
-          label={`${member.name} (${member.cohort}기 · ${member.role_label ?? member.role_tier})`}
-        />
+        <LeadOnly
+          fallback={
+            <p className="mt-3 text-xs text-fg-muted">
+              삭제는 학회장단만 할 수 있습니다.
+            </p>
+          }
+        >
+          <DeleteMemberForm
+            id={member.id}
+            label={`${member.name} (${member.cohort}기 · ${member.role_label ?? member.role_tier})`}
+          />
+        </LeadOnly>
       </section>
     </div>
   )

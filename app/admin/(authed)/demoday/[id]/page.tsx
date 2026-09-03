@@ -7,6 +7,7 @@ import { PosterUploadForm } from '@/components/admin/demoday/poster-upload-form'
 import { GroupPhotoUploadForm } from '@/components/admin/demoday/group-photo-upload-form'
 import { DemodayToggles } from '@/components/admin/demoday/toggles'
 import { DeleteDemodayForm } from '@/components/admin/demoday/delete-form'
+import { LeadOnly } from '@/components/admin/lead-only'
 
 export const dynamic = 'force-dynamic'
 
@@ -147,7 +148,15 @@ export default async function AdminDemodayDetailPage({
         <p className="mt-2 text-xs text-fg-muted">
           이 회차를 삭제하면 연결된 신청자 명단도 함께 삭제됩니다.
         </p>
-        <DeleteDemodayForm id={event.id} />
+        <LeadOnly
+          fallback={
+            <p className="mt-3 text-xs text-fg-muted">
+              삭제는 학회장단만 할 수 있습니다.
+            </p>
+          }
+        >
+          <DeleteDemodayForm id={event.id} />
+        </LeadOnly>
       </section>
     </div>
   )
