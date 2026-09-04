@@ -116,7 +116,7 @@ from audit_log order by occurred_at desc limit 50;
 
 `actor_role`이 `service_role`이면 웹 화면 경유, `direct`이면 대시보드 수동 SQL이다.
 
-## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0032. 다음 번호는 0033부터)
+## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0032. 0033은 적용 대기, 다음 번호는 0034부터)
 
 핵심만: 0011 학회원 명단 / 0013 리크루팅 / 0014 학회원 포털 / 0016 첨부 확장 /
 0017 자기소개 / 0018 RLS 하드닝 / 0019 어드민 화이트리스트 / 0020 결과 통보 기록 /
@@ -134,10 +134,18 @@ portal_role과 동일한 대소문자 무시 이메일 비교) / 0023 is_admin·
 body_md는 폴백으로 유지)** / **0031 자기소개 댓글(intro_comments, 정책 0개 ·
 0026 트리거 부착 · 백업 목록 등록)** / **0032 어드민 2등급(admins.tier =
 lead/officer, 자기 판정 RPC admin_tier(). 기존 행은 전부 officer로 떨어지고
-학회장단만 lead로 올린다. 적용 즉시 권한이 좁아지는 방향이라 사고 반경이 작다)**.
+학회장단만 lead로 올린다. 적용 즉시 권한이 좁아지는 방향이라 사고 반경이 작다)** /
+**0033 세션 파일(session_materials = 임원진이 안내글에 붙이는 자료,
+session_submissions = 학회원 발표자료 제출, portal-files 버킷 50MB.
+club_sessions에 allow_submissions·submission_due·submission_note·
+submissions_visible 추가. 두 테이블 모두 session_id는 0025와 같은 RESTRICT)**.
 새 마이그레이션은 파일 추가 후 Supabase SQL Editor에서 수동 실행한다.
-**어느 세션이 만들든 다음 번호는 0033부터다** (Operator 인계분 포함. 0029~0032는
-2026-09-02~03에 Builder가 사용했다).
+**어느 세션이 만들든 다음 번호는 0034부터다** (Operator 인계분 포함. 0029~0033은
+2026-09-02~05에 Builder·Supervisor가 사용했다).
+
+**0033 적용 순서 주의**: SQL을 먼저 돌리고 코드를 머지한다. 컬럼이 없는 DB에
+새 코드가 나가면 세션 저장이 실패한다(PostgREST가 미지의 컬럼을 거절한다).
+반대 순서로 두면 세션 편집 화면 전체가 멈춘다.
 
 **0025·0026 적용 순서**: 0025 먼저, 0026 다음. 각각 `begin;`으로 감싸고 끝의
 `select ... as result`가 기대한 문자열을 돌려주는지 확인한 뒤 `commit;` 한다.

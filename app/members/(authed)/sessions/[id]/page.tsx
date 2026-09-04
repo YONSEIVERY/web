@@ -9,6 +9,8 @@ import { getSessionById, SESSION_KIND_LABELS } from '@/lib/portal/queries'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import { Markdown } from '@/components/portal/markdown'
 import { SessionPosts } from '@/components/portal/session-posts'
+import { SessionMaterials } from '@/components/portal/session-materials'
+import { SessionSubmissions } from '@/components/portal/session-submissions'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,8 +81,22 @@ export default async function MemberSessionPage({
         </div>
       ) : (
         <p className="mt-8 font-display text-sm text-fg-muted">
-          자료가 아직 등록되지 않았습니다.
+          안내글이 아직 등록되지 않았습니다.
         </p>
+      )}
+
+      <Suspense fallback={null}>
+        <SessionMaterials sessionId={session.id} />
+      </Suspense>
+
+      {session.allow_submissions && identity && (
+        <Suspense fallback={<SessionPostsFallback />}>
+          <SessionSubmissions
+            session={session}
+            viewerEmail={identity.email}
+            viewerIsExec={isExec}
+          />
+        </Suspense>
       )}
 
       {session.allow_posts && identity && (

@@ -39,6 +39,12 @@ function parseSessionForm(formData: FormData) {
   const content_md = String(formData.get('content_md') ?? '')
   const is_published = formData.get('is_published') === 'on'
   const allow_posts = formData.get('allow_posts') === 'on'
+  const allow_submissions = formData.get('allow_submissions') === 'on'
+  const dueRaw = String(formData.get('submission_due') ?? '').trim()
+  const submission_due = dueRaw === '' ? null : kstLocalToISO(dueRaw)
+  const submission_note =
+    String(formData.get('submission_note') ?? '').trim().slice(0, 1000) || null
+  const submissions_visible = formData.get('submissions_visible') === 'on'
   const sortRaw = String(formData.get('sort_order') ?? '').trim()
   const sort_order = sortRaw === '' ? 100 : Number(sortRaw)
 
@@ -63,6 +69,10 @@ function parseSessionForm(formData: FormData) {
     content_md,
     is_published,
     allow_posts,
+    allow_submissions,
+    submission_due,
+    submission_note,
+    submissions_visible,
     sort_order,
   }
 }
@@ -124,7 +134,11 @@ export async function deleteSession(
     console.error('[deleteSession] delete failed', error)
     // 0025 이후 출결이나 기록이 딸린 세션은 삭제가 막힌다. 의도한 동작이므로
     // 실패가 아니라 무엇을 먼저 정리해야 하는지로 안내한다.
-    const blocked = deleteBlockedMessage(error, '세션', '출결 또는 기록')
+    const blocked = deleteBlockedMessage(
+      error,
+      '세션',
+      '출결, 기록, 자료 또는 제출물',
+    )
     return { ok: false, error: blocked ?? '세션 삭제에 실패했습니다.' }
   }
   revalidatePath('/members')

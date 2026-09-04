@@ -8,6 +8,7 @@ import {
   getSessions,
   SESSION_KIND_LABELS,
 } from '@/lib/portal/queries'
+import { isSubmissionClosed } from '@/lib/portal/submission-window'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 
 export const dynamic = 'force-dynamic'
@@ -175,6 +176,13 @@ function SessionList({
                     className="shrink-0 border border-fg-muted px-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-muted"
                   >
                     DRAFT
+                  </span>
+                )}
+                {/* 제출 칸이 세션 상세 안에만 있으면 낼 것이 있는지 목록에서
+                    알 수 없다. 마감 전인 회차만 표시한다. */}
+                {s.allow_submissions && !isSubmissionClosed(s.submission_due) && (
+                  <span className="shrink-0 border border-fg-primary px-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-fg-primary">
+                    제출
                   </span>
                 )}
               </span>
