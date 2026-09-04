@@ -30,7 +30,9 @@ export const BACKUP_TABLES = [
   'notices',
   'partners',
   'recruit_rounds',
+  'session_materials',
   'session_posts',
+  'session_submissions',
   'site_config',
   'sponsors',
 ] as const
@@ -81,7 +83,9 @@ const ORDER_BY: Record<BackupTable, string> = {
   notices: 'id',
   partners: 'id',
   recruit_rounds: 'id',
+  session_materials: 'id',
   session_posts: 'id',
+  session_submissions: 'id',
   site_config: 'key',
   sponsors: 'id',
 }

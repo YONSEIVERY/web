@@ -167,6 +167,63 @@ export function SessionForm({
         </span>
       </label>
 
+      <fieldset className="grid grid-cols-1 gap-4 border border-border p-5">
+        <legend className={`${LABEL_CLASS} px-2`}>발표자료 제출</legend>
+
+        <label className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            name="allow_submissions"
+            defaultChecked={session?.allow_submissions ?? false}
+            className="h-4 w-4 border-border accent-fg-primary"
+          />
+          <span className="font-display text-sm text-fg-subtle">
+            제출 받기 (켜면 세션 화면에 제출 칸이 열립니다)
+          </span>
+        </label>
+
+        <label className="flex flex-col gap-2">
+          <span className={LABEL_CLASS}>마감 (선택 · KST)</span>
+          <input
+            type="datetime-local"
+            name="submission_due"
+            defaultValue={
+              session?.submission_due
+                ? formatKstDatetimeLocal(session.submission_due)
+                : ''
+            }
+            className={INPUT_CLASS}
+          />
+          <span className="font-display text-xs text-fg-muted">
+            비우면 마감 없이 계속 받습니다. 지나면 새 제출이 막힙니다.
+          </span>
+        </label>
+
+        <label className="flex flex-col gap-2">
+          <span className={LABEL_CLASS}>제출 안내 (선택)</span>
+          <textarea
+            name="submission_note"
+            rows={3}
+            maxLength={1000}
+            defaultValue={session?.submission_note ?? ''}
+            placeholder={'예: 조별 1개만 제출. 파일명은 "3조_중간발표"로.'}
+            className={INPUT_CLASS}
+          />
+        </label>
+
+        <label className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            name="submissions_visible"
+            defaultChecked={session?.submissions_visible ?? false}
+            className="h-4 w-4 border-border accent-fg-primary"
+          />
+          <span className="font-display text-sm text-fg-subtle">
+            학회원 상호 공개 (꺼두면 임원진과 제출 본인에게만 보입니다)
+          </span>
+        </label>
+      </fieldset>
+
       <PortalSubmitButton
         label={submitLabel}
         className="inline-flex w-fit items-center gap-3 border border-fg-primary px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-fg-primary transition-colors hover:bg-fg-primary hover:text-bg-base"

@@ -26,6 +26,10 @@ export type ClubSession = {
   content_md: string
   is_published: boolean
   allow_posts: boolean
+  allow_submissions: boolean
+  submission_due: string | null
+  submission_note: string | null
+  submissions_visible: boolean
   sort_order: number
   created_at: string
   updated_at: string
@@ -45,6 +49,10 @@ function toSession(row: Record<string, unknown>): ClubSession {
     content_md: String(row.content_md ?? ''),
     is_published: Boolean(row.is_published),
     allow_posts: Boolean(row.allow_posts),
+    allow_submissions: Boolean(row.allow_submissions),
+    submission_due: (row.submission_due as string | null) ?? null,
+    submission_note: (row.submission_note as string | null) ?? null,
+    submissions_visible: Boolean(row.submissions_visible),
     sort_order: Number(row.sort_order ?? 100),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
@@ -210,6 +218,91 @@ export async function getPostsForSession(
     .order('created_at', { ascending: false })
   if (!data) return []
   return (data as Record<string, unknown>[]).map(toPost)
+}
+
+/** 임원진이 세션 안내글에 붙인 자료 한 건. */
+export type SessionMaterial = {
+  id: string
+  session_id: string
+  file_path: string
+  file_name: string
+  file_size: number
+  label: string | null
+  sort_order: number
+  uploaded_by: string
+  created_at: string
+}
+
+function toMaterial(row: Record<string, unknown>): SessionMaterial {
+  return {
+    id: String(row.id),
+    session_id: String(row.session_id),
+    file_path: String(row.file_path),
+    file_name: String(row.file_name),
+    file_size: Number(row.file_size ?? 0),
+    label: (row.label as string | null) ?? null,
+    sort_order: Number(row.sort_order ?? 100),
+    uploaded_by: String(row.uploaded_by ?? ''),
+    created_at: String(row.created_at),
+  }
+}
+
+export async function getMaterialsForSession(
+  sessionId: string,
+): Promise<SessionMaterial[]> {
+  const { data } = await supabaseService
+    .from('session_materials')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true })
+  if (!data) return []
+  return (data as Record<string, unknown>[]).map(toMaterial)
+}
+
+/** 학회원이 세션에 제출한 발표자료 한 건. */
+export type SessionSubmission = {
+  id: string
+  session_id: string
+  member_id: string | null
+  submitter_email: string
+  submitter_name: string
+  team_label: string | null
+  title: string | null
+  note: string | null
+  file_path: string
+  file_name: string
+  file_size: number
+  created_at: string
+}
+
+function toSubmission(row: Record<string, unknown>): SessionSubmission {
+  return {
+    id: String(row.id),
+    session_id: String(row.session_id),
+    member_id: row.member_id == null ? null : String(row.member_id),
+    submitter_email: String(row.submitter_email),
+    submitter_name: String(row.submitter_name),
+    team_label: (row.team_label as string | null) ?? null,
+    title: (row.title as string | null) ?? null,
+    note: (row.note as string | null) ?? null,
+    file_path: String(row.file_path),
+    file_name: String(row.file_name),
+    file_size: Number(row.file_size ?? 0),
+    created_at: String(row.created_at),
+  }
+}
+
+export async function getSubmissionsForSession(
+  sessionId: string,
+): Promise<SessionSubmission[]> {
+  const { data } = await supabaseService
+    .from('session_submissions')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('created_at', { ascending: false })
+  if (!data) return []
+  return (data as Record<string, unknown>[]).map(toSubmission)
 }
 
 export type RosterMember = {
