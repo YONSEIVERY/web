@@ -113,6 +113,16 @@ const SIGNED_URL_TTL_SEC = 60 * 60
  *
  * 버킷이 다른 오리진이라 HTML download 속성은 무시된다. 파일명을 살리려면
  * 서명 URL 자체에 실어야 한다.
+ *
+ * supabase-js의 `{ download }` 옵션을 쓰지 않고 직접 붙인다. 그 옵션은
+ * URLSearchParams로 인코딩한 쿼리를 다시 encodeURI로 감싸서 퍼센트 기호가
+ * 한 번 더 인코딩된다(storage-js v2 createSignedUrl). 서버는 이미 인코딩된
+ * 문자열을 원본 파일명으로 받으므로 "1주차.pdf"가
+ * "1%EC%A3%BC%EC%B0%A8.pdf"로 저장된다. 한글 파일명은 전부 깨지고,
+ * 파일명에 #이 있으면 URL이 프래그먼트에서 잘린다.
+ *
+ * 스토리지 서버는 받은 값을 그대로 RFC 5987(filename*=UTF-8'')로 인코딩하므로
+ * 여기서 정확히 한 번만 인코딩해 보내면 된다.
  */
 export async function signDownload(
   path: string,
@@ -120,10 +130,11 @@ export async function signDownload(
 ): Promise<string | null> {
   const { data, error } = await supabaseService.storage
     .from(FILES_BUCKET)
-    .createSignedUrl(path, SIGNED_URL_TTL_SEC, { download: fileName })
+    .createSignedUrl(path, SIGNED_URL_TTL_SEC)
   if (error || !data) {
     console.error('[signDownload] sign failed', path, error)
     return null
   }
-  return data.signedUrl
+  const sep = data.signedUrl.includes('?') ? '&' : '?'
+  return `${data.signedUrl}${sep}download=${encodeURIComponent(fileName)}`
 }
