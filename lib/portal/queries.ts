@@ -13,6 +13,23 @@ export const SESSION_KIND_LABELS: Record<SessionKind, string> = {
   special: '비정규 세션',
 }
 
+/**
+ * 기록을 누구 이름으로 받는가. 비정규 세션 세 종류를 이 한 축으로 담는다.
+ *   individual 인사이트(소감문), 컨벤션(외부 행사 참여)
+ *   team       조 단위로만 받는 회차
+ *   both       스터디. 조 제출과 개인 제출을 따로 받는다
+ */
+export const POST_SCOPES = ['individual', 'team', 'both'] as const
+export type PostScope = (typeof POST_SCOPES)[number]
+export const POST_SCOPE_LABELS: Record<PostScope, string> = {
+  individual: '개인만',
+  team: '조만',
+  both: '조와 개인 둘 다',
+}
+
+/** 기록 한 건이 누구 몫인지. 'both' 세션에서 두 값이 섞인다. */
+export type PostAuthorScope = 'individual' | 'team'
+
 export type ClubSession = {
   id: string
   cohort: number
@@ -26,6 +43,11 @@ export type ClubSession = {
   content_md: string
   is_published: boolean
   allow_posts: boolean
+  post_due: string | null
+  post_note: string | null
+  post_scope: PostScope
+  post_quota: number
+  post_teams: string[]
   allow_submissions: boolean
   submission_due: string | null
   submission_note: string | null
@@ -33,6 +55,13 @@ export type ClubSession = {
   sort_order: number
   created_at: string
   updated_at: string
+}
+
+/** text[] 컬럼을 안전하게 옮긴다. 널이나 예상 밖 값이면 빈 배열. */
+function toStringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((v): v is string => typeof v === 'string')
+    : []
 }
 
 function toSession(row: Record<string, unknown>): ClubSession {
@@ -49,6 +78,13 @@ function toSession(row: Record<string, unknown>): ClubSession {
     content_md: String(row.content_md ?? ''),
     is_published: Boolean(row.is_published),
     allow_posts: Boolean(row.allow_posts),
+    post_due: (row.post_due as string | null) ?? null,
+    post_note: (row.post_note as string | null) ?? null,
+    post_scope: POST_SCOPES.includes(row.post_scope as PostScope)
+      ? (row.post_scope as PostScope)
+      : 'individual',
+    post_quota: Number(row.post_quota ?? 1),
+    post_teams: toStringArray(row.post_teams),
     allow_submissions: Boolean(row.allow_submissions),
     submission_due: (row.submission_due as string | null) ?? null,
     submission_note: (row.submission_note as string | null) ?? null,
@@ -188,6 +224,10 @@ export type SessionPost = {
   author_name: string
   content_md: string
   image_paths: string[]
+  scope: PostAuthorScope
+  team_label: string | null
+  file_paths: string[]
+  file_names: string[]
   created_at: string
 }
 
@@ -199,11 +239,11 @@ function toPost(row: Record<string, unknown>): SessionPost {
     author_email: String(row.author_email),
     author_name: String(row.author_name),
     content_md: String(row.content_md ?? ''),
-    image_paths: Array.isArray(row.image_paths)
-      ? (row.image_paths as unknown[]).filter(
-          (v): v is string => typeof v === 'string',
-        )
-      : [],
+    image_paths: toStringArray(row.image_paths),
+    scope: row.scope === 'team' ? 'team' : 'individual',
+    team_label: (row.team_label as string | null) ?? null,
+    file_paths: toStringArray(row.file_paths),
+    file_names: toStringArray(row.file_names),
     created_at: String(row.created_at),
   }
 }

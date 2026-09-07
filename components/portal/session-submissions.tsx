@@ -5,7 +5,7 @@ import {
 } from '@/lib/portal/queries'
 import { signDownload } from '@/lib/portal/file-upload'
 import { fileExt, formatFileSize } from '@/lib/portal/files'
-import { isSubmissionClosed } from '@/lib/portal/submission-window'
+import { isPastDue } from '@/lib/portal/deadline'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import { DeleteButton } from '@/components/admin/delete-button'
 import { SubmissionComposer } from '@/components/portal/submission-composer'
@@ -44,7 +44,7 @@ export async function SessionSubmissions({
     visible.map((s) => signDownload(s.file_path, s.file_name)),
   )
 
-  const closed = isSubmissionClosed(session.submission_due)
+  const closed = isPastDue(session.submission_due)
 
   // 미제출자 대조는 임원진 화면에서만. 명단 전체가 드러나기 때문이다.
   let missing: string[] = []
