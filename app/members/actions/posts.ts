@@ -3,8 +3,17 @@ import { revalidatePath } from 'next/cache'
 import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { getMemberByEmail, getPortalIdentityVerified } from '@/lib/portal/auth'
-import { getSessionById } from '@/lib/portal/queries'
+import {
+  getSessionById,
+  type PostAuthorScope,
+} from '@/lib/portal/queries'
 import { isPastDue } from '@/lib/portal/deadline'
+import {
+  confirmUpload,
+  removeFiles,
+  signUpload,
+  type UploadTicket,
+} from '@/lib/portal/file-upload'
 import type { DeleteState } from '@/app/admin/actions/delete-state'
 
 /**
@@ -19,8 +28,16 @@ import type { DeleteState } from '@/app/admin/actions/delete-state'
 
 const BUCKET = 'portal-photos'
 const MAX_IMAGES = 6
+const MAX_FILES = 5
 const MAX_CONTENT_LENGTH = 5000
 const IMAGE_EXTS = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif'])
+
+/**
+ * 사진과 파일이 다른 버킷에 간다. 사진은 화면에 펼쳐 보여주므로 기존
+ * portal-photos를, 녹음본·문서는 내려받기 대상이라 0033의 portal-files를
+ * 쓴다. 후자는 서명 발급·확정·삭제 절차가 이미 갖춰져 있다.
+ */
+const FILE_PREFIX = (sessionId: string) => `assignments/${sessionId}/`
 
 type Ticket = { path: string; token: string }
 
@@ -81,18 +98,56 @@ export async function createPostUploadTickets(
   }
 }
 
-export async function createSessionPost(
+/** 녹음본·문서 첨부용 서명 티켓. 사진과 달리 portal-files로 간다. */
+export async function createPostFileTicket(
   sessionId: string,
-  contentMd: string,
-  imagePaths: string[],
-): Promise<{ ok: true } | { ok: false; error: string }> {
+  fileName: string,
+): Promise<{ ok: true; ticket: UploadTicket } | { ok: false; error: string }> {
   try {
     const { identity } = await requirePostContext(sessionId)
 
-    const content = String(contentMd ?? '').trim()
-    const paths = Array.isArray(imagePaths) ? imagePaths.map(String) : []
-    if (!content && paths.length === 0)
-      return { ok: false, error: '내용이나 사진 중 하나는 있어야 합니다.' }
+    const rl = checkRateLimit(`post-file:${identity.email.toLowerCase()}`, {
+      limit: 30,
+      windowMs: 60 * 60 * 1000,
+    })
+    if (!rl.ok)
+      return {
+        ok: false,
+        error: `잠시 후 다시 시도해주세요. (${rl.retryAfterSec}초)`,
+      }
+
+    const res = await signUpload(FILE_PREFIX(sessionId), fileName)
+    if (!res.ok) return { ok: false, error: res.error }
+    return { ok: true, ticket: res.value }
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : '요청에 실패했습니다.',
+    }
+  }
+}
+
+export async function createSessionPost(
+  sessionId: string,
+  input: {
+    contentMd: string
+    imagePaths: string[]
+    scope: PostAuthorScope
+    teamLabel: string
+    files: { path: string; fileName: string }[]
+  },
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    const { identity, session } = await requirePostContext(sessionId)
+
+    const content = String(input.contentMd ?? '').trim()
+    const paths = Array.isArray(input.imagePaths)
+      ? input.imagePaths.map(String)
+      : []
+    const files = Array.isArray(input.files) ? input.files.slice(0, MAX_FILES) : []
+
+    if (!content && paths.length === 0 && files.length === 0)
+      return { ok: false, error: '내용, 사진, 파일 중 하나는 있어야 합니다.' }
     if (content.length > MAX_CONTENT_LENGTH)
       return {
         ok: false,
@@ -104,6 +159,30 @@ export async function createSessionPost(
     if (paths.some((p) => !p.startsWith(prefix) || p.includes('..')))
       return { ok: false, error: '사진 경로가 올바르지 않습니다.' }
 
+    // 이 회차가 받기로 한 단위인지. 화면이 막고 있어도 액션이 다시 본다.
+    const scope: PostAuthorScope =
+      input.scope === 'team' ? 'team' : 'individual'
+    if (scope === 'team' && session.post_scope === 'individual')
+      return { ok: false, error: '이 회차는 개인 제출만 받습니다.' }
+    if (scope === 'individual' && session.post_scope === 'team')
+      return { ok: false, error: '이 회차는 조 제출만 받습니다.' }
+
+    const teamLabel = String(input.teamLabel ?? '').trim()
+    if (scope === 'team' && !session.post_teams.includes(teamLabel))
+      return { ok: false, error: '조를 골라주세요.' }
+
+    // 행을 만들기 전에 파일이 실제로 올라왔는지 확인한다. 이 단계가 없으면
+    // 업로드에 실패한 채로 제출됨 표시만 남는다.
+    const confirmed: { path: string; fileName: string }[] = []
+    for (const f of files) {
+      const res = await confirmUpload(String(f.path), FILE_PREFIX(sessionId))
+      if (!res.ok) {
+        await removeFiles(confirmed.map((c) => c.path))
+        return { ok: false, error: res.error }
+      }
+      confirmed.push({ path: String(f.path), fileName: String(f.fileName) })
+    }
+
     const member = await getMemberByEmail(identity.email)
     const authorName = member?.name ?? identity.email.split('@')[0]
 
@@ -114,9 +193,14 @@ export async function createSessionPost(
       author_name: authorName,
       content_md: content,
       image_paths: paths,
+      scope,
+      team_label: scope === 'team' ? teamLabel : null,
+      file_paths: confirmed.map((c) => c.path),
+      file_names: confirmed.map((c) => c.fileName),
     })
     if (error) {
       console.error('[createSessionPost] insert failed', error)
+      await removeFiles(confirmed.map((c) => c.path))
       return { ok: false, error: '저장에 실패했습니다.' }
     }
     revalidatePath(`/members/sessions/${sessionId}`)
@@ -141,7 +225,7 @@ export async function deleteSessionPost(
 
   const { data: row, error: fetchErr } = await supabaseService
     .from('session_posts')
-    .select('id, session_id, author_email, image_paths')
+    .select('id, session_id, author_email, image_paths, file_paths')
     .eq('id', id)
     .maybeSingle()
   if (fetchErr) {
@@ -177,6 +261,12 @@ export async function deleteSessionPost(
       console.error('[deleteSessionPost] photo cleanup threw', rmErr)
     }
   }
+
+  // 첨부는 다른 버킷(portal-files)이라 따로 지운다.
+  const filePaths = Array.isArray(row.file_paths)
+    ? (row.file_paths as unknown[]).map(String)
+    : []
+  await removeFiles(filePaths)
 
   revalidatePath(`/members/sessions/${String(row.session_id)}`)
   return { ok: true, error: null }

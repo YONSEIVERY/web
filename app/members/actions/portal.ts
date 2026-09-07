@@ -7,8 +7,10 @@ import { deleteBlockedMessage } from '@/lib/db/fk-error'
 import type { DeleteState } from '@/app/admin/actions/delete-state'
 import {
   ATTENDANCE_STATUSES,
+  POST_SCOPES,
   SESSION_KINDS,
   type AttendanceStatus,
+  type PostScope,
   type SessionKind,
 } from '@/lib/portal/queries'
 
@@ -41,6 +43,21 @@ function parseSessionForm(formData: FormData) {
   const allow_posts = formData.get('allow_posts') === 'on'
   const postDueRaw = String(formData.get('post_due') ?? '').trim()
   const post_due = postDueRaw === '' ? null : kstLocalToISO(postDueRaw)
+  const post_note =
+    String(formData.get('post_note') ?? '').trim().slice(0, 1000) || null
+  const scopeRaw = String(formData.get('post_scope') ?? '')
+  const post_scope: PostScope = POST_SCOPES.includes(scopeRaw as PostScope)
+    ? (scopeRaw as PostScope)
+    : 'individual'
+  const quotaRaw = String(formData.get('post_quota') ?? '').trim()
+  const post_quota = quotaRaw === '' ? 1 : Number(quotaRaw)
+  // 조 목록은 쉼표로 구분해 받는다. 조 편성 테이블을 따로 두지 않는 대신
+  // 세션마다 적어 두면 학회원은 고르기만 하고 오타가 섞이지 않는다.
+  const post_teams = String(formData.get('post_teams') ?? '')
+    .split(',')
+    .map((s) => s.trim().slice(0, 40))
+    .filter(Boolean)
+    .slice(0, 20)
   const allow_submissions = formData.get('allow_submissions') === 'on'
   const dueRaw = String(formData.get('submission_due') ?? '').trim()
   const submission_due = dueRaw === '' ? null : kstLocalToISO(dueRaw)
@@ -58,6 +75,10 @@ function parseSessionForm(formData: FormData) {
     throw new Error('제목을 확인해주세요.')
   if (!Number.isInteger(sort_order))
     throw new Error('정렬 값이 올바르지 않습니다.')
+  if (!Number.isInteger(post_quota) || post_quota < 1 || post_quota > 20)
+    throw new Error('제출 건수는 1에서 20 사이여야 합니다.')
+  if (post_scope !== 'individual' && post_teams.length === 0)
+    throw new Error('조 단위로 받으려면 조 목록을 입력해주세요.')
 
   return {
     cohort,
@@ -72,6 +93,10 @@ function parseSessionForm(formData: FormData) {
     is_published,
     allow_posts,
     post_due,
+    post_note,
+    post_scope,
+    post_quota,
+    post_teams,
     allow_submissions,
     submission_due,
     submission_note,

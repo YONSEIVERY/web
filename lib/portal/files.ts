@@ -14,6 +14,9 @@ export const MAX_FILE_BYTES = 50 * 1024 * 1024
 /**
  * 발표자료와 세션 자료로 오갈 만한 형식. 실행 파일과 스크립트는 넣지 않는다.
  * 목록에 없는 형식은 zip으로 묶어 올리면 된다.
+ *
+ * 오디오는 스터디 세션의 토론 녹음본 때문에 열어 뒀다. 50MB 제한이 있으니
+ * 한 시간이 넘는 녹음은 m4a처럼 압축률이 좋은 형식이어야 들어간다.
  */
 export const ALLOWED_FILE_EXTS = [
   'pdf',
@@ -35,6 +38,11 @@ export const ALLOWED_FILE_EXTS = [
   'jpeg',
   'webp',
   'gif',
+  'mp3',
+  'm4a',
+  'wav',
+  'aac',
+  'ogg',
 ] as const
 
 const EXT_SET = new Set<string>(ALLOWED_FILE_EXTS)

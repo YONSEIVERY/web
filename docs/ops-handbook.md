@@ -139,10 +139,12 @@ lead/officer, 자기 판정 RPC admin_tier(). 기존 행은 전부 officer로 �
 session_submissions = 학회원 발표자료 제출, portal-files 버킷 50MB.
 club_sessions에 allow_submissions·submission_due·submission_note·
 submissions_visible 추가. 두 테이블 모두 session_id는 0025와 같은 RESTRICT)** /
-**0034 학회원 기록 마감(club_sessions.post_due). 인사이트 과제는 글로 내는
-과제라 0015의 session_posts가 제자리인데, 기록에 마감이 없어 0033의 발표자료
-제출을 대신 쓰고 있었다. 그쪽은 파일이 필수라 텍스트만으로는 제출 자체가
-안 된다)**.
+**0034 비정규 세션 과제(club_sessions에 post_due·post_note·post_scope·
+post_quota·post_teams, session_posts에 scope·team_label·file_paths·file_names).
+인사이트는 개인 1건, 스터디는 조 제출과 개인 제출을 따로, 컨벤션은 개인이
+기수 내내 2건을 누적한다. 조 편성 테이블은 만들지 않고 조 목록을 세션
+설정에 둔다(0033과 같은 판단). 첨부는 portal-files의
+assignments/{sessionId}/ 프리픽스이고 사진은 종전대로 portal-photos)**.
 새 마이그레이션은 파일 추가 후 Supabase SQL Editor에서 수동 실행한다.
 **어느 세션이 만들든 다음 번호는 0035부터다** (Operator 인계분 포함. 0029~0034는
 2026-09-02~06에 Builder·Supervisor가 사용했다).
