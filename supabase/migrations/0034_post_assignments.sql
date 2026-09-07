@@ -12,66 +12,43 @@
 --
 -- 셋을 한 구조로 담기 위해 세 축을 세션 설정으로 뺀다.
 --   post_scope : 개인만 / 조만 / 둘 다
---   post_quota : 인당(또는 조당) 필요 건수. 컨벤션이 2
+--   post_quota : 인당 필요 건수. 컨벤션이 2
 --   post_teams : 조 목록. 조 편성 테이블을 새로 파지 않는다(0033과 같은
 --                판단). 세션마다 조가 바뀔 수 있고, 목록이 있으면 학회원은
 --                드롭다운으로 고르고 임원진은 미제출 조를 셀 수 있다.
 --
 -- 제출물 항목(인증샷·녹음본 등)을 컬럼으로 쪼개지 않는 이유는 스터디
 -- 전용 스키마가 되기 때문이다. 무엇을 내야 하는지는 post_note에 적는다.
+--
+-- 문장을 한 줄씩 끊어 쓴다. do $$ ... $$ 블록과 여러 줄에 걸친 alter는
+-- 실행 도구가 문장을 엉뚱한 데서 잘라 syntax error를 냈다(둘 다 실제로
+-- 겪었다). 한 줄 문장이면 어디서 나뉘어도 온전하다.
+--
+-- 새 테이블이 없으므로 BACKUP_TABLES는 그대로다.
 
-alter table public.club_sessions
-  add column if not exists post_due timestamptz,
-  add column if not exists post_note text,
-  add column if not exists post_scope text not null default 'individual',
-  add column if not exists post_quota int not null default 1,
-  add column if not exists post_teams text[] not null default '{}';
+alter table public.club_sessions add column if not exists post_due timestamptz;
+alter table public.club_sessions add column if not exists post_note text;
+alter table public.club_sessions add column if not exists post_scope text not null default 'individual';
+alter table public.club_sessions add column if not exists post_quota int not null default 1;
+alter table public.club_sessions add column if not exists post_teams text[] not null default '{}';
 
--- 제약은 drop if exists 뒤에 add로 건다. do $$ ... $$ 블록을 쓰면 달러
--- 인용을 못 읽는 클라이언트가 문장을 엉뚱한 데서 잘라 실패한다(실제로
--- 겪었다). 이 형태가 멱등성은 같으면서 어디서 실행하든 안전하다.
-alter table public.club_sessions
-  drop constraint if exists club_sessions_post_scope_check;
-alter table public.club_sessions
-  add constraint club_sessions_post_scope_check
-  check (post_scope in ('individual', 'team', 'both'));
+alter table public.club_sessions drop constraint if exists club_sessions_post_scope_check;
+alter table public.club_sessions add constraint club_sessions_post_scope_check check (post_scope in ('individual', 'team', 'both'));
 
-alter table public.club_sessions
-  drop constraint if exists club_sessions_post_quota_check;
-alter table public.club_sessions
-  add constraint club_sessions_post_quota_check
-  check (post_quota between 1 and 20);
+alter table public.club_sessions drop constraint if exists club_sessions_post_quota_check;
+alter table public.club_sessions add constraint club_sessions_post_quota_check check (post_quota between 1 and 20);
 
 -- 기록 한 건이 개인 것인지 조 것인지, 그리고 사진 외 첨부(녹음본·문서).
 -- 이미지(image_paths)와 따로 두는 이유는 화면에서 다르게 다루기 때문이다.
 -- 사진은 펼쳐 보여주고 파일은 내려받기 링크로 낸다.
-alter table public.session_posts
-  add column if not exists scope text not null default 'individual',
-  add column if not exists team_label text,
-  add column if not exists file_paths text[] not null default '{}',
-  add column if not exists file_names text[] not null default '{}';
+alter table public.session_posts add column if not exists scope text not null default 'individual';
+alter table public.session_posts add column if not exists team_label text;
+alter table public.session_posts add column if not exists file_paths text[] not null default '{}';
+alter table public.session_posts add column if not exists file_names text[] not null default '{}';
 
-alter table public.session_posts
-  drop constraint if exists session_posts_scope_check;
-alter table public.session_posts
-  add constraint session_posts_scope_check
-  check (scope in ('individual', 'team'));
+alter table public.session_posts drop constraint if exists session_posts_scope_check;
+alter table public.session_posts add constraint session_posts_scope_check check (scope in ('individual', 'team'));
 
-create index if not exists session_posts_scope_idx
-  on public.session_posts (session_id, scope, created_at desc);
+create index if not exists session_posts_scope_idx on public.session_posts (session_id, scope, created_at desc);
 
-select
-  'POST_ASSIGNMENTS_MIGRATION_OK' as result,
-  (
-    select count(*)
-    from information_schema.columns
-    where table_schema = 'public' and table_name = 'club_sessions'
-      and column_name in
-        ('post_due', 'post_note', 'post_scope', 'post_quota', 'post_teams')
-  ) as session_cols,
-  (
-    select count(*)
-    from information_schema.columns
-    where table_schema = 'public' and table_name = 'session_posts'
-      and column_name in ('scope', 'team_label', 'file_paths', 'file_names')
-  ) as post_cols;
+select 'POST_ASSIGNMENTS_MIGRATION_OK' as result, (select count(*) from information_schema.columns where table_schema = 'public' and table_name = 'club_sessions' and column_name in ('post_due', 'post_note', 'post_scope', 'post_quota', 'post_teams')) as session_cols, (select count(*) from information_schema.columns where table_schema = 'public' and table_name = 'session_posts' and column_name in ('scope', 'team_label', 'file_paths', 'file_names')) as post_cols;
