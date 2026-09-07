@@ -29,14 +29,6 @@ export const SESSION_KIND_LABELS: Record<SessionKind, string> = {
   convention: '컨벤션 세션',
   special: '비정규 세션',
 }
-/** 탭처럼 가로 폭이 좁은 자리용. 폰에서 다섯 개가 한 줄에 들어가야 한다. */
-export const SESSION_KIND_SHORT: Record<SessionKind, string> = {
-  regular: '정규',
-  insight: '인사이트',
-  study: '스터디',
-  convention: '컨벤션',
-  special: '기타',
-}
 
 /**
  * 기록을 누구 이름으로 받는가. 비정규 세션 세 종류를 이 한 축으로 담는다.

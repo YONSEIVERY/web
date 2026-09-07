@@ -8,8 +8,16 @@ import { LogoutButton } from '@/components/portal/logout-button'
 
 type NavItem = { href: Route; label: string }
 
+// 홈은 공지와 정규 세션만 맡고 비정규 세션은 종류별로 갈라 여기에 세운다.
+// 인사이트가 주차별로 쌓이면 홈에서 정규 세션이 밀려나기 때문이다.
+// 라벨과 경로의 kind 값은 SESSION_KIND_LABELS와 맞춰야 하지만, 그 모듈은
+// server-only라 클라이언트인 여기서 부를 수 없어 손으로 적는다.
 const MEMBER_ITEMS: NavItem[] = [
   { href: '/members' as Route, label: '홈' },
+  { href: '/members/category/insight' as Route, label: '인사이트' },
+  { href: '/members/category/study' as Route, label: '스터디' },
+  { href: '/members/category/convention' as Route, label: '컨벤션' },
+  { href: '/members/category/special' as Route, label: '기타' },
   { href: '/members/people' as Route, label: '멤버' },
   { href: '/members/attendance' as Route, label: '내 출결' },
   { href: '/members/profile' as Route, label: '내 소개' },
