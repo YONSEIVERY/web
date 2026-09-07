@@ -2,6 +2,8 @@ import { PortalSubmitButton } from '@/components/portal/submit-button'
 import {
   POST_SCOPES,
   POST_SCOPE_LABELS,
+  SESSION_KINDS,
+  SESSION_KIND_LABELS,
   type ClubSession,
 } from '@/lib/portal/queries'
 import { formatKstDatetimeLocal } from '@/lib/utils/format-date'
@@ -51,8 +53,11 @@ export function SessionForm({
             defaultValue={session?.kind ?? 'regular'}
             className={INPUT_CLASS}
           >
-            <option value="regular">정규 세션</option>
-            <option value="special">비정규 세션</option>
+            {SESSION_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {SESSION_KIND_LABELS[k]}
+              </option>
+            ))}
           </select>
         </label>
         <label className="flex flex-col gap-2">

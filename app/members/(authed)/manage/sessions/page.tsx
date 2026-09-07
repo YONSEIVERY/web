@@ -1,9 +1,11 @@
+import { Fragment } from 'react'
 import Link from 'next/link'
 import type { Route } from 'next'
 import { requireExec } from '@/lib/portal/auth'
 import { getSiteConfig } from '@/lib/data/site-config'
 import {
   getSessions,
+  SESSION_KINDS,
   SESSION_KIND_LABELS,
 } from '@/lib/portal/queries'
 
@@ -57,11 +59,12 @@ export default async function ManageSessionsPage({
         )}
       </div>
 
+      {/* 유형은 열이 아니라 구분 행으로 낸다. 인사이트가 주차별로 쌓이면
+          같은 값이 열에 반복되기만 하고 종류 경계는 눈에 띄지 않는다. */}
       <div className="mt-10 overflow-x-auto">
-        <table className="w-full min-w-[560px] text-sm">
+        <table className="w-full min-w-[520px] text-sm">
           <thead className="border-b border-border">
             <tr className="text-left">
-              <Th>유형</Th>
               <Th>주차</Th>
               <Th>제목</Th>
               <Th>상태</Th>
@@ -69,46 +72,56 @@ export default async function ManageSessionsPage({
             </tr>
           </thead>
           <tbody>
-            {sessions.map((s) => (
-              <tr
-                key={s.id}
-                className="border-b border-border transition-colors hover:bg-fg-primary/[0.03]"
-              >
-                <Td>
-                  <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.2em] text-fg-muted">
-                    {SESSION_KIND_LABELS[s.kind]}
-                  </span>
-                </Td>
-                <Td>{s.week ?? '-'}</Td>
-                <Td>
-                  <span className="font-display font-bold text-fg-primary">
-                    {s.title}
-                  </span>
-                </Td>
-                <Td>
-                  <span
-                    className={`inline-flex items-center gap-1.5 whitespace-nowrap border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.2em] ${
-                      s.is_published
-                        ? 'border-fg-primary text-fg-primary'
-                        : 'border-border text-fg-muted'
-                    }`}
-                  >
-                    {s.is_published ? '공개' : '초안'}
-                  </span>
-                </Td>
-                <Td>
-                  <Link
-                    href={`/members/manage/sessions/${s.id}` as Route}
-                    className="inline-block border border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
-                  >
-                    편집
-                  </Link>
-                </Td>
-              </tr>
-            ))}
+            {SESSION_KINDS.map((kind) => {
+              const group = sessions.filter((s) => s.kind === kind)
+              if (group.length === 0) return null
+              return (
+                <Fragment key={kind}>
+                  <tr className="border-b border-border bg-fg-primary/[0.04]">
+                    <td colSpan={4} className="py-2.5 pr-4">
+                      <span className="font-mono text-[10px] tracking-[0.24em] text-fg-primary">
+                        {SESSION_KIND_LABELS[kind]} · {group.length}
+                      </span>
+                    </td>
+                  </tr>
+                  {group.map((s) => (
+                    <tr
+                      key={s.id}
+                      className="border-b border-border transition-colors hover:bg-fg-primary/[0.03]"
+                    >
+                      <Td>{s.week ?? '-'}</Td>
+                      <Td>
+                        <span className="font-display font-bold text-fg-primary">
+                          {s.title}
+                        </span>
+                      </Td>
+                      <Td>
+                        <span
+                          className={`inline-flex items-center gap-1.5 whitespace-nowrap border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.2em] ${
+                            s.is_published
+                              ? 'border-fg-primary text-fg-primary'
+                              : 'border-border text-fg-muted'
+                          }`}
+                        >
+                          {s.is_published ? '공개' : '초안'}
+                        </span>
+                      </Td>
+                      <Td>
+                        <Link
+                          href={`/members/manage/sessions/${s.id}` as Route}
+                          className="inline-block border border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-subtle transition-colors hover:border-fg-primary hover:text-fg-primary"
+                        >
+                          편집
+                        </Link>
+                      </Td>
+                    </tr>
+                  ))}
+                </Fragment>
+              )
+            })}
             {sessions.length === 0 && (
               <tr>
-                <Td colSpan={5}>
+                <Td colSpan={4}>
                   <p className="py-12 text-center text-fg-muted">
                     등록된 세션이 없습니다. 위의 새 세션 버튼으로 첫 세션을
                     만드세요.
