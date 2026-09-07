@@ -39,6 +39,8 @@ function parseSessionForm(formData: FormData) {
   const content_md = String(formData.get('content_md') ?? '')
   const is_published = formData.get('is_published') === 'on'
   const allow_posts = formData.get('allow_posts') === 'on'
+  const postDueRaw = String(formData.get('post_due') ?? '').trim()
+  const post_due = postDueRaw === '' ? null : kstLocalToISO(postDueRaw)
   const allow_submissions = formData.get('allow_submissions') === 'on'
   const dueRaw = String(formData.get('submission_due') ?? '').trim()
   const submission_due = dueRaw === '' ? null : kstLocalToISO(dueRaw)
@@ -69,6 +71,7 @@ function parseSessionForm(formData: FormData) {
     content_md,
     is_published,
     allow_posts,
+    post_due,
     allow_submissions,
     submission_due,
     submission_note,

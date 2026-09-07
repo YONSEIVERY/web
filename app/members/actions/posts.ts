@@ -4,6 +4,7 @@ import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { getMemberByEmail, getPortalIdentityVerified } from '@/lib/portal/auth'
 import { getSessionById } from '@/lib/portal/queries'
+import { isPastDue } from '@/lib/portal/deadline'
 import type { DeleteState } from '@/app/admin/actions/delete-state'
 
 /**
@@ -29,6 +30,9 @@ async function requirePostContext(sessionId: string) {
   const session = await getSessionById(sessionId)
   if (!session) throw new Error('세션을 찾을 수 없습니다.')
   if (!session.allow_posts) throw new Error('기록이 허용되지 않은 세션입니다.')
+  // 삭제(deleteSessionPost)는 이 검사를 타지 않는다. 마감 뒤에도 잘못 올린
+  // 글은 본인이 내릴 수 있어야 한다.
+  if (isPastDue(session.post_due)) throw new Error('기록 마감이 지났습니다.')
   return { identity, session }
 }
 

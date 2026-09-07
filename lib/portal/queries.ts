@@ -26,6 +26,7 @@ export type ClubSession = {
   content_md: string
   is_published: boolean
   allow_posts: boolean
+  post_due: string | null
   allow_submissions: boolean
   submission_due: string | null
   submission_note: string | null
@@ -49,6 +50,7 @@ function toSession(row: Record<string, unknown>): ClubSession {
     content_md: String(row.content_md ?? ''),
     is_published: Boolean(row.is_published),
     allow_posts: Boolean(row.allow_posts),
+    post_due: (row.post_due as string | null) ?? null,
     allow_submissions: Boolean(row.allow_submissions),
     submission_due: (row.submission_due as string | null) ?? null,
     submission_note: (row.submission_note as string | null) ?? null,

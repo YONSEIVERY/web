@@ -116,7 +116,7 @@ from audit_log order by occurred_at desc limit 50;
 
 `actor_role`이 `service_role`이면 웹 화면 경유, `direct`이면 대시보드 수동 SQL이다.
 
-## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0032. 0033은 적용 대기, 다음 번호는 0034부터)
+## 5. 마이그레이션 이력 (운영 DB 적용 완료: 0001~0033. 0034는 적용 대기, 다음 번호는 0035부터)
 
 핵심만: 0011 학회원 명단 / 0013 리크루팅 / 0014 학회원 포털 / 0016 첨부 확장 /
 0017 자기소개 / 0018 RLS 하드닝 / 0019 어드민 화이트리스트 / 0020 결과 통보 기록 /
@@ -138,12 +138,16 @@ lead/officer, 자기 판정 RPC admin_tier(). 기존 행은 전부 officer로 �
 **0033 세션 파일(session_materials = 임원진이 안내글에 붙이는 자료,
 session_submissions = 학회원 발표자료 제출, portal-files 버킷 50MB.
 club_sessions에 allow_submissions·submission_due·submission_note·
-submissions_visible 추가. 두 테이블 모두 session_id는 0025와 같은 RESTRICT)**.
+submissions_visible 추가. 두 테이블 모두 session_id는 0025와 같은 RESTRICT)** /
+**0034 학회원 기록 마감(club_sessions.post_due). 인사이트 과제는 글로 내는
+과제라 0015의 session_posts가 제자리인데, 기록에 마감이 없어 0033의 발표자료
+제출을 대신 쓰고 있었다. 그쪽은 파일이 필수라 텍스트만으로는 제출 자체가
+안 된다)**.
 새 마이그레이션은 파일 추가 후 Supabase SQL Editor에서 수동 실행한다.
-**어느 세션이 만들든 다음 번호는 0034부터다** (Operator 인계분 포함. 0029~0033은
-2026-09-02~05에 Builder·Supervisor가 사용했다).
+**어느 세션이 만들든 다음 번호는 0035부터다** (Operator 인계분 포함. 0029~0034는
+2026-09-02~06에 Builder·Supervisor가 사용했다).
 
-**0033 적용 순서 주의**: SQL을 먼저 돌리고 코드를 머지한다. 컬럼이 없는 DB에
+**0033·0034 적용 순서 주의**: SQL을 먼저 돌리고 코드를 머지한다. 컬럼이 없는 DB에
 새 코드가 나가면 세션 저장이 실패한다(PostgREST가 미지의 컬럼을 거절한다).
 반대 순서로 두면 세션 편집 화면 전체가 멈춘다.
 

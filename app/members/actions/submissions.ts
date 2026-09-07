@@ -4,7 +4,7 @@ import { supabaseService } from '@/lib/supabase/service'
 import { checkRateLimit } from '@/lib/server/rate-limit'
 import { getMemberByEmail, getPortalIdentityVerified } from '@/lib/portal/auth'
 import { getSessionById } from '@/lib/portal/queries'
-import { isSubmissionClosed } from '@/lib/portal/submission-window'
+import { isPastDue } from '@/lib/portal/deadline'
 import {
   confirmUpload,
   removeFiles,
@@ -37,7 +37,7 @@ async function requireOpenSession(sessionId: string) {
   if (!session) throw new Error('세션을 찾을 수 없습니다.')
   if (!session.allow_submissions)
     throw new Error('제출을 받고 있지 않은 세션입니다.')
-  if (isSubmissionClosed(session.submission_due))
+  if (isPastDue(session.submission_due))
     throw new Error('제출 마감이 지났습니다.')
   return { identity, session }
 }

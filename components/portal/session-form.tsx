@@ -155,17 +155,39 @@ export function SessionForm({
         </span>
       </label>
 
-      <label className="flex items-center gap-3">
-        <input
-          type="checkbox"
-          name="allow_posts"
-          defaultChecked={session?.allow_posts ?? false}
-          className="h-4 w-4 border-border accent-fg-primary"
-        />
-        <span className="font-display text-sm text-fg-subtle">
-          학회원 기록 허용 (사진·소감문 작성, 비정규 세션 권장)
-        </span>
-      </label>
+      <fieldset className="grid grid-cols-1 gap-4 border border-border p-5">
+        <legend className={`${LABEL_CLASS} px-2`}>학회원 기록</legend>
+
+        <label className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            name="allow_posts"
+            defaultChecked={session?.allow_posts ?? false}
+            className="h-4 w-4 border-border accent-fg-primary"
+          />
+          <span className="font-display text-sm text-fg-subtle">
+            기록 허용 (사진·소감문 작성. 인사이트 과제는 여기로 받습니다)
+          </span>
+        </label>
+
+        <label className="flex flex-col gap-2">
+          <span className={LABEL_CLASS}>마감 (선택 · KST)</span>
+          <input
+            type="datetime-local"
+            name="post_due"
+            defaultValue={
+              session?.post_due
+                ? formatKstDatetimeLocal(session.post_due)
+                : ''
+            }
+            className={INPUT_CLASS}
+          />
+          <span className="font-display text-xs text-fg-muted">
+            비우면 마감 없이 계속 받습니다. 지나면 새 기록이 막히고,
+            임원진 화면에 미작성자 명단이 뜹니다.
+          </span>
+        </label>
+      </fieldset>
 
       <fieldset className="grid grid-cols-1 gap-4 border border-border p-5">
         <legend className={`${LABEL_CLASS} px-2`}>발표자료 제출</legend>

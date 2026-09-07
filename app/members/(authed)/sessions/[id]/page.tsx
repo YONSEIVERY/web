@@ -102,7 +102,7 @@ export default async function MemberSessionPage({
       {session.allow_posts && identity && (
         <Suspense fallback={<SessionPostsFallback />}>
           <SessionPosts
-            sessionId={session.id}
+            session={session}
             viewerEmail={identity.email}
             viewerIsExec={isExec}
           />
