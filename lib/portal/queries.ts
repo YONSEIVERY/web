@@ -6,11 +6,36 @@ import { supabaseService } from '@/lib/supabase/service'
  * 읽는다. 호출 전 인가는 미들웨어 + lib/portal/auth.ts가 담당.
  */
 
-export const SESSION_KINDS = ['regular', 'special'] as const
+/**
+ * 세션 종류. 배열 순서가 곧 목록 정렬 순서이자 포털 홈의 탭 순서다.
+ *
+ * 43기까지는 비정규 세션을 종류별로 한 건에 몰아 담아 regular/special 둘로
+ * 충분했다. 44기부터 인사이트를 주차별로 쪼개 쌓기 때문에 special 하나에
+ * 인사이트 여러 건과 스터디, 컨벤션이 뒤섞인다. 종류를 여기서 갈라 홈에서
+ * 탭으로 나눈다. special은 아이디어톤처럼 한 번만 열리는 나머지 자리다.
+ */
+export const SESSION_KINDS = [
+  'regular',
+  'insight',
+  'study',
+  'convention',
+  'special',
+] as const
 export type SessionKind = (typeof SESSION_KINDS)[number]
 export const SESSION_KIND_LABELS: Record<SessionKind, string> = {
   regular: '정규 세션',
+  insight: '인사이트 세션',
+  study: '스터디 세션',
+  convention: '컨벤션 세션',
   special: '비정규 세션',
+}
+/** 탭처럼 가로 폭이 좁은 자리용. 폰에서 다섯 개가 한 줄에 들어가야 한다. */
+export const SESSION_KIND_SHORT: Record<SessionKind, string> = {
+  regular: '정규',
+  insight: '인사이트',
+  study: '스터디',
+  convention: '컨벤션',
+  special: '기타',
 }
 
 /**
@@ -68,7 +93,9 @@ function toSession(row: Record<string, unknown>): ClubSession {
   return {
     id: String(row.id),
     cohort: Number(row.cohort),
-    kind: row.kind === 'special' ? 'special' : 'regular',
+    kind: SESSION_KINDS.includes(row.kind as SessionKind)
+      ? (row.kind as SessionKind)
+      : 'regular',
     week: row.week == null ? null : Number(row.week),
     title: String(row.title),
     speaker: (row.speaker as string | null) ?? null,
@@ -103,13 +130,24 @@ export async function getSessions(opts: {
     .from('club_sessions')
     .select('*')
     .eq('cohort', opts.cohort)
-    .order('kind', { ascending: true })
     .order('sort_order', { ascending: true })
     .order('week', { ascending: true, nullsFirst: false })
   if (opts.publishedOnly) q = q.eq('is_published', true)
   const { data } = await q
   if (!data) return []
-  return (data as Record<string, unknown>[]).map(toSession)
+  // kind는 DB에서 정렬하지 않는다. 알파벳순으로 세우면 convention이 맨 앞에
+  // 오고 정규 세션이 가운데로 밀린다. SESSION_KINDS 순서가 정본이며,
+  // Array.sort가 안정 정렬이라 같은 종류 안에서는 위 sort_order와 week
+  // 순서가 그대로 남는다. 한 기수 세션은 많아야 서른 건이라 비용은 없다.
+  return (data as Record<string, unknown>[])
+    .map(toSession)
+    .sort((a, b) => kindRank(a.kind) - kindRank(b.kind))
+}
+
+/** 알 수 없는 종류는 뒤로 보낸다. 목록에서 사라지는 것보다 낫다. */
+function kindRank(kind: SessionKind): number {
+  const i = SESSION_KINDS.indexOf(kind)
+  return i === -1 ? SESSION_KINDS.length : i
 }
 
 export async function getSessionById(id: string): Promise<ClubSession | null> {
