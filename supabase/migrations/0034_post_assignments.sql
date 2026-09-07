@@ -27,23 +27,20 @@ alter table public.club_sessions
   add column if not exists post_quota int not null default 1,
   add column if not exists post_teams text[] not null default '{}';
 
-do $$
-begin
-  if not exists (
-    select 1 from pg_constraint where conname = 'club_sessions_post_scope_check'
-  ) then
-    alter table public.club_sessions
-      add constraint club_sessions_post_scope_check
-      check (post_scope in ('individual', 'team', 'both'));
-  end if;
-  if not exists (
-    select 1 from pg_constraint where conname = 'club_sessions_post_quota_check'
-  ) then
-    alter table public.club_sessions
-      add constraint club_sessions_post_quota_check
-      check (post_quota between 1 and 20);
-  end if;
-end $$;
+-- 제약은 drop if exists 뒤에 add로 건다. do $$ ... $$ 블록을 쓰면 달러
+-- 인용을 못 읽는 클라이언트가 문장을 엉뚱한 데서 잘라 실패한다(실제로
+-- 겪었다). 이 형태가 멱등성은 같으면서 어디서 실행하든 안전하다.
+alter table public.club_sessions
+  drop constraint if exists club_sessions_post_scope_check;
+alter table public.club_sessions
+  add constraint club_sessions_post_scope_check
+  check (post_scope in ('individual', 'team', 'both'));
+
+alter table public.club_sessions
+  drop constraint if exists club_sessions_post_quota_check;
+alter table public.club_sessions
+  add constraint club_sessions_post_quota_check
+  check (post_quota between 1 and 20);
 
 -- 기록 한 건이 개인 것인지 조 것인지, 그리고 사진 외 첨부(녹음본·문서).
 -- 이미지(image_paths)와 따로 두는 이유는 화면에서 다르게 다루기 때문이다.
@@ -54,16 +51,11 @@ alter table public.session_posts
   add column if not exists file_paths text[] not null default '{}',
   add column if not exists file_names text[] not null default '{}';
 
-do $$
-begin
-  if not exists (
-    select 1 from pg_constraint where conname = 'session_posts_scope_check'
-  ) then
-    alter table public.session_posts
-      add constraint session_posts_scope_check
-      check (scope in ('individual', 'team'));
-  end if;
-end $$;
+alter table public.session_posts
+  drop constraint if exists session_posts_scope_check;
+alter table public.session_posts
+  add constraint session_posts_scope_check
+  check (scope in ('individual', 'team'));
 
 create index if not exists session_posts_scope_idx
   on public.session_posts (session_id, scope, created_at desc);
