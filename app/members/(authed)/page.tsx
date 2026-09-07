@@ -8,11 +8,24 @@ import {
   getSessions,
   SESSION_KINDS,
   SESSION_KIND_LABELS,
+  type ClubSession,
 } from '@/lib/portal/queries'
 import { SessionList } from '@/components/portal/session-list'
+import { isPastDue } from '@/lib/portal/deadline'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 
 export const dynamic = 'force-dynamic'
+
+/**
+ * 아직 낼 수 있고 마감이 걸린 회차의 마감 시각. 없으면 null.
+ * 마감 없이 열려만 있는 제출은 급하지 않으므로 세지 않는다.
+ */
+function openDue(s: ClubSession): string | null {
+  if (s.post_due && !isPastDue(s.post_due)) return s.post_due
+  if (s.allow_submissions && s.submission_due && !isPastDue(s.submission_due))
+    return s.submission_due
+  return null
+}
 
 /**
  * 포털 홈. 공지 + 정규 세션. ?cohort=43 으로 지난 기수 아카이브 열람.
@@ -47,6 +60,18 @@ export default async function MembersHomePage({
 
   const regular = sessions.filter((s) => s.kind === 'regular')
   const empty = isArchive ? sessions.length === 0 : regular.length === 0
+
+  // 비정규 세션을 사이드바로 뺐더니 인사이트 과제 마감이 홈에서 사라졌다.
+  // 종류와 무관하게 마감이 남은 회차를 임박순으로 한 자리에 모은다.
+  // 세션은 이미 전 종류를 조회했으므로 추가 비용은 없다.
+  const pending = isArchive
+    ? []
+    : sessions
+        .map((s) => ({ session: s, due: openDue(s) }))
+        .filter(
+          (x): x is { session: ClubSession; due: string } => x.due !== null,
+        )
+        .sort((a, b) => Date.parse(a.due) - Date.parse(b.due))
 
   return (
     <div>
@@ -106,6 +131,29 @@ export default async function MembersHomePage({
                     {n.content_md}
                   </p>
                 )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {pending.length > 0 && (
+        <section className="mt-10">
+          <SectionLabel>마감이 남은 제출</SectionLabel>
+          <ul className="mt-4 divide-y divide-border border border-fg-primary">
+            {pending.map(({ session: s, due }) => (
+              <li key={s.id}>
+                <Link
+                  href={`/members/sessions/${s.id}` as Route}
+                  className="flex flex-col items-start gap-1 p-4 transition-colors hover:bg-border/30 sm:flex-row sm:items-baseline sm:gap-3"
+                >
+                  <span className="font-display text-sm font-bold text-fg-primary md:text-base">
+                    {s.title}
+                  </span>
+                  <span className="shrink-0 font-mono text-[10px] tracking-[0.16em] text-fg-primary sm:ml-auto">
+                    {formatKstDateTime(due)} 마감
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>
