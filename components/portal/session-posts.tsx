@@ -150,6 +150,7 @@ export async function SessionPosts({
               sessionId={session.id}
               scope="team"
               teams={session.post_teams}
+              attachments={session.post_attachments}
               label="조 제출"
               placeholder="책 내용 정리, 토론 정리를 적고 인증샷과 녹음본을 함께 올려주세요."
             />
@@ -158,11 +159,14 @@ export async function SessionPosts({
             <PostComposer
               sessionId={session.id}
               scope="individual"
+              attachments={session.post_attachments}
               label={session.post_scope === 'both' ? '개인 제출' : '기록 남기기'}
               placeholder={
                 session.post_scope === 'both'
                   ? '후기와 배운 점을 남겨주세요.'
-                  : '소감문, 내용 정리, 사진 한 줄 설명 등 자유롭게 남겨주세요. (마크다운 지원)'
+                  : session.post_attachments
+                    ? '소감문, 내용 정리, 사진 한 줄 설명 등 자유롭게 남겨주세요. (마크다운 지원)'
+                    : '소감문을 자유롭게 남겨주세요. (마크다운 지원)'
               }
             />
           )}

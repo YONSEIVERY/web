@@ -41,6 +41,8 @@ function parseSessionForm(formData: FormData) {
   const content_md = String(formData.get('content_md') ?? '')
   const is_published = formData.get('is_published') === 'on'
   const allow_posts = formData.get('allow_posts') === 'on'
+  // 'text'만 글 전용. 값이 없거나 낯설면 기존 동작(첨부 허용)으로 둔다.
+  const post_attachments = formData.get('post_attachments') !== 'text'
   const postDueRaw = String(formData.get('post_due') ?? '').trim()
   const post_due = postDueRaw === '' ? null : kstLocalToISO(postDueRaw)
   const post_note =
@@ -92,6 +94,7 @@ function parseSessionForm(formData: FormData) {
     content_md,
     is_published,
     allow_posts,
+    post_attachments,
     post_due,
     post_note,
     post_scope,

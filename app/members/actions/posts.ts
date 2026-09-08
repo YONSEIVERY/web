@@ -58,7 +58,9 @@ export async function createPostUploadTickets(
   exts: string[],
 ): Promise<{ ok: true; tickets: Ticket[] } | { ok: false; error: string }> {
   try {
-    const { identity } = await requirePostContext(sessionId)
+    const { identity, session } = await requirePostContext(sessionId)
+    if (!session.post_attachments)
+      return { ok: false, error: '이 회차는 글만 받습니다.' }
 
     if (!Array.isArray(exts) || exts.length === 0)
       return { ok: false, error: '업로드할 파일이 없습니다.' }
@@ -104,7 +106,9 @@ export async function createPostFileTicket(
   fileName: string,
 ): Promise<{ ok: true; ticket: UploadTicket } | { ok: false; error: string }> {
   try {
-    const { identity } = await requirePostContext(sessionId)
+    const { identity, session } = await requirePostContext(sessionId)
+    if (!session.post_attachments)
+      return { ok: false, error: '이 회차는 글만 받습니다.' }
 
     const rl = checkRateLimit(`post-file:${identity.email.toLowerCase()}`, {
       limit: 30,
@@ -148,6 +152,9 @@ export async function createSessionPost(
 
     if (!content && paths.length === 0 && files.length === 0)
       return { ok: false, error: '내용, 사진, 파일 중 하나는 있어야 합니다.' }
+    // 글 전용 회차. 티켓 발급도 막지만 저장 단계에서 한 번 더 본다.
+    if (!session.post_attachments && (paths.length > 0 || files.length > 0))
+      return { ok: false, error: '이 회차는 글만 받습니다.' }
     if (content.length > MAX_CONTENT_LENGTH)
       return {
         ok: false,

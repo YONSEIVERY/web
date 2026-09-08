@@ -60,6 +60,7 @@ export type ClubSession = {
   content_md: string
   is_published: boolean
   allow_posts: boolean
+  post_attachments: boolean
   post_due: string | null
   post_note: string | null
   post_scope: PostScope
@@ -97,6 +98,8 @@ function toSession(row: Record<string, unknown>): ClubSession {
     content_md: String(row.content_md ?? ''),
     is_published: Boolean(row.is_published),
     allow_posts: Boolean(row.allow_posts),
+    // 0036 이전 행에는 컬럼이 없다. 없으면 기존 동작(첨부 허용)으로 본다.
+    post_attachments: Boolean(row.post_attachments ?? true),
     post_due: (row.post_due as string | null) ?? null,
     post_note: (row.post_note as string | null) ?? null,
     post_scope: POST_SCOPES.includes(row.post_scope as PostScope)

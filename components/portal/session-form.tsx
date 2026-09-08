@@ -175,17 +175,33 @@ export function SessionForm({
             className="h-4 w-4 border-border accent-fg-primary"
           />
           <span className="font-display text-sm text-fg-subtle">
-            기록 허용 (글·사진·파일. 글로 내는 과제는 여기로 받습니다)
+            기록 허용 (글로 내는 과제는 여기로 받습니다)
           </span>
         </label>
 
         {/* 비정규 세션 세 종류의 설정을 한 줄로 적어 둔다. 매번 어떻게
             맞추는지 되묻지 않게 하는 것이 이 안내의 목적이다. */}
         <p className="border border-border px-4 py-3 font-display text-xs leading-relaxed text-fg-muted">
-          인사이트: 개인만 · 1건<br />
-          스터디: 조와 개인 둘 다 · 1건 · 조 목록 입력<br />
-          컨벤션: 개인만 · 2건 · 마감은 기수 말로
+          인사이트: 글만 작성 · 개인만 · 1건<br />
+          스터디: 사진·파일 가능 · 조와 개인 둘 다 · 1건 · 조 목록 입력<br />
+          컨벤션: 사진·파일 가능 · 개인만 · 2건 · 마감은 기수 말로
         </p>
+
+        <label className="flex flex-col gap-2">
+          <span className={LABEL_CLASS}>제출 방식</span>
+          <select
+            name="post_attachments"
+            defaultValue={(session?.post_attachments ?? true) ? 'full' : 'text'}
+            className={INPUT_CLASS}
+          >
+            <option value="text">글만 작성</option>
+            <option value="full">사진·파일 업로드도 가능</option>
+          </select>
+          <span className="font-display text-xs text-fg-muted">
+            소감문처럼 글만 받는 회차는 &quot;글만 작성&quot;으로 두세요.
+            학회원 화면에서 사진·파일 칸이 사라져 무엇을 낼지 헷갈리지 않습니다.
+          </span>
+        </label>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-2">
