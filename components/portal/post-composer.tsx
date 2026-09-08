@@ -44,17 +44,23 @@ const FILE_INPUT_CLASS =
  * portal-photos, 녹음본·문서는 내려받기용 portal-files.
  *
  * scope='team'이면 조를 골라야 제출된다. 조 목록은 세션 설정에서 온다.
+ *
+ * attachments=false면 글만 받는 회차다(인사이트 소감문). 사진·파일 칸을
+ * 아예 그리지 않는다. 서버 액션도 같은 값을 다시 확인하므로 화면은
+ * 안내 역할이고 강제는 서버가 한다.
  */
 export function PostComposer({
   sessionId,
   scope = 'individual',
   teams = [],
+  attachments = true,
   label = '기록 남기기',
   placeholder = '소감문, 내용 정리, 사진 한 줄 설명 등 자유롭게 남겨주세요. (마크다운 지원)',
 }: {
   sessionId: string
   scope?: 'individual' | 'team'
   teams?: string[]
+  attachments?: boolean
   label?: string
   placeholder?: string
 }) {
@@ -103,7 +109,9 @@ export function PostComposer({
   const submit = async () => {
     if (pending) return
     if (!content.trim() && images.length === 0 && docs.length === 0) {
-      setError('내용, 사진, 파일 중 하나는 있어야 합니다.')
+      setError(
+        attachments ? '내용, 사진, 파일 중 하나는 있어야 합니다.' : '내용을 적어주세요.',
+      )
       return
     }
     if (scope === 'team' && !team) {
@@ -205,26 +213,30 @@ export function PostComposer({
         className={`${INPUT_CLASS} mt-3`}
       />
 
-      <div className="mt-3 flex flex-wrap items-center gap-4">
-        <input
-          ref={imageRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          multiple
-          onChange={(e) => pickImages(e.target.files)}
-          className={FILE_INPUT_CLASS}
-        />
-      </div>
+      {attachments && (
+        <div className="mt-3 flex flex-wrap items-center gap-4">
+          <input
+            ref={imageRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            multiple
+            onChange={(e) => pickImages(e.target.files)}
+            className={FILE_INPUT_CLASS}
+          />
+        </div>
+      )}
 
       <div className="mt-3 flex flex-wrap items-center gap-4">
-        <input
-          ref={docRef}
-          type="file"
-          accept={DOC_ACCEPT}
-          multiple
-          onChange={(e) => pickDocs(e.target.files)}
-          className={FILE_INPUT_CLASS}
-        />
+        {attachments && (
+          <input
+            ref={docRef}
+            type="file"
+            accept={DOC_ACCEPT}
+            multiple
+            onChange={(e) => pickDocs(e.target.files)}
+            className={FILE_INPUT_CLASS}
+          />
+        )}
         <button
           type="button"
           onClick={submit}
@@ -235,13 +247,15 @@ export function PostComposer({
         </button>
       </div>
 
-      <p className="mt-2 font-display text-xs text-fg-muted">
-        위는 사진(장당 10MB, 최대 {MAX_IMAGES}장), 아래는 문서와 녹음본
-        (개당 {Math.floor(MAX_FILE_BYTES / (1024 * 1024))}MB, 최대 {MAX_FILES}개).
-        {images.length > 0 && ` 사진 ${images.length}장`}
-        {docs.length > 0 && ` 파일 ${docs.length}개`}
-        {(images.length > 0 || docs.length > 0) && ' 첨부됨'}
-      </p>
+      {attachments && (
+        <p className="mt-2 font-display text-xs text-fg-muted">
+          위는 사진(장당 10MB, 최대 {MAX_IMAGES}장), 아래는 문서와 녹음본
+          (개당 {Math.floor(MAX_FILE_BYTES / (1024 * 1024))}MB, 최대 {MAX_FILES}개).
+          {images.length > 0 && ` 사진 ${images.length}장`}
+          {docs.length > 0 && ` 파일 ${docs.length}개`}
+          {(images.length > 0 || docs.length > 0) && ' 첨부됨'}
+        </p>
+      )}
       {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
     </div>
   )
