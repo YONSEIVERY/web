@@ -10,6 +10,7 @@ import {
   INTRO_INITIAL_STATE,
   type IntroFormState,
 } from '@/app/members/actions/intro-state'
+import { shrinkImage } from '@/lib/portal/shrink-image'
 
 /**
  * 구조화 자기소개 편집 폼 (43기 노션 형식).
@@ -21,6 +22,8 @@ import {
  */
 
 const MAX_PHOTO_BYTES = 10 * 1024 * 1024
+/** 가장 크게 그리는 곳이 개인 페이지 448px 칸이라 레티나 두 배까지만. */
+const INTRO_PHOTO_MAX_EDGE = 1024
 const EXT_BY_MIME: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
@@ -112,14 +115,15 @@ export function IntroForm({ initial }: { initial: IntroFormInitial }) {
     try {
       let photoPath = removed ? null : initial.photoPath
       if (file) {
-        const ext = EXT_BY_MIME[file.type]
+        const shrunk = await shrinkImage(file, INTRO_PHOTO_MAX_EDGE)
+        const ext = EXT_BY_MIME[shrunk.type]
         if (!ext) throw new Error('JPG/PNG/WEBP 사진만 올릴 수 있습니다.')
         const ticket = await createIntroPhotoTicket(ext)
         if (!ticket.ok) throw new Error(ticket.error)
         const supabase = createClient()
         const { error: upErr } = await supabase.storage
           .from('portal-photos')
-          .uploadToSignedUrl(ticket.path, ticket.token, file)
+          .uploadToSignedUrl(ticket.path, ticket.token, shrunk)
         if (upErr) throw new Error('사진 업로드에 실패했습니다.')
         photoPath = ticket.path
       }
