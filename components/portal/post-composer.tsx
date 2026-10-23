@@ -14,7 +14,10 @@ import {
   fileExt,
   isAllowedExt,
 } from '@/lib/portal/files'
+import { shrinkImage } from '@/lib/portal/shrink-image'
 
+/** 누르면 새 탭에서 크게 열리므로 대표사진보다 넉넉하게 둔다. */
+const POST_IMAGE_MAX_EDGE = 1600
 const MAX_IMAGES = 6
 const MAX_FILES = 5
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
@@ -125,16 +128,19 @@ export function PostComposer({
 
       let paths: string[] = []
       if (images.length > 0) {
-        const exts = images
+        const shrunk = await Promise.all(
+          images.map((f) => shrinkImage(f, POST_IMAGE_MAX_EDGE)),
+        )
+        const exts = shrunk
           .map((f) => EXT_BY_MIME[f.type])
           .filter((e): e is string => Boolean(e))
-        if (exts.length !== images.length)
+        if (exts.length !== shrunk.length)
           throw new Error('JPG/PNG/WEBP/GIF만 첨부할 수 있습니다.')
         const ticketRes = await createPostUploadTickets(sessionId, exts)
         if (!ticketRes.ok) throw new Error(ticketRes.error)
-        for (let i = 0; i < images.length; i++) {
+        for (let i = 0; i < shrunk.length; i++) {
           const ticket = ticketRes.tickets[i]
-          const file = images[i]
+          const file = shrunk[i]
           if (!ticket || !file)
             throw new Error('업로드 준비가 어긋났습니다. 다시 시도해주세요.')
           const { error: upErr } = await supabase.storage
