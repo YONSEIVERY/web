@@ -31,7 +31,7 @@ export async function approveAlumni(id: string) {
     console.error('[approveAlumni] alumni_companies update failed', cErr)
     throw new Error('approve failed')
   }
-  revalidatePath('/alumni')
+  revalidatePath('/cohorts')
   revalidatePath('/admin/applications')
   redirect(APPLICATIONS_QUEUE)
 }

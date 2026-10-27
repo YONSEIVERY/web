@@ -71,7 +71,7 @@ export async function deleteAlumni(
       console.error('[deleteAlumni] logo storage cleanup failed', rmErr)
   }
 
-  revalidatePath('/alumni')
+  revalidatePath('/cohorts')
   revalidatePath('/admin/alumni')
   return { ok: true, error: null }
 }

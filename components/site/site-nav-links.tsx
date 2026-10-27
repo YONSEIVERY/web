@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import type { Route } from 'next'
 import { usePathname } from 'next/navigation'
-import { NAV_ITEMS } from '@/lib/content/nav'
+import { NAV_ACTIONS, NAV_ITEMS } from '@/lib/content/nav'
 
 /**
  * Client island for nav links that need pathname awareness.
@@ -26,33 +26,53 @@ export function SiteNavLinks({
 
   if (variant === 'desktop') {
     return (
-      <ul className="flex items-center gap-7 lg:gap-9">
-        {NAV_ITEMS.map((item) => {
-          const active = isActive(pathname, item.href)
-          return (
+      <div className="flex items-center gap-7 lg:gap-9">
+        <ul className="flex items-center gap-7 lg:gap-9">
+          {NAV_ITEMS.map((item) => {
+            const active = isActive(pathname, item.href)
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href as Route}
+                  aria-current={active ? 'page' : undefined}
+                  translate="no"
+                  className={`font-mono text-[10px] uppercase tracking-[0.32em] transition-colors md:text-xs ${
+                    active
+                      ? 'text-fg-primary'
+                      : 'text-fg-muted hover:text-fg-primary'
+                  }`}
+                >
+                  {item.monoLabel}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+        <ul className="flex items-center gap-3">
+          {NAV_ACTIONS.map((item, i) => (
             <li key={item.href}>
               <Link
                 href={item.href as Route}
-                aria-current={active ? 'page' : undefined}
+                aria-current={isActive(pathname, item.href) ? 'page' : undefined}
                 translate="no"
-                className={`font-mono text-[10px] uppercase tracking-[0.32em] transition-colors md:text-xs ${
-                  active
-                    ? 'text-fg-primary'
-                    : 'text-fg-muted hover:text-fg-primary'
+                className={`inline-flex items-center border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.32em] transition-colors md:text-xs ${
+                  i === 0
+                    ? 'border-fg-primary bg-fg-primary text-bg-base hover:bg-transparent hover:text-fg-primary'
+                    : 'border-border-strong text-fg-muted hover:border-fg-primary hover:text-fg-primary'
                 }`}
               >
                 {item.monoLabel}
               </Link>
             </li>
-          )
-        })}
-      </ul>
+          ))}
+        </ul>
+      </div>
     )
   }
 
   return (
     <ul className="flex flex-col gap-3">
-      {NAV_ITEMS.map((item) => {
+      {[...NAV_ITEMS, ...NAV_ACTIONS].map((item) => {
         const active = isActive(pathname, item.href)
         return (
           <li key={item.href}>

@@ -1,38 +1,28 @@
-import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
 import type { Route } from 'next'
 import { ALUMNI } from '@/lib/content/alumni'
-import { getSiteConfig, volLabel } from '@/lib/data/site-config'
 import { getAlumniCompanies } from '@/lib/data/alumni'
 import type { AlumniCompany } from '@/lib/data/alumni'
 import { getSponsors } from '@/lib/sponsors/queries'
 import type { Sponsor } from '@/lib/sponsors/queries'
 
-export const dynamic = 'force-dynamic'
-
-export const metadata = pageMeta({
-  title: '알럼나이',
-  description:
-    'VERY의 알럼나이 네트워크. 1997년부터 누적된 회원·동문 창업가·후속 합류·투자 라운드로 이어지는 책장.',
-  path: '/alumni',
-})
-
 /**
- * /alumni - accumulated network page.
+ * 알럼나이 섹션 묶음. 2026-10-27 상단 메뉴 개편 때 /alumni 페이지를
+ * /cohorts(MEMBERS) 아래로 합쳤다. /alumni는 next.config 리다이렉트로
+ * /cohorts#alumni에 닿는다. 등록 폼(/alumni/register)은 그대로다.
  *
  * Spotlight reads the admin-managed roster (alumni_companies via
  * getAlumniCompanies). TBA placeholders render only while the roster is
  * empty, styled like /demoday's status column so users read it as
  * "coming soon" rather than missing data.
  */
-export default async function AlumniPage() {
+export async function AlumniSections() {
   const [companies, sponsors] = await Promise.all([
     getAlumniCompanies(),
     getSponsors(),
   ])
   return (
-    <main className="pt-14 md:pt-16">
-      <AlumniHero />
+    <div id="alumni" className="scroll-mt-16">
       <IntroSection />
       <StatsSection />
       <SpotlightSection companies={companies} />
@@ -40,37 +30,7 @@ export default async function AlumniPage() {
       <HallOfHonorSection sponsors={sponsors} />
       <RegisterCTASection />
       <ClosingSection />
-    </main>
-  )
-}
-
-async function AlumniHero() {
-  const eyebrow = `Alumni · ${volLabel(await getSiteConfig())}`
-  const { headlineLine1, headlineLine2, subline } = ALUMNI.hero
-  return (
-    <section className="about-hero relative px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-32">
-      <p
-        translate="no"
-        className="about-anim-eyebrow flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
-      >
-        <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
-        {eyebrow}
-      </p>
-      <h1 className="about-anim-headline mt-8 font-display font-bold tracking-tight text-fg-primary md:mt-10">
-        <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05]">
-          {headlineLine1}
-        </span>
-        <span className="block text-[clamp(2.5rem,_7.5vw,_6.5rem)] leading-[1.05] text-fg-subtle">
-          {headlineLine2}
-        </span>
-      </h1>
-      <p
-        translate="no"
-        className="about-anim-subline mt-8 max-w-[58ch] font-display text-sm italic lowercase tracking-[0.12em] text-fg-subtle md:mt-10 md:text-base"
-      >
-        {subline}
-      </p>
-    </section>
+    </div>
   )
 }
 
@@ -79,6 +39,13 @@ function IntroSection() {
   return (
     <section className="about-section relative grid grid-cols-12 gap-x-8 px-6 py-24 md:gap-x-12 md:px-10 md:py-32">
       <div className="col-span-12 md:col-span-8 md:col-start-3">
+        <p
+          translate="no"
+          className="mb-8 flex items-center font-mono text-[10px] uppercase tracking-[0.4em] text-fg-muted md:text-xs"
+        >
+          <span aria-hidden className="mr-3 inline-block h-px w-8 bg-fg-muted" />
+          Alumni · Network
+        </p>
         <h2 className="about-anim-title font-display text-[clamp(2rem,_5vw,_3.5rem)] font-bold leading-[1.1] tracking-tight text-fg-primary">
           {title}
         </h2>
