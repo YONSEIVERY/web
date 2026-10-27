@@ -340,6 +340,19 @@ export async function deleteMember(
       .remove([oldPath])
     if (rmErr) console.error('[deleteMember] cleanup failed', rmErr)
   }
+  // 자기소개 대표사진은 portal-photos의 intros/{id}/ 아래에 있다. member_intros
+  // 행은 cascade로 지워지지만 파일은 남으므로 프리픽스째 비운다 (best-effort).
+  const introPrefix = `intros/${id}`
+  const { data: introFiles } = await supabaseService.storage
+    .from('portal-photos')
+    .list(introPrefix)
+  if (introFiles?.length) {
+    const { error: introErr } = await supabaseService.storage
+      .from('portal-photos')
+      .remove(introFiles.map((f) => `${introPrefix}/${f.name}`))
+    if (introErr)
+      console.error('[deleteMember] intro photo cleanup failed', introErr)
+  }
   revalidatePath('/admin/members')
   revalidatePath('/about')
   revalidatePath('/cohorts')
