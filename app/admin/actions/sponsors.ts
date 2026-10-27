@@ -7,7 +7,7 @@ import { requireAdmin, requireLead } from '@/lib/admin/is-admin'
 import type { SponsorActionState } from './sponsors-state'
 
 /**
- * 후원자 CRUD. 마케팅 페이지(/alumni)와 목록/상세(어드민) 재검증까지
+ * 후원자 CRUD. 마케팅 페이지(/cohorts 알럼나이 섹션)와 목록/상세(어드민) 재검증까지
  * 한 번에 처리한다. 삭제 후에는 목록으로 리다이렉트.
  */
 
@@ -60,7 +60,7 @@ export async function createSponsor(
     return { status: 'error', message: '저장에 실패했습니다.' }
   }
   revalidatePath('/admin/sponsors')
-  revalidatePath('/alumni')
+  revalidatePath('/cohorts')
   redirect('/admin/sponsors' as Route)
 }
 
@@ -98,7 +98,7 @@ export async function updateSponsor(
     return { status: 'error', message: '저장에 실패했습니다.' }
   }
   revalidatePath('/admin/sponsors')
-  revalidatePath('/alumni')
+  revalidatePath('/cohorts')
   return { status: 'success', message: '저장되었습니다.' }
 }
 
@@ -119,6 +119,6 @@ export async function deleteSponsor(
     return { status: 'error', message: '삭제에 실패했습니다.' }
   }
   revalidatePath('/admin/sponsors')
-  revalidatePath('/alumni')
+  revalidatePath('/cohorts')
   redirect('/admin/sponsors' as Route)
 }

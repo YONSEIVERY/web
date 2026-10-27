@@ -37,7 +37,7 @@ export async function toggleAlumniPublished(
     console.error('[toggleAlumniPublished] alumni update failed', error)
     return { ok: false, error: '저장에 실패했습니다.' }
   }
-  revalidatePath('/alumni')
+  revalidatePath('/cohorts')
   revalidatePath('/admin/alumni')
   return { ok: true, error: null }
 }
@@ -58,7 +58,7 @@ export async function toggleAlumniCompanyPublished(
     console.error('[toggleAlumniCompanyPublished] alumni_companies update failed', error)
     return { ok: false, error: '저장에 실패했습니다.' }
   }
-  revalidatePath('/alumni')
+  revalidatePath('/cohorts')
   revalidatePath('/admin/alumni')
   return { ok: true, error: null }
 }

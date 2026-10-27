@@ -2,13 +2,14 @@ import { pageMeta } from '@/lib/content/shared-metadata'
 import Link from 'next/link'
 import type { Route } from 'next'
 import { getPublishedCohortList } from '@/lib/cohort-members/queries'
+import { AlumniSections } from '@/components/site/alumni-sections'
 
 export const revalidate = 60
 
 export const metadata = pageMeta({
-  title: '기수 아카이브',
+  title: '학회원',
   description:
-    '연세대학교 창업학회 VERY 기수별 학회원 프로필 아카이브. 회장단·임원진·학회원을 기수별로 정리.',
+    '연세대학교 창업학회 VERY 기수별 학회원 아카이브와 알럼나이 네트워크. 회장단·임원진·학회원, 동문 창업가와 후원자.',
   path: '/cohorts',
 })
 
@@ -37,7 +38,7 @@ export default async function CohortsIndexPage() {
         </p>
       </section>
 
-      <section className="px-6 pb-32 md:px-10 md:pb-40">
+      <section className="px-6 pb-8 md:px-10 md:pb-12">
         <div className="mx-auto max-w-4xl">
           {cohorts.length === 0 ? (
             <p className="text-sm text-fg-muted">
@@ -77,6 +78,8 @@ export default async function CohortsIndexPage() {
           )}
         </div>
       </section>
+
+      <AlumniSections />
     </main>
   )
 }

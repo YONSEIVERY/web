@@ -64,6 +64,13 @@ const nextConfig: NextConfig = {
         destination: '/admin/members',
         permanent: true,
       },
+      // 2026-10-27 상단 메뉴 개편: 알럼나이 페이지를 학회원(/cohorts) 아래로
+      // 합쳤다. 옛 링크와 검색 결과가 끊기지 않게 돌린다. /alumni/register는 그대로다.
+      {
+        source: '/alumni',
+        destination: '/cohorts#alumni',
+        permanent: false,
+      },
     ]
   },
 }

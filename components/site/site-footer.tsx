@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Route } from 'next'
 import veryMark from '@/public/brand/very-mark.png'
-import { NAV_ITEMS } from '@/lib/content/nav'
+import { FOOTER_ITEMS } from '@/lib/content/nav'
 import { SITE } from '@/lib/content/site'
 import { getSiteConfig } from '@/lib/data/site-config'
 
@@ -48,7 +48,7 @@ export async function SiteFooter() {
 
         <FooterColumn label="EXPLORE" mdSpan="md:col-span-2">
           <ul className="flex flex-col gap-2.5">
-            {NAV_ITEMS.map((item) => (
+            {FOOTER_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href as Route}

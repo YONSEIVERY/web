@@ -106,7 +106,7 @@ export const ABOUT = {
         monoLabel: 'ALUMNI',
         title: '알럼나이 네트워크',
         body: '재학생과 졸업생을 잇는 네트워크입니다. 멘토링·투자·팀 합류가 여기서 시작됩니다.',
-        href: '/alumni',
+        href: '/cohorts#alumni',
       },
       {
         monoLabel: 'PARTNERS',
