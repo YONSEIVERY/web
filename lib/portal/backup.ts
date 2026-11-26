@@ -35,6 +35,7 @@ export const BACKUP_TABLES = [
   'session_submissions',
   'site_config',
   'sponsors',
+  'submission_feedback',
 ] as const
 
 export type BackupTable = (typeof BACKUP_TABLES)[number]
@@ -88,6 +89,7 @@ const ORDER_BY: Record<BackupTable, string> = {
   session_submissions: 'id',
   site_config: 'key',
   sponsors: 'id',
+  submission_feedback: 'id',
 }
 
 /**

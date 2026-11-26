@@ -7,6 +7,7 @@ import { deleteSessionPost } from '@/app/members/actions/posts'
 import { deleteSessionMaterial } from '@/app/members/actions/materials'
 import { deleteSessionSubmission } from '@/app/members/actions/submissions'
 import { deleteIntroComment } from '@/app/members/actions/intro-comments'
+import { deleteSubmissionFeedback } from '@/app/members/actions/feedback'
 import { deleteNotice, deleteSession } from '@/app/members/actions/portal'
 import {
   DELETE_INITIAL,
@@ -21,6 +22,7 @@ type Kind =
   | 'session_material'
   | 'session_submission'
   | 'intro_comment'
+  | 'submission_feedback'
   | 'club_session'
   | 'notice'
 
@@ -35,6 +37,7 @@ const ACTIONS: Record<
   session_material: deleteSessionMaterial,
   session_submission: deleteSessionSubmission,
   intro_comment: deleteIntroComment,
+  submission_feedback: deleteSubmissionFeedback,
   club_session: deleteSession,
   notice: deleteNotice,
 }

@@ -5,6 +5,7 @@ import type { Route } from 'next'
 import { notFound } from 'next/navigation'
 import { getSiteConfig } from '@/lib/data/site-config'
 import { getPortalIdentity } from '@/lib/portal/auth'
+import { getAdminTier } from '@/lib/admin/is-admin'
 import { getSessionById, SESSION_KIND_LABELS } from '@/lib/portal/queries'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import { Markdown } from '@/components/portal/markdown'
@@ -43,6 +44,9 @@ export default async function MemberSessionPage({
   if (!session.is_published && !isExec) notFound()
   // 지난 기수 아카이브 세션도 임원진만 (학회장 결정, 2026-08-04)
   if (session.cohort !== siteConfig.cohort && !isExec) notFound()
+  // 피드백 작성 폼은 학회장단(lead)에게만. 학회원은 RPC를 타지 않는다.
+  const isLead =
+    isExec && session.allow_submissions && (await getAdminTier()) === 'lead'
 
   return (
     <div className="max-w-3xl">
@@ -95,6 +99,7 @@ export default async function MemberSessionPage({
             session={session}
             viewerEmail={identity.email}
             viewerIsExec={isExec}
+            viewerIsLead={isLead}
           />
         </Suspense>
       )}
