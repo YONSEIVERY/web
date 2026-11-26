@@ -81,7 +81,7 @@ export async function deleteSubmissionFeedback(
 
   const { data: row, error: fetchErr } = await supabaseService
     .from('submission_feedback')
-    .select('id, session_submissions(session_id)')
+    .select('id, submission_id')
     .eq('id', id)
     .maybeSingle()
   if (fetchErr) {
@@ -99,7 +99,12 @@ export async function deleteSubmissionFeedback(
     return { ok: false, error: '삭제에 실패했습니다.' }
   }
 
-  const parent = row.session_submissions as { session_id?: string } | null
-  if (parent?.session_id) revalidatePath(`/members/sessions/${parent.session_id}`)
+  // 화면 갱신용 조회라 실패해도 삭제 결과는 그대로 성공이다.
+  const { data: sub } = await supabaseService
+    .from('session_submissions')
+    .select('session_id')
+    .eq('id', String(row.submission_id))
+    .maybeSingle()
+  if (sub?.session_id) revalidatePath(`/members/sessions/${String(sub.session_id)}`)
   return { ok: true, error: null }
 }

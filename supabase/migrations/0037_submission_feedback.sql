@@ -40,5 +40,8 @@ create trigger audit_delete after delete on public.submission_feedback for each 
 drop trigger if exists no_truncate on public.submission_feedback;
 create trigger no_truncate before truncate on public.submission_feedback for each statement execute function public.block_truncate();
 
+-- PostgREST가 새 테이블을 바로 읽게 스키마 캐시를 다시 읽힌다 (0032와 같음)
+notify pgrst, 'reload schema';
+
 -- 기대값: SUBMISSION_FEEDBACK_INSTALLED, policies 0, guards 2
 select 'SUBMISSION_FEEDBACK_INSTALLED' as result, (select count(*) from pg_policies where tablename = 'submission_feedback') as policies, (select count(*) from pg_trigger t join pg_class c on c.oid = t.tgrelid where c.relname = 'submission_feedback' and not t.tgisinternal and t.tgname in ('audit_delete','no_truncate')) as guards;
