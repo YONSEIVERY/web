@@ -1,4 +1,5 @@
 import {
+  getFeedbackForSubmissions,
   getRoster,
   getSubmissionsForSession,
   type ClubSession,
@@ -9,6 +10,7 @@ import { isPastDue } from '@/lib/portal/deadline'
 import { formatKstDateTime } from '@/lib/utils/format-date'
 import { DeleteButton } from '@/components/admin/delete-button'
 import { SubmissionComposer } from '@/components/portal/submission-composer'
+import { SubmissionFeedbackForm } from '@/components/portal/submission-feedback-form'
 
 /**
  * 발표자료 제출 섹터 (RSC).
@@ -24,15 +26,21 @@ import { SubmissionComposer } from '@/components/portal/submission-composer'
  *
  * 비공개일 때도 제출 건수는 보여준다. 숫자만으로는 누가 냈는지 알 수
  * 없고, 마감 앞에서 "나만 안 낸 건가"를 가늠할 근거는 있어야 한다.
+ *
+ * 학회장단 피드백(0037)은 제출물 카드 안에 붙는다. 카드를 볼 수 있는
+ * 사람이 곧 피드백을 볼 수 있는 사람이라 가시성 규칙을 따로 두지 않는다.
+ * 작성 폼은 lead에게만 보이고, 서버 액션이 같은 규칙을 다시 확인한다.
  */
 export async function SessionSubmissions({
   session,
   viewerEmail,
   viewerIsExec,
+  viewerIsLead,
 }: {
   session: ClubSession
   viewerEmail: string
   viewerIsExec: boolean
+  viewerIsLead: boolean
 }) {
   const all = await getSubmissionsForSession(session.id)
   const viewer = viewerEmail.toLowerCase()
@@ -40,9 +48,10 @@ export async function SessionSubmissions({
 
   const seesAll = viewerIsExec || session.submissions_visible
   const visible = seesAll ? all : mine
-  const urls = await Promise.all(
-    visible.map((s) => signDownload(s.file_path, s.file_name)),
-  )
+  const [urls, feedback] = await Promise.all([
+    Promise.all(visible.map((s) => signDownload(s.file_path, s.file_name))),
+    getFeedbackForSubmissions(visible.map((s) => s.id)),
+  ])
 
   const closed = isPastDue(session.submission_due)
 
@@ -171,6 +180,44 @@ export async function SessionSubmissions({
                   </span>
                 )}
               </p>
+
+              {(viewerIsLead || (feedback.get(s.id)?.length ?? 0) > 0) && (
+                <div className="mt-5 border-t border-border pt-4">
+                  <p
+                    translate="no"
+                    className="font-mono text-[10px] uppercase tracking-[0.32em] text-fg-muted"
+                  >
+                    FEEDBACK · 학회장단
+                  </p>
+                  <ul className="mt-3 space-y-3">
+                    {(feedback.get(s.id) ?? []).map((f) => (
+                      <li key={f.id}>
+                        <div className="flex flex-wrap items-baseline gap-x-3">
+                          <span className="font-display text-xs font-bold text-fg-primary">
+                            {f.author_name}
+                          </span>
+                          <span className="font-mono text-[10px] text-fg-muted">
+                            {formatKstDateTime(f.created_at)}
+                          </span>
+                          {viewerIsLead && (
+                            <span className="ml-auto">
+                              <DeleteButton
+                                kind="submission_feedback"
+                                id={f.id}
+                                label={`${f.author_name}의 피드백`}
+                              />
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1 max-w-[68ch] whitespace-pre-line font-display text-sm leading-[1.8] text-fg-subtle">
+                          {f.body}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                  {viewerIsLead && <SubmissionFeedbackForm submissionId={s.id} />}
+                </div>
+              )}
             </li>
           )
         })}

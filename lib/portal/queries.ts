@@ -378,6 +378,49 @@ export async function getSubmissionsForSession(
   return (data as Record<string, unknown>[]).map(toSubmission)
 }
 
+export type SubmissionFeedback = {
+  id: string
+  submission_id: string
+  author_name: string
+  body: string
+  created_at: string
+}
+
+/**
+ * 제출물별 학회장단 피드백 (0037). 키는 submission_id.
+ *
+ * 조회 실패는 빈 결과로 떨어뜨린다. 마이그레이션보다 코드가 먼저 나가도
+ * 세션 화면이 통째로 깨지지 않고 피드백만 비어 보인다.
+ */
+export async function getFeedbackForSubmissions(
+  submissionIds: string[],
+): Promise<Map<string, SubmissionFeedback[]>> {
+  const bySubmission = new Map<string, SubmissionFeedback[]>()
+  if (submissionIds.length === 0) return bySubmission
+  const { data, error } = await supabaseService
+    .from('submission_feedback')
+    .select('id, submission_id, author_name, body, created_at')
+    .in('submission_id', submissionIds)
+    .order('created_at', { ascending: true })
+  if (error) {
+    console.error('[getFeedbackForSubmissions] query failed', error)
+    return bySubmission
+  }
+  for (const r of (data ?? []) as Record<string, unknown>[]) {
+    const item: SubmissionFeedback = {
+      id: String(r.id),
+      submission_id: String(r.submission_id),
+      author_name: String(r.author_name ?? ''),
+      body: String(r.body ?? ''),
+      created_at: String(r.created_at),
+    }
+    const list = bySubmission.get(item.submission_id)
+    if (list) list.push(item)
+    else bySubmission.set(item.submission_id, [item])
+  }
+  return bySubmission
+}
+
 export type RosterMember = {
   id: string
   name: string
